@@ -21,7 +21,7 @@ class SalesController extends AppController
 
     public function beforeFilter(Event $event){
         parent::beforeFilter($event);
-        $this->Auth->allow(array('daily', 'send'));
+        $this->Auth->allow(array('daily', 'send', 'cubage'));
     }
 
     /**
@@ -199,6 +199,21 @@ class SalesController extends AppController
             ->subject('VFM - Rapport Journalier des ventes')
             ->attachments(array(1 => $file))
             ->send($message);
+    }
+
+    public function cubage(){
+        $from = date('Y-m-d 00:00:00'); 
+        $to = date('Y-m-d 23:59:59'); 
+
+        $sales = $this->Sales->find('all', array('conditions' => array("created >=" => $from, "created <=" => $to)))->contain(['ProductsSales', 'Trucks']); 
+        foreach($sales as $sale){
+            foreach($sale->products_sales as $ps){
+                $product_sale = $this->Sales->ProductsSales->get($ps->id); 
+                $product_sale->quantity = $sale->truck->volume;
+                $product_sale->total = $product_sale->quantity*$product_sale->price;
+                $this->Sales->ProductsSales->save($product_sale);
+            }
+        }
     }
 
     public function dashboard(){

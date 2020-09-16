@@ -30,6 +30,7 @@ class ProductsSale extends Entity
         'product_id' => true,
         'sale_id' => true,
         'price' => true,
+        'list_price' => true,
         'quantity' => true,
         'product' => true,
         'sale' => true
