@@ -194,7 +194,8 @@ class SalesController extends AppController
         $email = new Email('default');
         $message = "Bonjour à tous!\n\nTrouvez en pièce jointe le rapport journalier des ventes à la VFM.\n\n Bonne fin d'après midi! \n\n Système VFM";
         $email->from(['vfmsysteme@gmail.com' => 'VFM'])
-            ->to("jlvorbe@vfmateriaux.com", "comptabilite@vfmateriaux.com")
+            ->to("jlvorbe@vfmateriaux.com", "Jean Luc Vorbe")
+            ->addTo('comptabilite@vfmateriaux.com', 'Comptabilite VFM')
             ->subject('VFM - Rapport Journalier des ventes')
             ->attachments(array(1 => $file))
             ->send($message);

@@ -203,8 +203,8 @@ $(document).scannerDetection({
 
 
         JsBarcode("#recnumber", $("#receiving_number").val(), {
-          width: 4,
-          height: 70,
+          width: 2,
+          height: 60,
           displayValue: false
         });
 

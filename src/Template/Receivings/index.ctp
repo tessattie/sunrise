@@ -5,7 +5,7 @@
  */
 ?>
 
-
+<?= $this->Html->script("scanner/jquery.scannerdetection.js") ?>
 <div class="row" style="margin-bottom:15px">
     <ol class="breadcrumb">
         <li><a href="#">
@@ -108,7 +108,34 @@ $('.datatable').DataTable({
             'excel', 'pdf', 'print'
         ]
     } );
-} );</script>
+} );
+
+$(document).scannerDetection({
+        timeBeforeScanTest: 200, // wait for the next character for upto 200ms
+        startChar: [120], // Prefix character for the cabled scanner (OPL6845R)
+        endChar: [13], // be sure the scan is complete if key 13 (enter) is detected
+        avgTimeByChar: 40, // it's not a barcode if a character takes longer than 40ms
+        onComplete: function(barcode, qty){ 
+            alert(barcode);
+            var token =  $('input[name="_csrfToken"]').val();
+            $.ajax({
+                type : 'POST',
+                url : '/receivings/find',
+                data : {
+                    truck : bc
+                },
+                headers : {
+                    'X-CSRF-Token': token 
+                },
+                success: function(data){
+                    data = JSON.parse(data);   
+                },
+                error: function(){
+                  console.log('La requête n\'a pas abouti'); 
+                }
+            });   
+        }
+    }) ;</script>
 
 <style>
     .dt-button{
