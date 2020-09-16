@@ -202,10 +202,10 @@ class SalesController extends AppController
     }
 
     public function cubage(){
-        $from = date('Y-m-d 00:00:00'); 
-        $to = date('Y-m-d 23:59:59'); 
+        $from = date('2020-09-01 00:00:00'); 
+        $to = date('2020-09-01 23:59:59'); 
 
-        $sales = $this->Sales->find('all', array('conditions' => array("created >=" => $from, "created <=" => $to)))->contain(['ProductsSales', 'Trucks']); 
+        $sales = $this->Sales->find('all', array('conditions' => array("Sales.created >=" => $from, "Sales.created <=" => $to)))->contain(['ProductsSales', 'Trucks']); 
         foreach($sales as $sale){
             foreach($sale->products_sales as $ps){
                 $product_sale = $this->Sales->ProductsSales->get($ps->id); 
@@ -214,6 +214,7 @@ class SalesController extends AppController
                 $this->Sales->ProductsSales->save($product_sale);
             }
         }
+        die();
     }
 
     public function dashboard(){
