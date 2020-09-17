@@ -217,7 +217,7 @@
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				Rapport de Caisse</div>
-			<div class="panel-body" style="height:420px;overflow-y:scroll">
+			<div class="panel-body" style="height:430px;overflow-y:scroll">
 					<?php foreach($closing as $report) : ?>
             <table class="table table-bordered datatable" style="margin-top:15px">
                 <thead>
