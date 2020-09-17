@@ -238,9 +238,24 @@ class SalesController extends AppController
 
         $transport_ratios = $this->getTransportRatio($from, $to);
 
+        $sales = $this->Sales->find("all", array("conditions" => array("Sales.created >=" => $from, 'Sales.created <=' => $to, 'sortie' => 0)));
+
+        $users = $this->Sales->Users->find('all', [ "conditions" => array('id=9 OR id=15 OR id=11'), "order" => ['first_name ASC'],
+            'keyField' => 'id',
+            'valueField' => function ($u) {
+                return $u->get('name');
+            }
+        ]);  
+        $i=0;
+        foreach($users as $user){
+            $closing[$i] = $this->getClosingValues($user->id, $from, $to);
+            $closing[$i]['user'] = strtoupper($user->last_name)." ".strtoupper($user->first_name);
+            $i++;
+        }
+
         $salesDetails = array("cashHTG" => $this->getSalesCashHTG($from, $to), 'cashUSD' => 0, 'creditHTG' => $this->getSalesCreditHTG($from, $to), 'creditUSD' => $this->getSalesCreditUSD($from, $to), 'chequeUSD' => $this->getSalesChequeUSD($from, $to), 'chequeHTG' => $this->getSalesChequeHTG($from, $to));
         
-        $this->set(compact('from', 'to', "total_sales", 'volume', 'count', 'product_data', 'best_clients', 'best_trucks', 'truck_ratios', 'transport_ratios', 'salesDetails'));
+        $this->set(compact('from', 'to', "total_sales", 'volume', 'count', 'product_data', 'best_clients', 'best_trucks', 'truck_ratios', 'transport_ratios', 'salesDetails', 'sales', 'closing'));
     }
 
     private function getProductData($from, $to){
@@ -263,7 +278,6 @@ class SalesController extends AppController
         $conn = ConnectionManager::get('default');
 
         $condition = "(o.status = 0 OR o.status = 4 OR o.status = 6 OR o.status = 7)";
-
         $conn->query("CREATE OR REPLACE VIEW best_clients AS ( SELECT c.`first_name`, c.`last_name`, c.id, IFNULL((SELECT SUM(ps.quantity) FROM products_sales ps LEFT JOIN sales o ON ps.sale_id = o.id WHERE o.customer_id = c.id AND o.created >= '".$from."' AND o.created <= '".$to."' AND ".$condition." GROUP BY o.customer_id ORDER BY o.customer_id),0) AS total_sold, IFNULL((SELECT COUNT(ps.quantity) FROM products_sales ps LEFT JOIN sales o ON ps.sale_id = o.id WHERE o.customer_id = c.id AND o.created >= '".$from."' AND o.created <= '".$to."' AND ".$condition." GROUP BY o.customer_id ORDER BY o.customer_id),0) AS total_trips FROM `customers` c WHERE c.id != 1 )");
         $bestest = $conn->query("SELECT * FROM best_clients WHERE total_sold != 0 ORDER BY total_sold DESC LIMIT 0,10");
         return $bestest;
@@ -276,7 +290,6 @@ class SalesController extends AppController
         if($this->Auth->user()['role_id'] == 6){
             $condition  ="(o.status = 0 OR o.status = 4 or o.status = 1)";
         }
-
         $conn->query("CREATE OR REPLACE VIEW best_trucks AS ( SELECT t.`name`, t.`immatriculation`, t.id, IFNULL((SELECT SUM(ps.quantity) FROM products_sales ps LEFT JOIN sales o ON ps.sale_id = o.id WHERE o.truck_id = t.id AND o.created >= '".$from."' AND o.created <= '".$to."' AND ".$condition." GROUP BY o.truck_id ORDER BY o.truck_id),0) AS total_sold,  IFNULL((SELECT COUNT(ps.quantity) FROM products_sales ps LEFT JOIN sales o ON ps.sale_id = o.id WHERE o.truck_id = t.id AND o.created >= '".$from."' AND o.created <= '".$to."' AND ".$condition." GROUP BY o.truck_id ORDER BY o.truck_id),0) AS total_trips FROM `trucks` t )");
         $bestest = $conn->query("SELECT * FROM best_trucks WHERE total_sold != 0 ORDER BY total_sold DESC LIMIT 0,10");
         return $bestest;

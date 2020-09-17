@@ -13,7 +13,7 @@
     color: white;text-decoration:none!important;cursor:pointer">Exporter</a>
 </div>
 
-<div class="panel panel-container">
+<div class="panel panel-container" style="margin-bottom:50px">
 	<div class="row">
 		<div class="col-xs-6 col-md-3 col-lg-3 no-padding">
 			<div class="panel panel-teal panel-widget border-right">
@@ -192,7 +192,50 @@
 		</div>
 	</div>
 </div>	
-
+<div class="row">	
+	<div class="col-md-6">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				Fiches non sorties</div>
+			<div class="panel-body" style="height:430px;overflow-y: scroll;">
+				<ul class="todo-list">
+				<?php foreach($sales as $sale) : ?>
+					<a href="<?= ROOT_DIREC ?>/sales/view/<?= $sale->id ?>" target="_blank" style="color:black">
+						<li class="todo-list-item">
+							<div class="checkbox">
+								<span class="fa fa-arrow-right">&nbsp;</span>
+								<label for="checkbox-2"><?= $sale->sale_number ?></label>
+							</div>
+						</li>
+					</a>
+				<?php endforeach; ?>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-6">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				Rapport de Caisse</div>
+			<div class="panel-body" style="height:420px;overflow-y:scroll">
+					<?php foreach($closing as $report) : ?>
+            <table class="table table-bordered datatable" style="margin-top:15px">
+                <thead>
+                <tr><th colspan="3"><?= $report['user'] ?></th></tr>
+                    <tr><th>Type</th><th class="text-center">HTG</th><th class="text-center">USD</th></tr>
+                </thead>
+                <tbody>
+                
+                    <tr><th>Cash</th><td class="text-center"><?= number_format($report['cash_htg'], 2, ".", ",") ?> HTG</td> <td class="text-center"><?= number_format($report['cash_usd'], 2, ".", ",") ?> USD</td></tr>
+                    <tr><th>Chèque </th> <td class="text-center"><?= number_format($report['cheque_htg'], 2, ".", ",") ?> HTG</td><td class="text-center"><?= number_format($report['cheque_usd'], 2, ".", ",") ?> USD</td></tr>
+                    <tr><th>Crédit </th> <td class="text-center"><?= number_format($report['credit_htg'], 2, ".", ",") ?> HTG</td><td class="text-center"><?= number_format($report['credit_usd'], 2, ".", ",") ?> USD</td></tr>
+                </tbody>
+            </table>
+				<?php endforeach; ?>
+			</div>
+		</div>
+	</div>
+</div>	
 <?= $this->Html->script("chart.min.js") ?>
 <?= "<script> var labels = [];" ?>
 <?php foreach($product_data as $product): ?>

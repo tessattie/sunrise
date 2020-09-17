@@ -40,6 +40,20 @@ class TrucksController extends AppController
         die('DONE WITH TRUCK BARCODE CREATION');
     }
 
+    public function duplicate(){
+        $trucks = $this->Trucks->find("all");
+        foreach($trucks as $truck){
+            $compare = $this->Trucks->find("all", array("conditions" => array("immatriculation" => $truck->immatriculation)))->contain(['Sales']);
+            if($compare->count() > 1){
+                foreach($compare as $c){
+                    if(count($c->sales) == 0){
+                        $this->Trucks->delete($c);
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * View method
      *
