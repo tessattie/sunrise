@@ -469,8 +469,8 @@ class SalesController extends AppController
 
     public function daily(){
 
-        $from = date("Y-m-d 00:00:00");
-        $to = date("Y-m-d 23:59:59");
+        $from = "2020-09-19 00:00:00";
+        $to = "2020-09-19 23:59:59";
         
         require_once(ROOT . DS . 'vendor' . DS  . 'fpdf'  . DS . 'fpdf.php');
         
@@ -741,11 +741,7 @@ class SalesController extends AppController
             $credit_htg = $credit_htg + $q->total;
         }
 
-        $query = $this->Sales->find(); 
-            $query
-            ->select(['sum' => $query->func()->sum('Sales.total')])
-            ->where(["Sales.created >=" => $from, "Sales.created <=" => $to, 'Sales.status' => 0, 'Sales.user_id' => $user])
-            ->toArray();
+        $query = $this->Sales->find('all', array('conditions' => array("Sales.status" => 0, 'Sales.user_id' => $user, 'Sales.created >=' => $from, 'Sales.created <=' => $to)));
 
         foreach($query as $q){
             $credit_usd = $credit_usd +$q->total;

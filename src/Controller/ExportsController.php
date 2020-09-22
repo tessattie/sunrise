@@ -170,7 +170,7 @@ class ExportsController extends AppController
              
             $this->excel->getActiveSheet()->SetCellValue("H".$i, $sale->products_sales[0]->product->abbreviation); 
             $this->excel->getActiveSheet()->SetCellValue("I".$i, $sale->products_sales[0]->quantity); 
-            if($sale->status == 0){
+            if($sale->status == 0 || $sale->status == 6 || $sale->status == 10){
                 $this->excel->getActiveSheet()->SetCellValue("K".$i, number_format($aff_us, 2, ".", '')); 
             }else{
                 $this->excel->getActiveSheet()->SetCellValue("J".$i, number_format($aff, 2, ".", ''));
