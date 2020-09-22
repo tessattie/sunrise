@@ -885,34 +885,6 @@ class SalesController extends AppController
                         $sale = $this->Sales->get($new['id'], ['contain' => ["ProductsSales" => ['Products'], 'Customers', 'Trucks']]);
                         $sale->subtotal = $this->calculateSubtotal($sale);
                         $sale->total = $this->calculateTotal($sale);
-                        // debug($sale);
-                        $transactions = $this->Accounts->Transactions->find("all", array("conditions" => array("sale_id" => $new['id'])));
-                        if($sale->status == 0){
-                            $account = $this->Accounts->find("all", array("conditions" => array("customer_id" => $sale->customer_id, "rate_id" => 2)))->toArray();
-                        }else{
-                            $account = $this->Accounts->find("all", array("conditions" => array("customer_id" => $sale->customer_id, "rate_id" => 1)))->toArray();
-                        }
-                        
-                        foreach($transactions as $t){
-                            $t->account_id = $account[0]->id;
-                            $t->amount = $sale->total;
-                            $this->Sales->Transactions->save($t);
-                        }
-                    }
-
-                    if($customer_id != $new['customer_id']){
-                        $transactions = $this->Accounts->Transactions->find("all", array("conditions" => array("sale_id" => $new['id'])));
-                        if($sale->status == 0){
-                            $account = $this->Accounts->find("all", array("conditions" => array("customer_id" => $sale->customer_id, "rate_id" => 2)))->toArray();
-                        }else{
-                            $account = $this->Accounts->find("all", array("conditions" => array("customer_id" => $sale->customer_id, "rate_id" => 1)))->toArray();
-                        }
-
-                        foreach($transactions as $t){
-                            $t->account_id = $account[0]->id;
-                            $t->customer_id = $sale->customer_id;
-                            $this->Sales->Transactions->save($t);
-                        }
                     }
 
                     $this->Sales->save($sale);
