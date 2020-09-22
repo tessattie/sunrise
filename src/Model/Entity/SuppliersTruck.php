@@ -28,6 +28,7 @@ class SuppliersTruck extends Entity
         'supplier_id' => true,
         'truck_id' => true,
         'supplier' => true,
+        'item_id' => true,
         'truck' => true, 
         'code' => true
     ];

@@ -44,6 +44,9 @@ class ItemsTable extends Table
             'foreignKey' => 'user_id',
             'joinType' => 'INNER'
         ]);
+        $this->hasMany('SuppliersTrucks', [
+            'foreignKey' => 'item_id'
+        ]);
     }
 
     /**

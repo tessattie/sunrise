@@ -41,6 +41,10 @@ class SuppliersTrucksTable extends Table
             'foreignKey' => 'supplier_id',
             'joinType' => 'INNER'
         ]);
+        $this->belongsTo('Items', [
+            'foreignKey' => 'item_id',
+            'joinType' => 'INNER'
+        ]);
         $this->belongsTo('Trucks', [
             'foreignKey' => 'truck_id',
             'joinType' => 'INNER'

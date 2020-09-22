@@ -36,7 +36,7 @@
             <?php if($sale->status == 4 || $sale->status == 5 || $sale->status == 7 || $sale->status == 8) : ?>
                 <span class= "label label-primary">HTG</span>
             <?php endif; ?>
-            <?php if($sale->status == 2 || $sale->status == 3 || $sale->status == 5 || $sale->status == 8 || $sale->status == 9 ||  || $sale->status == 11) : ?>
+            <?php if($sale->status == 2 || $sale->status == 3 || $sale->status == 5 || $sale->status == 8 || $sale->status == 9 || $sale->status == 11) : ?>
                 <span class= "label label-danger">X</span>
             <?php endif; ?>
         </td>
