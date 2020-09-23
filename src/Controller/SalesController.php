@@ -469,8 +469,8 @@ class SalesController extends AppController
 
     public function daily(){
 
-        $from = "2020-09-19 00:00:00";
-        $to = "2020-09-19 23:59:59";
+        $from = date("Y-m-d 00:00:00");
+        $to = date("Y-m-d 23:59:59");
         
         require_once(ROOT . DS . 'vendor' . DS  . 'fpdf'  . DS . 'fpdf.php');
         
