@@ -652,6 +652,7 @@ class ExportsController extends AppController
         $last_column = $this->excel->getActiveSheet()->getHighestColumn();
         $realtotal = 0; $realtotal_usd = 0;
         foreach($customers as $customer){
+            if($customer->total->count() > 0){
             $j=4;
             if($number % 2 == 0){
                 $this->excel->getActiveSheet()
@@ -707,7 +708,7 @@ class ExportsController extends AppController
                 $transport = $t['transport'];
             }
             $this->excel->getActiveSheet()->SetCellValue($this->alphabet[$j].$i, number_format($transport, 2, ".", ""));
-            $number++; $i++;
+            $number++; $i++;}
         }
         $last_row = $this->excel->getActiveSheet()->getHighestRow();
         $last_column = $this->excel->getActiveSheet()->getHighestColumn();
@@ -716,19 +717,19 @@ class ExportsController extends AppController
             'A'.($last_row +1),
             'TOTAL'
         );
-        
+        $this->excel->getActiveSheet()->getStyle('B'.($last_row +1))->getNumberFormat()->setFormatCode('"gdes" #,##0.00' );
         $this->excel->getActiveSheet()
         ->setCellValue(
             'B'.($last_row +1),
-            number_format($realtotal, 2, ".", "")
+            $realtotal
         );
-        $this->excel->getActiveSheet()->getStyle('B'.($last_row +1))->getNumberFormat()->setFormatCode( '"gdes" ###0.00_-' );
+        $this->excel->getActiveSheet()->getStyle('C'.($last_row +1))->getNumberFormat()->setFormatCode( '"$" #,##0.00' );
         $this->excel->getActiveSheet()
         ->setCellValue(
             'C'.($last_row +1),
             number_format($realtotal_usd, 2, ".", "")
         );
-        $this->excel->getActiveSheet()->getStyle('C'.($last_row +1))->getNumberFormat()->setFormatCode( '"$" ###0.00_-' );
+        
         $in = 3;
         foreach($products as $product){
             $this->excel->getActiveSheet()

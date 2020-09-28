@@ -44,6 +44,7 @@
             
             <tbody>
                 <?php $number=1; foreach($customers as $customer) : ?>
+                <?php if($customer->total > 0) : ?>
                     <tr <?= ($number % 2 == 0) ? "style='background:#F2F2F2'" : "" ?>><td> <a target="_blank" style="" href="<?= ROOT_DIREC ?>/customers/view/<?= $customer->id ?>"><?= (empty($customer->last_name)) ? strtoupper($customer->first_name) : strtoupper($customer->last_name) ?></a></td>
                     <?php if($customer->rate_id == 1) : ?>
                         <th class="text-center"><?= number_format($customer->total, 2, ".", ",") ?></th>
@@ -61,6 +62,7 @@
                     <td class="text-center"><?= $customer->transport ?></td>
                     </tr>
                     <?php $number++ ?>
+                <?php endif; ?>
                 <?php endforeach; ?>
             </tbody>
             </table>

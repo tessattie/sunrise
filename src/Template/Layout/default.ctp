@@ -274,7 +274,7 @@ $cakeDescription = 'VFM';
                     </a></li>
                 </ul>
             </li>
-        <?php   endif; ?>
+        <?php endif; ?>
         <?php endif; ?>
         <?php if($user_connected['role_id'] == 5) : ?>
             <li class="<?= ($this->request->getParam('controller') == 'Trucks') ? 'active' : '' ?>"><a  href="<?= ROOT_DIREC ?>/trucks"><em class="fa fa-truck">&nbsp;</em> Camions</a></li>
