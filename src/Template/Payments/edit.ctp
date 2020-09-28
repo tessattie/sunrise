@@ -20,10 +20,10 @@
             Edition Paiement
         </div>
         <div class="panel-body articles-container">
-        <label>Client : <?= $customer->last_name ?></label>
+        <label>Client : <?= (empty($payment->customer->last_name)) ? $payment->customer->first_name : $payment->customer->last_name ?></label>
         <hr>    
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <?= $this->Form->control('amount', array('class' => 'form-control total_amount', "placeholder" => "Montant", "label" => false, "style" => "margin-left:4px")); ?>
             </div>
             <div class="col-md-3">
@@ -32,8 +32,11 @@
             <div class="col-md-3">
                 <?= $this->Form->control('memo', array('class' => 'form-control', "placeholder" => "Mémo", "label" => false, "style" => "margin-left:4px")); ?>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <?= $this->Form->control('daily_rate', array('class' => 'form-control', "label" => false, "style" => "margin-left:4px;height:46px", "required" => true, 'placeholder' => "Taux du Jour", 'value' => $payment->daily_rate)); ?>
+            </div>
+            <div class="col-md-2">
+                <input value="<?= date("Y-m-d", strtotime($payment->created))  ?>" type="date" name="created" style="height: 45px;">
             </div>
         </div>
         <hr>    

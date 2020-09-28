@@ -225,12 +225,13 @@ class PaymentsController extends AppController
     public function edit($id = null)
     {
         $payment = $this->Payments->get($id, 
-            ['contain' => ['PaymentsSales' => ["Sales"]]
+            ['contain' => ['PaymentsSales' => ["Sales"], 'Customers']
         ]);
         $customer = $this->Payments->Customers->get($payment->customer_id, ['contain' => ['Rates']]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $payment = $this->Payments->patchEntity($payment, $this->request->getData());
             $payment->sale_id = 55;
+            $payment->created = $this->request->getData()['created']." 12:00:00";
             if ($pm = $this->Payments->save($payment)) {
                $payments_sales = $this->Payments->PaymentsSales->find("all", array("conditions" => array("payment_id" => $payment->id))); 
                foreach($payments_sales as $ps){

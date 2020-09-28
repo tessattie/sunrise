@@ -52,6 +52,7 @@ class TrucksController extends AppController
                 }
             }
         }
+        die("DONE DELETING DUPICATES");
     }
 
     /**
