@@ -202,8 +202,8 @@ class SalesController extends AppController
     }
 
     public function cubage(){
-        $from = date('2020-09-01 00:00:00'); 
-        $to = date('2020-09-01 23:59:59'); 
+        $from = date('Y-m-d 00:00:00'); 
+        $to = date('Y-m-d 23:59:59'); 
 
         $sales = $this->Sales->find('all', array('conditions' => array("Sales.created >=" => $from, "Sales.created <=" => $to)))->contain(['ProductsSales', 'Trucks']); 
         foreach($sales as $sale){
@@ -686,10 +686,9 @@ class SalesController extends AppController
         $fpdf->Cell(45,7,number_format($total_usd,2,".",",")." USD",'B,R',0, 'C');
 
         $directoryName = ROOT."/webroot/tmp/rapport_journalier_".date('Ymd').'.pdf'; 
-        $fpdf->Output('I');
-        // $fpdf->Output($directoryName, 'F');
-        // $this->send($directoryName);
-        die();
+        $fpdf->Output($directoryName, 'F');
+        $this->send($directoryName);
+        die("DONE WITH DAILY");
     }
 
 
