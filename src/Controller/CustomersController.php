@@ -27,7 +27,7 @@ class CustomersController extends AppController
      */
     public function index()
     {
-        $customers = $this->Customers->find("all", array("order" => array("last_name ASC")))->contain(['Rates']);
+        $customers = $this->Customers->find("all", array("order" => array("last_name ASC"), 'conditions' => array("Customers.id <>" => 1)))->contain(['Rates', 'Payments', 'Sales']);
 
         $this->set(compact('customers'));
     }

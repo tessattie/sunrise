@@ -56,7 +56,7 @@ class CustomersTable extends Table
             'foreignKey' => 'customer_id'
         ]);
 
-        $this->hasMany('Cpayments', [
+        $this->hasMany('Payments', [
             'foreignKey' => 'customer_id'
         ]);
 

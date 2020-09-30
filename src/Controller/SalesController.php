@@ -479,18 +479,14 @@ class SalesController extends AppController
         $fpdf->Image(ROOT.'/webroot/img/logo.png',10,4,50);
         $fpdf->SetFont('Arial','B',10);
         $fpdf->Cell(190,0,date('l j F Y'),0,0, 'R');
-        $fpdf->Ln(7);
-        $fpdf->Cell(190,0,"",'B',0, 'R');
-        $fpdf->Ln(5);
+        $fpdf->Ln(6);
         $fpdf->SetFont('Arial','B',8);
-        $fpdf->Cell(190,0,utf8_decode("RESUME DES VENTES"),0,0, 'L');
-        $fpdf->Ln(5);
 
         // Tableau Dashboard #2 [ 22 - 42 ] 
 
         $salesDetails = array("cashHTG" => $this->getSalesCashHTG($from, $to), 'cashUSD' => 0, 'creditHTG' => $this->getSalesCreditHTG($from, $to), 'creditUSD' => $this->getSalesCreditUSD($from, $to), 'chequeUSD' => $this->getSalesChequeUSD($from, $to), 'chequeHTG' => $this->getSalesChequeHTG($from, $to));
 
-        $fpdf->Cell(22,5,"",0,0, 'L');
+        $fpdf->Cell(22,5,"RESUME",'T,L',0, 'L');
         $fpdf->Cell(42,5,"CASH",'L,B,R,T',0, 'C');
         $fpdf->Cell(42,5,"CREDIT",'B,R,T',0, 'C');
         $fpdf->Cell(42,5,"CHEQUE",'B,R,T',0, 'C');
@@ -524,14 +520,12 @@ class SalesController extends AppController
             LEFT JOIN categories c ON c.id = p.category_id
             ORDER BY total_sold DESC"); 
         $fpdf->SetFont('Arial','B',8);  
-        $fpdf->Ln(10);
-        $fpdf->Cell(190,0,utf8_decode("VENTES PAR PRODUITS"),0,0, 'L');
-        $fpdf->Ln(5);
-        $fpdf->Cell(70,5,"PRODUIT","L,B,R,T",0, 'L');
+        $fpdf->Ln(9);
+        $fpdf->Cell(70,5,"VENTES PAR PRODUITS","L,B,R,T",0, 'L');
         $fpdf->Cell(20,5,"VOYAGES",'B,R,T',0, 'C');
         $fpdf->Cell(40,5,"VOLUME (M3)",'B,R,T',0, 'C');
+        $fpdf->Cell(30,5,"AVG / VOY",'B,R,T',0, 'C');
         $fpdf->Cell(30,5,"POURCENTAGE",'B,R,T',0, 'C');
-        $fpdf->Cell(30,5,"CUMMULE",'B,R,T',0, 'C');
         $total=0;$fiches = 0;
         $fpdf->SetFont('Arial','',8);
         $total = 0; $fiches = 0;
@@ -547,30 +541,31 @@ class SalesController extends AppController
                 $pourcentage = 0; $cumule = 0;
             }
             if($product['total_sold'] != 0){
+                $average = $product['total_sold']/$product['total_trips'];
                 $fpdf->Ln();
                 $fpdf->Cell(70,5,$product['name'],"L,B,R",0, 'L');
                 $fpdf->Cell(20,5,number_format($product['total_trips'], 0, ".", ","),'B,R',0, 'C');
                 $fpdf->Cell(40,5,number_format($product['total_sold'], 2, ".", ",")." M3",'B,R',0, 'C');
+                $fpdf->Cell(30,5,number_format($average, 3, ".", ",")." M3",'B,R',0, 'C');
                 $fpdf->Cell(30,5,number_format($pourcentage, 3, ".", ",")."%",'B,R',0, 'C');
-                $fpdf->Cell(30,5,number_format($cummule, 3, ".", ",")."%",'B,R',0, 'C');
+                
             }
         }
         $fpdf->SetFont('Arial','B',8);
         $fpdf->Ln();
+        $total_average = $total / $fiches;
         $fpdf->Cell(70,5,"TOTAL","L,B,R",0, 'L');
         $fpdf->Cell(20,5,number_format($fiches, 0, ".", ","),'B,R',0, 'C');
         $fpdf->Cell(40,5,number_format($total, 2, ".", ",")." M3",'B,R',0, 'C');
-        $fpdf->Cell(30,5,number_format(100, 0,".", ",")."%",'B,R',0, 'C');
+        $fpdf->Cell(30,5,number_format($total_average, 3,".", ",")." M3",'B,R',0, 'C');
         $fpdf->Cell(30,5,number_format(100, 0, ".", ",")."%",'B,R',0, 'C');
 
 
         // Meilleurs clients crédits
         $best_clients = $this->getBestClients($from,$to);
-        $fpdf->Ln(10);
-        $fpdf->Cell(190,0,utf8_decode("MEILLEURS CLIENTS CREDITS"),0,0, 'L');
-        $fpdf->Ln(5);
+        $fpdf->Ln(9);
         $fpdf->SetFont('Arial','B',8);
-        $fpdf->Cell(100,5,"CLIENT","L,B,R,T",0, 'L');
+        $fpdf->Cell(100,5,"MEILLEURS CLIENTS CREDITS","L,B,R,T",0, 'L');
         $fpdf->Cell(45,5,"VOYAGES",'B,R,T',0, 'C');
         $fpdf->Cell(45,5,"VOLUME (M3)",'B,R,T',0, 'C');
         $fpdf->SetFont('Arial','',8);
@@ -584,25 +579,27 @@ class SalesController extends AppController
         }
 
         $truck_ratios = $this->getTrucksRatio($from, $to);
-        $fpdf->Ln(7);
+        $fpdf->Ln(9);
         $fpdf->SetFont('Arial','B',8);
-        $fpdf->Cell(190,5,"VOLUMES PAR TYPE DE CAMION","",0, 'L');
-        $fpdf->Ln(7);
-        
-        $fpdf->Cell(100,5,"TYPE","L,T,R",0, 'L');
+        $tot_voyages = $truck_ratios[0]['value'] + $truck_ratios[1]['value'] + $truck_ratios[2]['value'];
+        $fpdf->Cell(55,5,"VOLUMES PAR TYPE DE CAMION","L,T,R",0, 'L');
+        $fpdf->Cell(45,5,"% VOY",'T,R',0, 'C');
         $fpdf->Cell(45,5,"VOYAGES",'T,R',0, 'C');
         $fpdf->Cell(45,5,"VOLUME (M3)",'T,R',0, 'C');
         $fpdf->SetFont('Arial','',9);
         $fpdf->Ln();
-        $fpdf->Cell(100,5,"10 ROUES","L,R,T",0, 'L');
+        $fpdf->Cell(55,5,"10 ROUES","L,R,T",0, 'L');
+        $fpdf->Cell(45,5,number_format(($truck_ratios[0]['value']*100/$tot_voyages), 3, ".", ",")."%",'T,R',0, 'C');
         $fpdf->Cell(45,5,$truck_ratios[0]['value'] ,'R,T',0, 'C');
         $fpdf->Cell(45,5,$truck_ratios[0]['volume']." m3",'R,T',0, 'C');
         $fpdf->Ln();
-        $fpdf->Cell(100,5,"6 ROUES","L,B,R,T",0, 'L');
-        $fpdf->Cell(45,5,$truck_ratios[1]['value'] ,'B,R,T',0, 'C');
+        $fpdf->Cell(55,5,"6 ROUES","L,B,R,T",0, 'L');
+        $fpdf->Cell(45,5,number_format(($truck_ratios[1]['value']*100/$tot_voyages), 3, ".", ",")."%",'T,R',0, 'C');
+        $fpdf->Cell(45,5,$truck_ratios[1]['value'],'B,R,T',0, 'C');
         $fpdf->Cell(45,5,$truck_ratios[1]['volume']." m3",'B,R,T',0, 'C');
         $fpdf->Ln();
-        $fpdf->Cell(100,5,"CANTERS","L,B,R,T",0, 'L');
+        $fpdf->Cell(55,5,"CANTERS","L,B,R",0, 'L');
+        $fpdf->Cell(45,5,number_format(($truck_ratios[2]['value']*100/$tot_voyages), 3, ".", ",")."%",'T,R,B',0, 'C');
         $fpdf->Cell(45,5,$truck_ratios[2]['value'] ,'B,R',0, 'C');
         $fpdf->Cell(45,5,$truck_ratios[2]['volume']." m3",'B,R',0, 'C');
 
@@ -619,36 +616,79 @@ class SalesController extends AppController
             $i++;
         }
 
-        $fpdf->Ln();
+        $fpdf->Ln(9);
         $fpdf->SetFont('Arial','B',8);
-        $fpdf->Cell(190,7,"RAPPORT DE FERMETURE","B",0, 'L');
-        $fpdf->Ln();
-        $fpdf->Cell(100,7,"TYPE","L,B,R",0, 'L');
-        $fpdf->Cell(45,7,"HTG",'B,R',0, 'C');
-        $fpdf->Cell(45,7,"USD",'B,R',0, 'C');
+        $fpdf->Cell(55,7,"RAPPORT DE FERMETURE","T,L,B,R",0, 'L');
+        $fpdf->Cell(45,7,"#",'T,B,R',0, 'C');
+        $fpdf->Cell(45,7,"HTG",'T,B,R',0, 'C');
+        $fpdf->Cell(45,7,"USD",'T,B,R',0, 'C');
+        $total_voyages = 0; $total_htg=0; $total_usd = 0; 
+        $total_cash_htg=0;$total_ch_htg=0;$total_cr_htg=0;
+        $total_cash_usd=0;$total_ch_usd=0;$total_cr_usd=0;
+        $total_voy_cash=0;$total_voy_ch=0;$total_voy_cr=0;
         foreach($closing as $report){
             $fpdf->Ln();
             $fpdf->SetFont('Arial','B',8);
             $fpdf->Cell(190,7,utf8_decode($report['user']),"L,R,B",0, 'L');
             $fpdf->Ln();
             $fpdf->SetFont('Arial','',8);
-            $fpdf->Cell(100,6,"CASH","L,B,R",0, 'L');
+            $fpdf->Cell(55,6,"CASH","L,B,R",0, 'L');
+            $fpdf->Cell(45,6,$report['total_cash'],'B,R',0, 'C');
             $fpdf->Cell(45,6,number_format($report['cash_htg'], 2, ".", ",")." HTG",'B,R',0, 'C');
             $fpdf->Cell(45,6,number_format($report['cash_usd'], 2, ".", ",")." USD",'B,R',0, 'C');
             $fpdf->Ln();
-            $fpdf->Cell(100,6,"CHEQUE","L,B,R",0, 'L');
+            $fpdf->Cell(55,6,"CHEQUE","L,B,R",0, 'L');
+            $fpdf->Cell(45,6,$report['total_ch'],'B,R',0, 'C');
             $fpdf->Cell(45,6,number_format($report['cheque_htg'], 2, ".", ",")." HTG",'B,R',0, 'C');
             $fpdf->Cell(45,6,number_format($report['cheque_usd'], 2, ".", ",")." USD",'B,R',0, 'C');
             $fpdf->Ln();
-            $fpdf->Cell(100,6,"CREDIT","L,B,R",0, 'L');
+            $fpdf->Cell(55,6,"CREDIT","L,B,R",0, 'L');
+            $fpdf->Cell(45,6,$report['total_cr'],'B,R',0, 'C');
             $fpdf->Cell(45,6,number_format($report['credit_htg'], 2, ".", ",")." HTG",'B,R',0, 'C');
             $fpdf->Cell(45,6,number_format($report['credit_usd'], 2, ".", ",")." USD",'B,R',0, 'C');
+            $total_voyages = $total_voyages + $report['total_cash']+$report['total_ch']+$report['total_cr'];
+            $total_htg = $total_htg + $report['cash_htg']+$report['cheque_htg']+$report['credit_htg'];
+            $total_usd = $total_usd + $report['cash_usd']+$report['cheque_usd']+$report['credit_usd'];
+            $total_voy_cash = $total_voy_cash + $report['total_cash'];
+            $total_voy_ch = $total_voy_ch + $report['total_ch'];
+            $total_voy_cr = $total_voy_cr + $report['total_cr'];
+            $total_cash_usd = $total_cash_usd + $report['cash_usd'];
+            $total_ch_usd = $total_ch_usd + $report['cheque_usd'];
+            $total_cr_usd = $total_cr_usd + $report['credit_usd'];
+            $total_cash_htg = $total_cash_htg + $report['cash_htg'];
+            $total_ch_htg = $total_ch_htg + $report['cheque_htg'];
+            $total_cr_htg = $total_cr_htg + $report['credit_htg'];
         }
+        $fpdf->Ln();
+        $fpdf->SetFont('Arial','B',8);
+        $fpdf->Cell(190,7,"TOTAL","L,R,B",0, 'L');
+        $fpdf->Ln();
+        $fpdf->SetFont('Arial','',8);
+        $fpdf->Cell(55,6,"CASH","L,B,R",0, 'L');
+        $fpdf->Cell(45,6,$total_voy_cash,'B,R',0, 'C');
+        $fpdf->Cell(45,6,number_format($total_cash_htg, 2, ".", ",")." HTG",'B,R',0, 'C');
+        $fpdf->Cell(45,6,number_format($total_cash_usd, 2, ".", ",")." USD",'B,R',0, 'C');
+        $fpdf->Ln();
+        $fpdf->Cell(55,6,"CHEQUE","L,B,R",0, 'L');
+        $fpdf->Cell(45,6,$total_voy_ch,'B,R',0, 'C');
+        $fpdf->Cell(45,6,number_format($total_ch_htg, 2, ".", ",")." HTG",'B,R',0, 'C');
+        $fpdf->Cell(45,6,number_format($total_ch_usd, 2, ".", ",")." USD",'B,R',0, 'C');
+        $fpdf->Ln();
+        $fpdf->Cell(55,6,"CREDIT","L,B,R",0, 'L');
+        $fpdf->Cell(45,6,$total_voy_cr,'B,R',0, 'C');
+        $fpdf->Cell(45,6,number_format($total_cr_htg, 2, ".", ",")." HTG",'B,R',0, 'C');
+        $fpdf->Cell(45,6,number_format($total_cr_usd, 2, ".", ",")." USD",'B,R',0, 'C');
+        $fpdf->Ln();
+        $fpdf->SetFont('Arial','B',8);
+        $fpdf->Cell(55,7,"TOTAL","L,B,R",0, 'L');
+        $fpdf->Cell(45,7,$total_voyages,'B,R',0, 'C');
+        $fpdf->Cell(45,7,number_format($total_htg,2,".",",")." HTG",'B,R',0, 'C');
+        $fpdf->Cell(45,7,number_format($total_usd,2,".",",")." USD",'B,R',0, 'C');
 
         $directoryName = ROOT."/webroot/tmp/rapport_journalier_".date('Ymd').'.pdf'; 
-        // $fpdf->Output('I');
-        $fpdf->Output($directoryName, 'F');
-        $this->send($directoryName);
+        $fpdf->Output('I');
+        // $fpdf->Output($directoryName, 'F');
+        // $this->send($directoryName);
         die();
     }
 
@@ -710,44 +750,47 @@ class SalesController extends AppController
         $credit_htg = 0;
         $credit_usd = 0;
         $cheque_usd = 0;
+        $total_cash = 0;
+        $total_ch = 0;
+        $total_cr = 0;
 
         $query = $this->Sales->find('all', array('conditions' => array("Sales.status" => 1, 'Sales.user_id' => $user, 'Sales.created >=' => $from, 'Sales.created <=' => $to)));
-
+        $total_cash = $total_cash + $query->count();
         foreach($query as $q){
             $cash_htg = $cash_htg + $q->total;
         }
 
         $query = $this->Sales->find('all', array('conditions' => array("Sales.status" => 10, 'Sales.user_id' => $user, 'Sales.created >=' => $from, 'Sales.created <=' => $to)));
-
+        $total_cash = $total_cash + $query->count();
         foreach($query as $q){
             $cash_usd = $cash_usd + $q['sum'];
         }
 
         $query = $this->Sales->find('all', array('conditions' => array("Sales.status" => 4, 'Sales.user_id' => $user, 'Sales.created >=' => $from, 'Sales.created <=' => $to)));
-
+        $total_ch = $total_ch + $query->count();
         foreach($query as $q){
             $cheque_htg = $cheque_htg + $q->total;
         }
 
         $query = $this->Sales->find('all', array('conditions' => array("Sales.status" => 6, 'Sales.user_id' => $user, 'Sales.created >=' => $from, 'Sales.created <=' => $to)));
-
+        $total_ch = $total_ch + $query->count();
         foreach($query as $q){
             $cheque_usd = $cheque_usd + $q->total;
         }
 
         $query = $this->Sales->find('all', array('conditions' => array("Sales.status" => 7, 'Sales.user_id' => $user, 'Sales.created >=' => $from, 'Sales.created <=' => $to)));
-
+        $total_cr = $total_cr + $query->count();
         foreach($query as $q){
             $credit_htg = $credit_htg + $q->total;
         }
 
         $query = $this->Sales->find('all', array('conditions' => array("Sales.status" => 0, 'Sales.user_id' => $user, 'Sales.created >=' => $from, 'Sales.created <=' => $to)));
-
+        $total_cr = $total_cr + $query->count();
         foreach($query as $q){
             $credit_usd = $credit_usd +$q->total;
         }
 
-        return array('credit_usd' => $credit_usd, "cheque_usd" => $cheque_usd, "cheque_htg" => $cheque_htg, "cash_usd" => $cash_usd, "cash_htg" => $cash_htg, 'credit_htg' => $credit_htg);
+        return array('credit_usd' => $credit_usd, "cheque_usd" => $cheque_usd, "cheque_htg" => $cheque_htg, "cash_usd" => $cash_usd, "cash_htg" => $cash_htg, 'credit_htg' => $credit_htg, 'total_cash' => $total_cash, 'total_ch' => $total_ch, 'total_cr' => $total_cr);
     }
 
     /**

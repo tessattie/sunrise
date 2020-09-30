@@ -29,6 +29,19 @@ class TrucksController extends AppController
         $this->set(compact('trucks'));
     }
 
+    /**
+     * Index method
+     *
+     * @return \Cake\Http\Response|void
+     */
+    public function nosales()
+    {
+        ini_set('memory_limit', '1024M');
+        $trucks = $this->Trucks->find('all', array('order' => array("immatriculation ASC")))->contain(['Users', 'Sales']);
+
+        $this->set(compact('trucks'));
+    }
+
     public function alter(){
         $trucks = $this->Trucks->find('all'); 
         $barcode = 827496;
@@ -43,7 +56,7 @@ class TrucksController extends AppController
     public function duplicate(){
         $trucks = $this->Trucks->find("all");
         foreach($trucks as $truck){
-            $compare = $this->Trucks->find("all", array("conditions" => array("immatriculation" => $truck->immatriculation)))->contain(['Sales']);
+            $compare = $this->Trucks->find("all", array("conditions" => array("immatriculation" => $truck->immatriculation)));
             if($compare->count() > 1){
                 foreach($compare as $c){
                     if(count($c->sales) == 0){
@@ -52,7 +65,7 @@ class TrucksController extends AppController
                 }
             }
         }
-        die("DONE DELETING DUPICATES");
+        die("DONE DELETING DUPLICATES");
     }
 
     /**
@@ -194,7 +207,6 @@ class TrucksController extends AppController
         } else {
             $this->Flash->error(__('Impossible de supprimer ce camion.'));
         }
-
         return $this->redirect(['action' => 'index']);
     }
 

@@ -122,10 +122,12 @@ class ExportsController extends AppController
             }
             $aff_us = 0;
             $aff = 0;
-            if($sale->status == 0){
+            if($sale->status == 0 || $sale->status == 6 || $sale->status == 10){
                 $total_us = $total_us + $sale->total;
                 $aff_us = $sale->total;
-            }else{
+            }
+
+            if($sale->status == 1 || $sale->status == 4 || $sale->status == 7){
                 $total = $total + $sale->total;
                 $aff = $sale->total; 
             }
@@ -136,7 +138,7 @@ class ExportsController extends AppController
             if($sale->status == 0 || $sale->status == 7){
                 $type.="[CR]";
             }
-            if($sale->status == 1){
+            if($sale->status == 1 || $sale->status == 10){
                 $type.="[CASH]";
             }
             if($sale->status == 4 || $sale->status == 6){
@@ -148,25 +150,27 @@ class ExportsController extends AppController
             if($sale->status == 4 || $sale->status == 5 || $sale->status == 7 || $sale->status == 8){
                 $type.="[HTG]";
             }
-            if($sale->status == 2 || $sale->status == 3 || $sale->status == 5 || $sale->status == 8 || $sale->status == 9){
+            if($sale->status == 2 || $sale->status == 3 || $sale->status == 5 || $sale->status == 8 || $sale->status == 9 || $sale->status == 11){
                 $type.="[X]";
             }
             $this->excel->getActiveSheet()->SetCellValue("B".$i, $type); 
             $this->excel->getActiveSheet()->SetCellValue("C".$i, strtoupper(substr($sale->user->last_name, 0,1).substr($sale->user->first_name, 0,1))); 
-            $this->excel->getActiveSheet()->SetCellValue("D".$i, substr(strtoupper($sale->customer->first_name." ".$sale->customer->last_name), 0, 15)); 
+            if(!empty($sale->customer->last_name)){
+                $this->excel->getActiveSheet()->SetCellValue("D".$i, substr(strtoupper($sale->customer->first_name." ".$sale->customer->last_name), 0, 15)); 
+            }else{
+                $this->excel->getActiveSheet()->SetCellValue("D".$i, substr(strtoupper($sale->customer->first_name." ".$sale->customer->first_name), 0, 15)); 
+            }
             $this->excel->getActiveSheet()->SetCellValue("E".$i, $sale->truck->immatriculation); 
             if($sale->charged == 0){
                 $this->excel->getActiveSheet()->SetCellValue("F".$i, "NON");
             }else{
                 $this->excel->getActiveSheet()->SetCellValue("F".$i, date("Y-m-d H:i", strtotime($sale->charged_time)));
             }
-
             if($sale->sortie == 0){
                 $this->excel->getActiveSheet()->SetCellValue("G".$i, "NON");
             }else{
                 $this->excel->getActiveSheet()->SetCellValue("G".$i, date("Y-m-d H:i", strtotime($sale->sortie_time)));
             }
-             
              
             $this->excel->getActiveSheet()->SetCellValue("H".$i, $sale->products_sales[0]->product->abbreviation); 
             $this->excel->getActiveSheet()->SetCellValue("I".$i, $sale->products_sales[0]->quantity); 
@@ -193,7 +197,6 @@ class ExportsController extends AppController
                 );
             }
             $i++;
-            
         }
         $this->excel->getActiveSheet()->SetCellValue("A3", "TOTAL"); 
         $this->excel->getActiveSheet()->SetCellValue("I3", number_format($volume, 2, ".", '')); 

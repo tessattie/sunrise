@@ -200,14 +200,16 @@
 			<div class="panel-body" style="height:430px;overflow-y: scroll;">
 				<ul class="todo-list">
 				<?php foreach($sales as $sale) : ?>
-					<a href="<?= ROOT_DIREC ?>/sales/view/<?= $sale->id ?>" target="_blank" style="color:black">
-						<li class="todo-list-item">
-							<div class="checkbox">
-								<span class="fa fa-arrow-right">&nbsp;</span>
-								<label for="checkbox-2"><?= $sale->sale_number ?></label>
-							</div>
-						</li>
-					</a>
+					<?php if($sale->status != 2 && $sale->status != 3 && $sale->status != 5 && $sale->status != 8 && $sale->status != 9 && $sale->status != 11) ?>
+						<a href="<?= ROOT_DIREC ?>/sales/view/<?= $sale->id ?>" target="_blank" style="color:black">
+							<li class="todo-list-item">
+								<div class="checkbox">
+									<span class="fa fa-arrow-right">&nbsp;</span>
+									<label for="checkbox-2"><?= $sale->sale_number ?></label>
+								</div>
+							</li>
+						</a>
+					<?php endif; ?>
 				<?php endforeach; ?>
 				</ul>
 			</div>

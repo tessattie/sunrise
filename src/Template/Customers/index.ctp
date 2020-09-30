@@ -72,21 +72,26 @@
     <div class="panel-body articles-container">
             <table class="table table-stripped datatable">
                 <thead> 
-                    <th>Compagnie</th>
-                    <th>Représentant</th>
+                    <th>Client</th>
                     <th class="text-center">Type</th>
                     <th class="text-center">Devise</th>
                     <th class="text-center">Téléphone</th>
                     <th class="text-center">Limite</th>
                     <th class="text-center">Statut</th>
+                    <th class="text-center">Ventes</th>
+                    <th class="text-center">Paiements</th>
                     <th class="text-center"></th>
                 </thead>
             <tbody> 
         <?php foreach($customers as $customer) : ?>
             <?php if($customer->id != 1) : ?>
                 <tr>
-                    <td><a href="<?= ROOT_DIREC ?>/customers/view/<?= $customer->id ?>" target="_blank"><?= strtoupper($customer->last_name) ?></a></td>
-                    <td><a href="<?= ROOT_DIREC ?>/customers/view/<?= $customer->id ?>" target="_blank"><?= strtoupper($customer->first_name) ?></a></td>
+                    <?php if(!empty($customer->last_name)) : ?>
+                        <td><a href="<?= ROOT_DIREC ?>/customers/view/<?= $customer->id ?>" target="_blank"><?= strtoupper($customer->last_name) ?></a></td>
+                    <?php else : ?>
+                        <td><a href="<?= ROOT_DIREC ?>/customers/view/<?= $customer->id ?>" target="_blank"><?= strtoupper($customer->first_name) ?></a></td>
+                    <?php endif; ?>
+                    
                     <?php if($customer->type == 1) : ?>
                         <td class="text-center"><span class="label label-info">CREDIT</span></td>
                     <?php else : ?>
@@ -108,7 +113,13 @@
                             <span class="label label-danger">Bloqué</span>
                         <?php endif; ?>
                     </td>
-                    <td class="text-right"><a href="<?= ROOT_DIREC ?>/customers/edit/<?= $customer->id ?>" style="font-size:1.3em!important;"><span class="fa fa-xl fa-pencil color-blue"></span></a>
+                    <td class="text-center"><span class="label label-info"><?= count($customer->sales) ?></span></td>
+                    <td class="text-center"><span class="label label-info"><?= count($customer->payments) ?></span></td>
+                    <td class="text-right">
+                    <?php if(count($customer->sales) == 0 && count($customer->payments) == 0) : ?>
+                        <a href="<?= ROOT_DIREC ?>/trucks/customers/<?= $customer->id ?>" style="font-size:1.3em!important;margin-right:5px"><span class="fa fa-xl fa-trash color-red"></span></a>
+                    <?php endif; ?>
+                    <a href="<?= ROOT_DIREC ?>/customers/edit/<?= $customer->id ?>" style="font-size:1.3em!important;"><span class="fa fa-xl fa-pencil color-blue"></span></a>
                      </td>
                 </tr>
             <?php endif; ?>

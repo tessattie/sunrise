@@ -45,14 +45,18 @@
                 </thead>
             <tbody> 
         <?php foreach($trucks as $truck) : ?>
+            <?php if(count($truck->sales) == 0) : ?>
                 <tr>
                     <td class="text-left"><a href="<?= ROOT_DIREC ?>/trucks/view/<?= $truck->id ?>"><?= $truck->immatriculation ?></a></td>
                     <td class="text-center"><?= $truck->volume ?> m3</td>
-                    <td class="text-center"><span class="label label-default"><?= count($truck->sales) ?></span></td>
                     <td class="text-right">
+                        
+                            <a href="<?= ROOT_DIREC ?>/trucks/delete/<?= $truck->id ?>" style="font-size:1.3em!important;"><span class="fa fa-xl fa-trash color-red"></span></a>
+                        
                         <a href="<?= ROOT_DIREC ?>/trucks/edit/<?= $truck->id ?>" style="font-size:1.3em!important;"><span class="fa fa-xl fa-pencil color-blue"></span></a>
                     </td>
                 </tr>
+                <?php endif; ?>
         <?php endforeach; ?>
         </tbody>
         </table>
