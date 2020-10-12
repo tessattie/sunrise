@@ -2,7 +2,8 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
-
+use FPDF;
+use PDF_BARCODE;
 /**
  * Suppliers Controller
  *
@@ -76,9 +77,14 @@ class SuppliersController extends AppController
      */
     public function edit($id = null)
     {
+        $from = $this->request->session()->read("from")." 00:00:00";
+        $to = $this->request->session()->read("to")." 23:59:59";
+
         $supplier = $this->Suppliers->get($id, [
-            'contain' => ['Trucks', 'SuppliersTrucks' => ['Trucks']]
+            'contain' => ['Trucks', 'SuppliersTrucks' => ['Trucks', 'Items'], 'SuppliersViolations' => ['Violations', 'Users']]
         ]);
+        $supplier->violations = $this->Suppliers->SuppliersViolations->find('all', array('conditions' => array("SuppliersViolations.created >= " => $from, "SuppliersViolations.created <=" => $to, 'supplier_id' => $supplier->id)))->contain(['Violations', "Users"]);
+        $supplier->receivings = $this->Suppliers->Receivings->find('all', array('conditions' => array("Receivings.created >= " => $from, "Receivings.created <=" => $to)))->contain(['Items', "Users", 'Trucks']);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $supplier = $this->Suppliers->patchEntity($supplier, $this->request->getData());
             if ($this->Suppliers->save($supplier)) {
@@ -91,7 +97,9 @@ class SuppliersController extends AppController
         $users = $this->Suppliers->Users->find('list', ['limit' => 200]);
         $trucks = $this->Suppliers->Trucks->find('list', ['limit' => 200]);
         $products = $this->Suppliers->Items->find("list");
-        $this->set(compact('supplier', 'users', 'trucks', 'products'));
+        $types = $this->Suppliers->Receivings->types;
+        $violations = $this->Suppliers->SuppliersViolations->Violations->find('list', array('order' => "name ASC"));
+        $this->set(compact('supplier', 'users', 'trucks', 'products', "violations", 'types'));
     }
 
     /**
@@ -112,5 +120,184 @@ class SuppliersController extends AppController
         }
 
         return $this->redirect(['action' => 'index']);
+    }
+
+    public function export(){
+        if ($this->request->is(['patch', 'post', 'put'])){
+            // debug($this->request->getData()); die();
+
+            $supplier = $this->Suppliers->get($this->request->getData()['supplier_id']);
+            $truck = $this->Suppliers->SuppliersTrucks->Trucks->get($this->request->getData()['truck_id']);
+
+            $sp = $this->Suppliers->SuppliersTrucks->get($this->request->getData()['id'], ['contain' => ['Items']]);
+
+            require_once(ROOT . DS . 'vendor' . DS  . 'fpdf-barcode-master'  . DS . 'pdf_barcode.php');
+
+            // require(ROOT . DS . 'vendor' . DS  . 'fpdf'  . DS . 'fpdf.php');
+        
+            $fpdf = new PDF_BARCODE('P','mm','A4');
+            $fpdf->AddPage();
+            $fpdf->Image(ROOT.'/webroot/img/logo.png',10,4,50);
+            $fpdf->SetFont('Arial','B',11);
+            $fpdf->Cell(190,0,date("m/d/Y" ,strtotime($this->request->getData()['from']))." - ".date("m/d/Y" ,strtotime($this->request->getData()['to'])),0,0, 'R');
+            $fpdf->Ln(7);
+            $fpdf->Cell(190,0,"",'B',0, 'R');
+            $fpdf->Ln();
+            $fpdf->Cell(40,25,$supplier->name,'B,R,L',0, 'C');
+            $fpdf->Cell(40,25,"Camion : ".$truck->immatriculation,'B,R',0, 'C');
+            $fpdf->Cell(40,25,"Produit : ".$sp->item->name,'B,R',0, 'C');
+            $fpdf->Cell(70,25,$fpdf->EAN13(143,21,$sp->code,15,0.4,9),'B,R',0, 'C');
+
+            $fpdf->SetFont('Arial','B',9);
+            $fpdf->Ln();
+            $fpdf->Cell(30,7,"DATE",'B,R,L',0, 'C');
+            $fpdf->Cell(20,7,"HEURE",'B,R,L',0, 'C');
+            $fpdf->Cell(35,7,"FICHE",'B,R',0, 'C');
+            $fpdf->Cell(35,7,"BUREAU",'B,R',0, 'C');
+            $fpdf->Cell(35,7,"ATV",'B,R',0, 'C');
+            $fpdf->Cell(35,7,"STOCK",'B,R',0, 'C');
+            $fpdf->Ln();
+            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
+            $fpdf->Cell(20,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Ln();
+            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
+            $fpdf->Cell(20,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Ln();
+            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
+            $fpdf->Cell(20,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Ln();
+            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
+            $fpdf->Cell(20,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Ln();
+            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
+            $fpdf->Cell(20,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Ln();
+            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
+            $fpdf->Cell(20,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Ln();
+            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
+            $fpdf->Cell(20,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Ln();
+            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
+            $fpdf->Cell(20,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Ln();
+            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
+            $fpdf->Cell(20,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Ln();
+            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
+            $fpdf->Cell(20,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Ln();
+            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
+            $fpdf->Cell(20,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Ln();
+            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
+            $fpdf->Cell(20,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Ln();
+            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
+            $fpdf->Cell(20,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Ln();
+            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
+            $fpdf->Cell(20,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Ln();
+            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
+            $fpdf->Cell(20,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Ln();
+            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
+            $fpdf->Cell(20,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Ln();
+            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
+            $fpdf->Cell(20,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Ln();
+        }
+
+        $fpdf->Output('I');
+        die('called');
+    }
+
+    /**
+     * Delete method
+     *
+     * @param string|null $id Suppliers Truck id.
+     * @return \Cake\Http\Response|null Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function deleteviolation($id = null)
+    {
+        $this->loadModel('SuppliersViolations');
+        $this->request->allowMethod(['post', 'delete', 'get']);
+        $suppliersViolation = $this->SuppliersViolations->get($id);
+        $supplier = $suppliersViolation->supplier_id;
+        if ($this->SuppliersViolations->delete($suppliersViolation)) {
+        } else {
+        }
+        return $this->redirect(['controller' => 'Suppliers', 'action' => 'edit', $supplier]);
     }
 }

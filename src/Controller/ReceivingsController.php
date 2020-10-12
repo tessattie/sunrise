@@ -22,7 +22,7 @@ class ReceivingsController extends AppController
     {
         $from = $this->request->session()->read("from")." 00:00:00";
         $to = $this->request->session()->read("to")." 23:59:59";
-        $receivings = $this->Receivings->find("all", array("conditions" => array("Receivings.created >=" => $from, "Receivings.created <=" => $to), "order" => array('Receivings.id ASC')))->contain(['Users', 'Trucks', 'Items', 'Suppliers' => ['Items']]);
+        $receivings = $this->Receivings->find("all", array("conditions" => array("Receivings.created >=" => $from, "Receivings.created <=" => $to), "order" => array('Receivings.id ASC')))->contain(['Users', 'Trucks', 'Items', 'Suppliers' => ['Items', 'SuppliersTrucks']]);
 
             $types = $this->Receivings->types;
         $this->set(compact('receivings', "items", "types"));
@@ -125,5 +125,16 @@ class ReceivingsController extends AppController
             $this->Flash->error(__('The receiving could not be deleted. Please, try again.'));
         }
         return $this->redirect(['action' => 'index']);
+    }
+
+    public function find(){
+        if($this->request->is('ajax')){
+            $this->loadModel("SuppliersTrucks"); 
+            $sp = $this->SuppliersTrucks->find("all", array("conditions" => array("code" =>$this->request->getData()['code'])))->first(); 
+            $supplier = $sp->supplier_id; 
+            $receiving = $this->Receivings->find("all", array("conditions" => array("supplier_id" => $supplier), "order" => array("created DESC")))->first();
+            echo $receiving->id;
+        }
+        die();
     }
 }

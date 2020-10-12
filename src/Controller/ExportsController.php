@@ -156,9 +156,9 @@ class ExportsController extends AppController
             $this->excel->getActiveSheet()->SetCellValue("B".$i, $type); 
             $this->excel->getActiveSheet()->SetCellValue("C".$i, strtoupper(substr($sale->user->last_name, 0,1).substr($sale->user->first_name, 0,1))); 
             if(!empty($sale->customer->last_name)){
-                $this->excel->getActiveSheet()->SetCellValue("D".$i, substr(strtoupper($sale->customer->first_name." ".$sale->customer->last_name), 0, 15)); 
+                $this->excel->getActiveSheet()->SetCellValue("D".$i, substr(strtoupper($sale->customer->last_name." ".$sale->customer->first_name), 0, 15)); 
             }else{
-                $this->excel->getActiveSheet()->SetCellValue("D".$i, substr(strtoupper($sale->customer->first_name." ".$sale->customer->first_name), 0, 15)); 
+                $this->excel->getActiveSheet()->SetCellValue("D".$i, substr(strtoupper($sale->customer->last_name." ".$sale->customer->first_name), 0, 15)); 
             }
             $this->excel->getActiveSheet()->SetCellValue("E".$i, $sale->truck->immatriculation); 
             if($sale->charged == 0){

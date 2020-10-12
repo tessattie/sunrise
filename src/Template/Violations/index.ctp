@@ -1,23 +1,24 @@
 <?php
 /**
  * @var \App\View\AppView $this
- * @var \App\Model\Entity\Supplier[]|\Cake\Collection\CollectionInterface $suppliers
+ * @var \App\Model\Entity\Category[]|\Cake\Collection\CollectionInterface $categories
  */
 ?>
 
+
 <div class="row" style="margin-bottom:15px">
     <ol class="breadcrumb">
-        <li><a href="#">
+        <li><a href="<?= ROOT_DIREC ?>/sales/dashboard">
             <em class="fa fa-home"></em>
         </a></li>
-        <li class="active">Produits</li>
+        <li class="active">Contraventions</li>
     </ol>
 </div>
 <?= $this->Flash->render() ?>
 <div class="container-fluid"> 
     <div class="panel panel-default articles">
         <div class="panel-heading">
-            Fournisseurs
+            Contraventions
             <ul class="pull-right panel-settings panel-button-tab-right">
                             <li class="dropdown"><a class="pull-right dropdown-toggle" data-toggle="dropdown" href="#">
                                 <em class="fa fa-plus"></em>
@@ -25,8 +26,8 @@
                                 <ul class="dropdown-menu dropdown-menu-right">
                                     <li>
                                         <ul class="dropdown-settings">
-                                            <li><a href="<?= ROOT_DIREC ?>/suppliers/add">
-                                                <em class="fa fa-plus"></em> Nouveau Fournisseur
+                                            <li><a href="<?= ROOT_DIREC ?>/violations/add">
+                                                <em class="fa fa-plus"></em> Nouvelle Contravention
                                             </a></li>
                                         </ul>
                                     </li>
@@ -37,21 +38,17 @@
     <div class="panel-body articles-container">
             <table class="table table-stripped datatable">
                 <thead> 
-                    <th>Nom</th>
-                    <th class="text-center">Téléphone</th>
-                    <th class="text-center">Email</th>
-                    <th class="text-center">Produit</th>
-                    <th class="text-center"></th>
+                        <th>Nom</th>
+                        <th class="text-center">Prix (HTG)</th>
+                        <th class="text-right"></th>
                 </thead>
             <tbody> 
-        <?php foreach($suppliers as $supplier) : ?>
+        <?php foreach($violations as $violation) : ?>
                 <tr>
-                    <td><a href="<?= ROOT_DIREC ?>/suppliers/edit/<?= $supplier->id ?>"><?= strtoupper($supplier->name) ?></a></td>
-                    <td class="text-center"><?= $supplier->phone ?></td>
-                    <td class="text-center"><?= $supplier->email ?></td>
-                    <td class="text-center"><?= $supplier->item->name ?></td>
-                    <td class="text-right"><a href="<?= ROOT_DIREC ?>/suppliers/edit/<?= $supplier->id ?>" style="font-size:1.3em!important;"><span class="fa fa-xl fa-pencil color-blue"></span></a> 
-                    </td>
+                    <td><?= $violation->name ?></td>
+                    <td class="text-center"><?= number_format($violation->price, 0, '.', ',') ?> HTG</td>
+                    <td class="text-right"><a href="<?= ROOT_DIREC ?>/violations/edit/<?= $violation->id ?>" style="font-size:1.3em!important;"><span class="fa fa-xl fa-pencil color-blue"></span></a> 
+					</td>
                 </tr>
         <?php endforeach; ?>
         </tbody>
@@ -61,9 +58,13 @@
         
     </div>
 </div><!--End .articles-->
+
 <script type="text/javascript">$(document).ready( function () {
-$('.datatable').DataTable({
-        iDisplayLength: 25,
+    $('.datatable').DataTable({
+        dom: 'Bfrtip',
+        buttons: [
+            'excel', 'pdf', 'print'
+        ]
     } );
 } );</script>
 

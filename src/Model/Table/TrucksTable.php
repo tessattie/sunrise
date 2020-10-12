@@ -47,7 +47,8 @@ class TrucksTable extends Table
             'joinType' => 'INNER'
         ]);
         $this->hasMany('Sales', [
-            'foreignKey' => 'truck_id'
+            'foreignKey' => 'truck_id',
+            'joinType' => 'LEFT'
         ]);
 
         $this->hasMany('Receivings', [

@@ -99,13 +99,14 @@ $(document).scannerDetection({
         avgTimeByChar: 40, // it's not a barcode if a character takes longer than 40ms
         onComplete: function(barcode, qty){ 
             var bc = barcode;
+            alert(bc);
             // var bc = barcode.replace("123456", "");
             $('.truckVerification').val(bc);
 
             var token =  $('input[name="_csrfToken"]').val();
             $.ajax({
                 type : 'POST',
-                url : '/trucks/find',
+                url : '/vfm/trucks/find',
                 data : {
                     truck : bc
                 },
@@ -126,9 +127,11 @@ $(document).scannerDetection({
                         
                         $('#quantity').val(data.volume);
                         $('.volume').text(data.volume);
-                        $('#item-id').val(data.suppliers[0]['item_id']);
-                        $('#item').val(data.suppliers[0]['item_id']);
-                        $('.cost').text(data.suppliers[0]['item'].price);
+                        $('#item-id').val(data.suppliers_trucks[0]['item_id']);
+                        $('#item').val(data.suppliers_trucks[0]['item_id']);
+                        $('#item-id').attr('readonly', true);
+                        $('#item').attr('readonly', true);
+                        $('.cost').text(data.suppliers_trucks[0]['item'].price);
                         $(".truck").text(data.immatriculation);
                         $(".truckValidation").val(data.id);
                         var supplier = $("#supplier-id").children("option:selected").html();

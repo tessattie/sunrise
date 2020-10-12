@@ -26,7 +26,7 @@ use Cake\Validation\Validator;
  */
 class ReceivingsTable extends Table
 {
-    public $types = array(1 => "Stock", 2 => "Concasseur");
+    public $types = array("" => "", 1 => "Stock", 2 => "Concasseur");
     /**
      * Initialize method
      *

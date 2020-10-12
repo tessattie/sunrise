@@ -135,10 +135,6 @@
 <script type="text/javascript">$(document).ready( function () {
     $('.datatable').DataTable({
         "ordering": false,
-        dom: 'Bfrtip',
-        buttons: [
-           'pdf', 'print'
-        ],
         scrollY: "400px",
         scrollCollapse: true,
         paging: false,

@@ -21,20 +21,20 @@
             Réceptions
             <?php if($user_connected['role_id'] != 8) : ?>
             <ul class="pull-right panel-settings panel-button-tab-right">
-                            <li class="dropdown"><a class="pull-right dropdown-toggle" data-toggle="dropdown" href="#">
-                                <em class="fa fa-plus"></em>
-                            </a>
-                                <ul class="dropdown-menu dropdown-menu-right">
-                                    <li>
-                                        <ul class="dropdown-settings">
-                                            <li><a href="<?= ROOT_DIREC ?>/receivings/add">
-                                                <em class="fa fa-plus"></em> Nouvelle Réception
-                                            </a></li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </li>
+            <li class="dropdown"><a class="pull-right dropdown-toggle" data-toggle="dropdown" href="#">
+                <em class="fa fa-plus"></em>
+            </a>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li>
+                        <ul class="dropdown-settings">
+                            <li><a href="<?= ROOT_DIREC ?>/receivings/add">
+                                <em class="fa fa-plus"></em> Nouvelle Réception
+                            </a></li>
                         </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
             <?php endif; ?>
         </div>
     <div class="panel-body articles-container">
@@ -102,11 +102,7 @@
 <script type="text/javascript">$(document).ready( function () {
 $('.datatable').DataTable({
         iDisplayLength: 25,
-        dom: 'Bfrtip',
         order: [],
-        buttons: [
-            'excel', 'pdf', 'print'
-        ]
     } );
 } );
 
@@ -116,22 +112,22 @@ $(document).scannerDetection({
         endChar: [13], // be sure the scan is complete if key 13 (enter) is detected
         avgTimeByChar: 40, // it's not a barcode if a character takes longer than 40ms
         onComplete: function(barcode, qty){ 
-            alert(barcode);
             var token =  $('input[name="_csrfToken"]').val();
             $.ajax({
                 type : 'POST',
-                url : '/receivings/find',
+                url : '/vfm/receivings/find',
                 data : {
-                    truck : bc
+                    code : barcode
                 },
                 headers : {
                     'X-CSRF-Token': token 
                 },
                 success: function(data){
-                    data = JSON.parse(data);   
+                    console.log(data);
+                    window.location.href = "http://localhost/vfm/receivings/edit/"+data;
                 },
-                error: function(){
-                  console.log('La requête n\'a pas abouti'); 
+                error: function(resultat,statut,erreur){
+                  console.log(erreur); 
                 }
             });   
         }

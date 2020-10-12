@@ -61,10 +61,6 @@
 
 <script type="text/javascript">$(document).ready( function () {
     $('.datatable').DataTable({
-        dom: 'Bfrtip',
-        buttons: [
-            'excel', 'pdf', 'print'
-        ]
     } );
 } );</script>
 

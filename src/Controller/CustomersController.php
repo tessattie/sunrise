@@ -20,6 +20,31 @@ use PHPExcel_Cell_DataValidation;
  */
 class CustomersController extends AppController
 {
+
+    public function simulation(){
+        $from = $this->request->session()->read("from")." 00:00:00";
+        $to = $this->request->session()->read("to")." 23:59:59";
+        $pourcentage = 0;
+        $de = 0;
+        $a = 0;
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $pourcentage = $this->request->getData()['pourcentage'];
+            $de = $this->request->getData()['interval_from'];
+            $a = $this->request->getData()['interval_to'];
+        }
+        $conn = ConnectionManager::get('default');
+        $sales = $conn->query("SELECT SUM(ps.quantity) as quantity, SUM(s.total) as total, s.truck_id, t.immatriculation 
+            FROM products_sales ps
+            LEFT JOIN sales s ON s.id = ps.sale_id
+            LEFT JOIN trucks t ON t.id = s.truck_id
+            WHERE s.created >= '".$from."' AND s.created <= '".$to."' AND (s.status = 1 OR s.status = 10)
+            GROUP BY s.truck_id
+            ORDER BY s.truck_id"); 
+        $this->set('sales', $sales);
+        $this->set('pourcentage', $pourcentage);
+        $this->set('de', $de);
+        $this->set('a', $a);
+    }
     /**
      * Index method
      *

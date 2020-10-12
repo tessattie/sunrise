@@ -24,7 +24,9 @@ class TrucksController extends AppController
     public function index()
     {
         ini_set('memory_limit', '1024M');
-        $trucks = $this->Trucks->find('all', array('order' => array("immatriculation ASC")))->contain(['Users', 'Sales']);
+        $from = $this->request->session()->read("from")." 00:00:00";
+        $to = $this->request->session()->read("to")." 23:59:59";
+        $trucks = $this->Trucks->find('all', array('order' => array("immatriculation ASC")))->contain(['Users', 'Sales' => ['conditions' => ['Sales.created >=' => $from, 'Sales.created <=' => $to]]]);
 
         $this->set(compact('trucks'));
     }
@@ -37,7 +39,7 @@ class TrucksController extends AppController
     public function nosales()
     {
         ini_set('memory_limit', '1024M');
-        $trucks = $this->Trucks->find('all', array('order' => array("immatriculation ASC")))->contain(['Users', 'Sales']);
+        $trucks = $this->Trucks->find('all', array('order' => array("immatriculation ASC")))->contain(['Users', 'Sales'])->limit(200);
 
         $this->set(compact('trucks'));
     }
@@ -165,6 +167,7 @@ class TrucksController extends AppController
     public function save()
     {
         if ($this->request->is(['patch', 'post', 'put'])) {
+            // debug($this->request->getData())
             $truck = $this->getTruck($this->request->getData()['immatriculation']);
             if($truck == false){
                 $this->Flash->error(__('Nous n\'avons pas trouvé un camion avec cette immatriculation.'));
@@ -172,6 +175,7 @@ class TrucksController extends AppController
                 $this->loadModel('SuppliersTrucks'); 
                 $sp = $this->SuppliersTrucks->newEntity();
                 $sp->truck_id = $truck->id; 
+                $sp->item_id = $this->request->getData()['item_id'];
                 $sp->code = $this->request->getData()['barcode'];
                 $sp->supplier_id = $this->request->getData()['supplier_id'];
                 $this->SuppliersTrucks->save($sp);
@@ -207,7 +211,7 @@ class TrucksController extends AppController
         } else {
             $this->Flash->error(__('Impossible de supprimer ce camion.'));
         }
-        return $this->redirect(['action' => 'index']);
+        return $this->redirect(['action' => 'nosales']);
     }
 
     public function find(){
@@ -219,7 +223,7 @@ class TrucksController extends AppController
                 $truck_id = $t->truck_id;
             }
             if($truck_id != false){
-                $truck = $this->Trucks->get($truck_id, ['contain' => ['SuppliersTrucks' => ['Suppliers'], 'Suppliers' => ["Items"]]]);
+                $truck = $this->Trucks->get($truck_id, ['contain' => ['SuppliersTrucks' => ['Suppliers', 'Items'], 'Suppliers' => ["Items"]]]);
             }
             // $truck = $this->Trucks->find('all', array('conditions' => array("immatriculation" => $this->request->getData()['truck'])))->contain(['Suppliers']);
             if(empty($truck)){

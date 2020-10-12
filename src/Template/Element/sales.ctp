@@ -17,9 +17,9 @@
         <th></th>
     </thead>
     <tbody> 
-    <?php $sous = 0; $reductions = 0; $total = 0; $sous_us = 0; $reductions_us = 0; $total_us = 0; $volume=0; foreach ($sales as $sale): ?>
+    <?php $increment=0; $sous = 0; $reductions = 0; $total = 0; $sous_us = 0; $reductions_us = 0; $total_us = 0; $volume=0; foreach ($sales as $sale): ?>
     <tr <?php if($sale->status == 0 || $sale->status == 4 || $sale->status == 6 || $sale->status == 7) : ?> style="background:#d9edf7" <?php endif; ?>>
-        <td class="text-center"> <a href="<?= ROOT_DIREC ?>/sales/view/<?= $sale->id ?>" target="_blank"><?= $sale->sale_number ?></a></td>
+        <td class="text-left"> <a href="<?= ROOT_DIREC ?>/sales/view/<?= $sale->id ?>" target="_blank"><?= $sale->sale_number ?></a></td>
         <td class="text-center">
             <?php if($sale->status == 0 || $sale->status == 7) : ?>
                 <span class="label label-info">CR</span>
@@ -60,24 +60,32 @@
 
             <?php 
                 $total_us = $total_us + $sale->total;
+                $increment = $increment + 1;
             ?>
-
-            
+            <?php $volume = $volume + $sale->products_sales[0]->quantity; ?>            
             <td class="text-center"><?= $sale->products_sales[0]->product->abbreviation ?></td>
             <td class="text-center"><?= $sale->products_sales[0]->quantity ?></td>
             <td class="text-center">-</td>
             <td class="text-center"><?= number_format($sale->total, 2, ".", ",") ?></td>
-        <?php else : ?>
+        <?php elseif($sale->status == 1 || $sale->status == 4 || $sale->status == 7) : ?>
             <?php
                 $total = $total + $sale->total;
+                $increment = $increment + 1;
             ?>
+            <?php $volume = $volume + $sale->products_sales[0]->quantity; ?>
             <td class="text-center"><?= $sale->products_sales[0]->product->abbreviation ?></td>
             <td class="text-center"><?= $sale->products_sales[0]->quantity ?></td>
             <td class="text-center"><?= number_format($sale->total, 2, ".", ",") ?></td>
             <td class="text-center">-</td>
+        <?php else : ?>
+            <td class="text-center"><?= $sale->products_sales[0]->product->abbreviation ?></td>
+            <td class="text-center"><?= $sale->products_sales[0]->quantity ?></td>
+            <td class="text-center">-</td>
+            <td class="text-center">-</td>
+            
         <?php endif; ?>
         
-        <?php $volume = $volume + $sale->products_sales[0]->quantity; ?>
+        
         <td class="text-center"><?= date('Y-m-d', strtotime($sale->created)) ?></td>
         <td class="text-center"><?= date('h:i A', strtotime($sale->created)) ?></td>
         <?php if($sale->transport == 0) : ?>
@@ -90,7 +98,7 @@
     <?php endforeach; ?>
     </tbody>
     <tfoot>
-        <th>Total</th>
+        <th>Total (<?= $increment ?> VOYAGES)</th>
         <th colspan="7"></th>
         <th class="text-center"><?= number_format($volume, 2, ".", ",") ?></th>
         <th class="text-center"><?= number_format($total, 2, ".", ",") ?></th>
@@ -111,10 +119,6 @@
 <script type="text/javascript">$(document).ready( function () {
     $('.datatable').DataTable({
         "ordering": false,
-        dom: 'Bfrtip',
-        buttons: [
-            'excel', 'pdf', 'print'
-        ],
         scrollY: "400px",
         scrollX: "1700px",
         scrollCollapse: true,

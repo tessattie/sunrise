@@ -195,6 +195,9 @@ $cakeDescription = 'VFM';
                     <li class="<?= ($this->request->getParam('controller') == 'Items') ? 'active' : '' ?>" ><a class="" href="<?= ROOT_DIREC ?>/items">
                         <span class="fa fa-arrow-right">&nbsp;</span> Produits
                     </a></li>
+                    <li class="<?= ($this->request->getParam('controller') == 'Violations') ? 'active' : '' ?>" ><a class="" href="<?= ROOT_DIREC ?>/violations">
+                        <span class="fa fa-arrow-right">&nbsp;</span> Contraventions
+                    </a></li>
                     <li class="<?= ($this->request->getParam('controller') == 'Receivings') ? 'active' : '' ?>"><a class=""  href="<?= ROOT_DIREC ?>/receivings">
                         <span class="fa fa-arrow-right">&nbsp;</span> Réceptions
                     </a></li>
@@ -236,6 +239,10 @@ $cakeDescription = 'VFM';
 
                     <li class="<?= ($this->request->getParam('controller') == 'CustomersProducts') ? 'active' : '' ?>"><a class=""  href="<?= ROOT_DIREC ?>/customersProducts">
                         <span class="fa fa-arrow-right">&nbsp;</span> Spécials
+                    </a></li>
+
+                    <li class="<?= ($this->request->getParam('controller') == 'Customers') ? 'active' : '' ?>"><a class=""  href="<?= ROOT_DIREC ?>/customers/simulation">
+                        <span class="fa fa-arrow-right">&nbsp;</span> Simulation
                     </a></li>
 
                     <li class="<?= ($this->request->getParam('controller') == 'Requisitions') ? 'active' : '' ?>"><a class=""  href="<?= ROOT_DIREC ?>/requisitions">
@@ -309,6 +316,9 @@ $cakeDescription = 'VFM';
                 <ul class="children collapse" id="sub-item-9">
                     <li class="<?= ($this->request->getParam('controller') == 'Suppliers') ? 'active' : '' ?>" ><a class="" href="<?= ROOT_DIREC ?>/suppliers">
                         <span class="fa fa-arrow-right">&nbsp;</span> Fournisseurs
+                    </a></li>
+                    <li class="<?= ($this->request->getParam('controller') == 'Violations') ? 'active' : '' ?>" ><a class="" href="<?= ROOT_DIREC ?>/violations">
+                        <span class="fa fa-arrow-right">&nbsp;</span> Contraventions
                     </a></li>
                     <li class="<?= ($this->request->getParam('controller') == 'Items') ? 'active' : '' ?>" ><a class="" href="<?= ROOT_DIREC ?>/items">
                         <span class="fa fa-arrow-right">&nbsp;</span> Produits

@@ -80,10 +80,6 @@
 <script type="text/javascript">$(document).ready( function () {
 $('.datatable').DataTable({
         iDisplayLength: 25,
-        dom: 'Bfrtip',
-        buttons: [
-            'excel', 'pdf', 'print'
-        ]
     } );
 } );</script>
 

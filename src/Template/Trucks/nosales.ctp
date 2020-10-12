@@ -40,7 +40,6 @@
                 <thead> 
                     <th class="text-left">Immatriculation</th>
                     <th class="text-center">Volume</th>
-                    <th class="text-center">Ventes</th>
                     <th class="text-center"></th>
                 </thead>
             <tbody> 
@@ -70,10 +69,6 @@
 <script type="text/javascript">$(document).ready( function () {
     $('.datatable').DataTable({
         "ordering": false,
-        dom: 'Bfrtip',
-        buttons: [
-            'excel', 'pdf', 'print'
-        ],
         scrollY: "400px",
         scrollCollapse: true,
         paging: false,

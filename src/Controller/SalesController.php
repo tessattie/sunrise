@@ -479,7 +479,7 @@ class SalesController extends AppController
         $fpdf->Image(ROOT.'/webroot/img/logo.png',10,4,50);
         $fpdf->SetFont('Arial','B',10);
         $fpdf->Cell(190,0,date('l j F Y'),0,0, 'R');
-        $fpdf->Ln(6);
+        $fpdf->Ln(5);
         $fpdf->SetFont('Arial','B',8);
 
         // Tableau Dashboard #2 [ 22 - 42 ] 
@@ -520,7 +520,7 @@ class SalesController extends AppController
             LEFT JOIN categories c ON c.id = p.category_id
             ORDER BY total_sold DESC"); 
         $fpdf->SetFont('Arial','B',8);  
-        $fpdf->Ln(9);
+        $fpdf->Ln(8);
         $fpdf->Cell(70,5,"VENTES PAR PRODUITS","L,B,R,T",0, 'L');
         $fpdf->Cell(20,5,"VOYAGES",'B,R,T',0, 'C');
         $fpdf->Cell(40,5,"VOLUME (M3)",'B,R,T',0, 'C');
@@ -563,7 +563,7 @@ class SalesController extends AppController
 
         // Meilleurs clients crédits
         $best_clients = $this->getBestClients($from,$to);
-        $fpdf->Ln(9);
+        $fpdf->Ln(8);
         $fpdf->SetFont('Arial','B',8);
         $fpdf->Cell(100,5,"MEILLEURS CLIENTS CREDITS","L,B,R,T",0, 'L');
         $fpdf->Cell(45,5,"VOYAGES",'B,R,T',0, 'C');
@@ -579,7 +579,7 @@ class SalesController extends AppController
         }
 
         $truck_ratios = $this->getTrucksRatio($from, $to);
-        $fpdf->Ln(9);
+        $fpdf->Ln(8);
         $fpdf->SetFont('Arial','B',8);
         $tot_voyages = $truck_ratios[0]['value'] + $truck_ratios[1]['value'] + $truck_ratios[2]['value'];
         $fpdf->Cell(55,5,"VOLUMES PAR TYPE DE CAMION","L,T,R",0, 'L');
@@ -616,7 +616,7 @@ class SalesController extends AppController
             $i++;
         }
 
-        $fpdf->Ln(9);
+        $fpdf->Ln(8);
         $fpdf->SetFont('Arial','B',8);
         $fpdf->Cell(55,7,"RAPPORT DE FERMETURE","T,L,B,R",0, 'L');
         $fpdf->Cell(45,7,"#",'T,B,R',0, 'C');
@@ -632,20 +632,20 @@ class SalesController extends AppController
             $fpdf->Cell(190,7,utf8_decode($report['user']),"L,R,B",0, 'L');
             $fpdf->Ln();
             $fpdf->SetFont('Arial','',8);
-            $fpdf->Cell(55,6,"CASH","L,B,R",0, 'L');
-            $fpdf->Cell(45,6,$report['total_cash'],'B,R',0, 'C');
-            $fpdf->Cell(45,6,number_format($report['cash_htg'], 2, ".", ",")." HTG",'B,R',0, 'C');
-            $fpdf->Cell(45,6,number_format($report['cash_usd'], 2, ".", ",")." USD",'B,R',0, 'C');
+            $fpdf->Cell(55,5,"CASH","L,B,R",0, 'L');
+            $fpdf->Cell(45,5,$report['total_cash'],'B,R',0, 'C');
+            $fpdf->Cell(45,5,number_format($report['cash_htg'], 2, ".", ",")." HTG",'B,R',0, 'C');
+            $fpdf->Cell(45,5,number_format($report['cash_usd'], 2, ".", ",")." USD",'B,R',0, 'C');
             $fpdf->Ln();
-            $fpdf->Cell(55,6,"CHEQUE","L,B,R",0, 'L');
-            $fpdf->Cell(45,6,$report['total_ch'],'B,R',0, 'C');
-            $fpdf->Cell(45,6,number_format($report['cheque_htg'], 2, ".", ",")." HTG",'B,R',0, 'C');
-            $fpdf->Cell(45,6,number_format($report['cheque_usd'], 2, ".", ",")." USD",'B,R',0, 'C');
+            $fpdf->Cell(55,5,"CHEQUE","L,B,R",0, 'L');
+            $fpdf->Cell(45,5,$report['total_ch'],'B,R',0, 'C');
+            $fpdf->Cell(45,5,number_format($report['cheque_htg'], 2, ".", ",")." HTG",'B,R',0, 'C');
+            $fpdf->Cell(45,5,number_format($report['cheque_usd'], 2, ".", ",")." USD",'B,R',0, 'C');
             $fpdf->Ln();
-            $fpdf->Cell(55,6,"CREDIT","L,B,R",0, 'L');
-            $fpdf->Cell(45,6,$report['total_cr'],'B,R',0, 'C');
-            $fpdf->Cell(45,6,number_format($report['credit_htg'], 2, ".", ",")." HTG",'B,R',0, 'C');
-            $fpdf->Cell(45,6,number_format($report['credit_usd'], 2, ".", ",")." USD",'B,R',0, 'C');
+            $fpdf->Cell(55,5,"CREDIT","L,B,R",0, 'L');
+            $fpdf->Cell(45,5,$report['total_cr'],'B,R',0, 'C');
+            $fpdf->Cell(45,5,number_format($report['credit_htg'], 2, ".", ",")." HTG",'B,R',0, 'C');
+            $fpdf->Cell(45,5,number_format($report['credit_usd'], 2, ".", ",")." USD",'B,R',0, 'C');
             $total_voyages = $total_voyages + $report['total_cash']+$report['total_ch']+$report['total_cr'];
             $total_htg = $total_htg + $report['cash_htg']+$report['cheque_htg']+$report['credit_htg'];
             $total_usd = $total_usd + $report['cash_usd']+$report['cheque_usd']+$report['credit_usd'];
@@ -661,29 +661,29 @@ class SalesController extends AppController
         }
         $fpdf->Ln();
         $fpdf->SetFont('Arial','B',8);
-        $fpdf->Cell(190,7,"TOTAL","L,R,B",0, 'L');
+        $fpdf->Cell(190,6,"TOTAL","L,R,B",0, 'L');
         $fpdf->Ln();
         $fpdf->SetFont('Arial','',8);
-        $fpdf->Cell(55,6,"CASH","L,B,R",0, 'L');
-        $fpdf->Cell(45,6,$total_voy_cash,'B,R',0, 'C');
-        $fpdf->Cell(45,6,number_format($total_cash_htg, 2, ".", ",")." HTG",'B,R',0, 'C');
-        $fpdf->Cell(45,6,number_format($total_cash_usd, 2, ".", ",")." USD",'B,R',0, 'C');
+        $fpdf->Cell(55,5,"CASH","L,B,R",0, 'L');
+        $fpdf->Cell(45,5,$total_voy_cash,'B,R',0, 'C');
+        $fpdf->Cell(45,5,number_format($total_cash_htg, 2, ".", ",")." HTG",'B,R',0, 'C');
+        $fpdf->Cell(45,5,number_format($total_cash_usd, 2, ".", ",")." USD",'B,R',0, 'C');
         $fpdf->Ln();
-        $fpdf->Cell(55,6,"CHEQUE","L,B,R",0, 'L');
-        $fpdf->Cell(45,6,$total_voy_ch,'B,R',0, 'C');
-        $fpdf->Cell(45,6,number_format($total_ch_htg, 2, ".", ",")." HTG",'B,R',0, 'C');
-        $fpdf->Cell(45,6,number_format($total_ch_usd, 2, ".", ",")." USD",'B,R',0, 'C');
+        $fpdf->Cell(55,5,"CHEQUE","L,B,R",0, 'L');
+        $fpdf->Cell(45,5,$total_voy_ch,'B,R',0, 'C');
+        $fpdf->Cell(45,5,number_format($total_ch_htg, 2, ".", ",")." HTG",'B,R',0, 'C');
+        $fpdf->Cell(45,5,number_format($total_ch_usd, 2, ".", ",")." USD",'B,R',0, 'C');
         $fpdf->Ln();
-        $fpdf->Cell(55,6,"CREDIT","L,B,R",0, 'L');
-        $fpdf->Cell(45,6,$total_voy_cr,'B,R',0, 'C');
-        $fpdf->Cell(45,6,number_format($total_cr_htg, 2, ".", ",")." HTG",'B,R',0, 'C');
-        $fpdf->Cell(45,6,number_format($total_cr_usd, 2, ".", ",")." USD",'B,R',0, 'C');
+        $fpdf->Cell(55,5,"CREDIT","L,B,R",0, 'L');
+        $fpdf->Cell(45,5,$total_voy_cr,'B,R',0, 'C');
+        $fpdf->Cell(45,5,number_format($total_cr_htg, 2, ".", ",")." HTG",'B,R',0, 'C');
+        $fpdf->Cell(45,5,number_format($total_cr_usd, 2, ".", ",")." USD",'B,R',0, 'C');
         $fpdf->Ln();
         $fpdf->SetFont('Arial','B',8);
-        $fpdf->Cell(55,7,"TOTAL","L,B,R",0, 'L');
-        $fpdf->Cell(45,7,$total_voyages,'B,R',0, 'C');
-        $fpdf->Cell(45,7,number_format($total_htg,2,".",",")." HTG",'B,R',0, 'C');
-        $fpdf->Cell(45,7,number_format($total_usd,2,".",",")." USD",'B,R',0, 'C');
+        $fpdf->Cell(55,6,"TOTAL","L,B,R",0, 'L');
+        $fpdf->Cell(45,6,$total_voyages,'B,R',0, 'C');
+        $fpdf->Cell(45,6,number_format($total_htg,2,".",",")." HTG",'B,R',0, 'C');
+        $fpdf->Cell(45,6,number_format($total_usd,2,".",",")." USD",'B,R',0, 'C');
 
         $directoryName = ROOT."/webroot/tmp/rapport_journalier_".date('Ymd').'.pdf'; 
         $fpdf->Output($directoryName, 'F');

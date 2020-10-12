@@ -157,10 +157,6 @@ $ouinon = array(0=> "Non", 1 => "Oui");
 <script type="text/javascript">$(document).ready( function () {
     $('.datatable').DataTable({
         "order": [[ 6, 'asc' ], [ 10, 'asc' ], [ 11, 'asc' ]],
-        dom: 'Bfrtip',
-        buttons: [
-            'excel', 'pdf', 'print'
-        ],
         scrollY: "400px",
  	scrollX: "2500px",
         scrollCollapse: true,

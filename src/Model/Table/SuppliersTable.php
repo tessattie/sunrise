@@ -55,6 +55,10 @@ class SuppliersTable extends Table
         $this->hasMany('Receivings', [
             'foreignKey' => 'supplier_id'
         ]);
+
+        $this->hasMany('SuppliersViolations', [
+            'foreignKey' => 'supplier_id'
+        ]);
         $this->belongsToMany('Trucks', [
             'foreignKey' => 'supplier_id',
             'targetForeignKey' => 'truck_id',
