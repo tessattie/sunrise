@@ -52,7 +52,9 @@ class CustomersController extends AppController
      */
     public function index()
     {
-        $customers = $this->Customers->find("all", array("order" => array("last_name ASC"), 'conditions' => array("Customers.id <>" => 1)))->contain(['Rates', 'Payments', 'Sales']);
+        $from = $this->request->session()->read("from")." 00:00:00";
+        $to = $this->request->session()->read("to")." 23:59:59";
+        $customers = $this->Customers->find("all", array("order" => array("last_name ASC"), 'conditions' => array("Customers.id <>" => 1)))->contain(['Rates', 'Payments', 'Sales' => ['conditions' => ['Sales.created >=' => $from, 'Sales.created <=' => $to]]]);
 
         $this->set(compact('customers'));
     }
