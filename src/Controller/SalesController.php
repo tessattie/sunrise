@@ -587,15 +587,15 @@ class SalesController extends AppController
         $fpdf->SetFont('Arial','',9);
         $fpdf->Ln();
         $fpdf->Cell(55,5,"10 ROUES","L,R,T",0, 'L');
-        $fpdf->Cell(60,5,$truck_ratios[0]['value'] " (".number_format(($truck_ratios[0]['value']*100/$tot_voyages), 2, ".", ",")."%)" ,'R,T',0, 'C');
+        $fpdf->Cell(60,5,$truck_ratios[0]['value'] ." (".number_format(($truck_ratios[0]['value']*100/$tot_voyages), 2, ".", ",")."%)" ,'R,T',0, 'C');
         $fpdf->Cell(75,5,$truck_ratios[0]['volume']." M3",'R,T',0, 'C');
         $fpdf->Ln();
         $fpdf->Cell(55,5,"6 ROUES","L,B,R,T",0, 'L');
-        $fpdf->Cell(60,5,$truck_ratios[1]['value'] " (".number_format(($truck_ratios[1]['value']*100/$tot_voyages), 2, ".", ",")."%)",'B,R,T',0, 'C');
+        $fpdf->Cell(60,5,$truck_ratios[1]['value'] ." (".number_format(($truck_ratios[1]['value']*100/$tot_voyages), 2, ".", ",")."%)",'B,R,T',0, 'C');
         $fpdf->Cell(75,5,$truck_ratios[1]['volume']." M3",'B,R,T',0, 'C');
         $fpdf->Ln();
         $fpdf->Cell(55,5,"CANTERS","L,B,R",0, 'L');
-        $fpdf->Cell(60,5,$truck_ratios[2]['value'] " (".number_format(($truck_ratios[2]['value']*100/$tot_voyages), 2, ".", ",")."%)" ,'B,R',0, 'C');
+        $fpdf->Cell(60,5,$truck_ratios[2]['value'] ." (".number_format(($truck_ratios[2]['value']*100/$tot_voyages), 2, ".", ",")."%)" ,'B,R',0, 'C');
         $fpdf->Cell(75,5,$truck_ratios[2]['volume']." M3",'B,R',0, 'C');
 
         $users = $this->Sales->Users->find('all', [ "conditions" => array('id=9 OR id=15 OR id=11'), "order" => ['first_name ASC'],
