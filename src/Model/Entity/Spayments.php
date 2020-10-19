@@ -4,17 +4,22 @@ namespace App\Model\Entity;
 use Cake\ORM\Entity;
 
 /**
- * SuppliersViolation Entity
+ * Spayment Entity
  *
  * @property int $id
- * @property int $supplier_id
- * @property int $violation_id
- * @property float $price
+ * @property int $customer_id
+ * @property float $amount
+ * @property int $rate_id
+ * @property float $daily_rate
+ * @property \Cake\I18n\FrozenTime $created
+ * @property \Cake\I18n\FrozenTime $modified
+ * @property int $user_id
  *
- * @property \App\Model\Entity\Violation $violation
- * @property \App\Model\Entity\Supplier $supplier
+ * @property \App\Model\Entity\Customer $customer
+ * @property \App\Model\Entity\Rate $rate
+ * @property \App\Model\Entity\User $user
  */
-class SuppliersViolation extends Entity
+class Spayment extends Entity
 {
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().
@@ -26,13 +31,14 @@ class SuppliersViolation extends Entity
      * @var array
      */
     protected $_accessible = [
-        'violation_id' => true,
         'supplier_id' => true,
-        'price' => true,
-        'truck_id' => true,
-        'user_id' => true,
+        'amount' => true,
+        'rate_id' => true,
+        'daily_rate' => true,
         'created' => true,
         'modified' => true,
-        'user_id' => true
+        'user_id' => true,
+        'requisition_number' => true,
+        'type' => true,
     ];
 }

@@ -302,7 +302,7 @@ class ExportsController extends AppController
                 $fpdf->Cell(25,7,number_format($price, 2, ".", ",")." ".$customer->rate->name,'B,R,T',0, 'C');
                 $fpdf->Cell(25,7,number_format($list_price, 2, ".", ",")." ".$customer->rate->name,'B,R,T',0, 'C');
                 $fpdf->Cell(25,7,number_format($total_prod, 2, ".", ",")." ".$customer->rate->name,'B,R,T',0, 'C');
-                $fpdf->Cell(20,7,$transport_fee,'L,B,R,T',0, 'C');
+                $fpdf->Cell(20,7,number_format($transport_fee, 2, ".", ",")." ".$customer->rate->name,'L,B,R,T',0, 'C');
                 $products_results[$product_name] = array("fiches" => $increment_prod, "volume" => $volume_prod, "total" => $total_prod, 'transport' => $transport, 'transport_fee' => $transport_fee);
                 $total_prod = 0;$volume_prod = 0; $increment_prod=0;
                 $fpdf->Ln("15");
@@ -345,7 +345,7 @@ class ExportsController extends AppController
                 
                 $k++;
             }
-            $fpdf->SetFont('Arial','B',9); 
+            $fpdf->SetFont('Arial','B',8); 
 
             $fpdf->Cell(60,7,"TOTAL (" . $sale['abbreviation'] . ")",'L,R,B,T',0, 'L');
             $fpdf->Cell(20,7,$increment_prod,'B,R,T',0, 'C');
@@ -357,7 +357,7 @@ class ExportsController extends AppController
             $fpdf->Ln();
             $products_results[$product_name] = array("fiches" => $increment_prod, "volume" => $volume_prod, "total" => $total_prod, 'transport' => $transport, 'transport_fee' => $transport_fee);
             $fpdf->Ln(10);
-            $fpdf->SetFont('Arial','B',9);
+            $fpdf->SetFont('Arial','B',8);
             $fpdf->Cell(190,7,"RESUME",'L,B,R,T',0, 'L');
             $fpdf->Ln();
             

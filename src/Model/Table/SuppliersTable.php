@@ -56,6 +56,10 @@ class SuppliersTable extends Table
             'foreignKey' => 'supplier_id'
         ]);
 
+        $this->hasMany('Spayments', [
+            'foreignKey' => 'supplier_id'
+        ]);
+
         $this->hasMany('SuppliersViolations', [
             'foreignKey' => 'supplier_id'
         ]);

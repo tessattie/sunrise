@@ -43,6 +43,10 @@ class SuppliersViolationsTable extends Table
             'foreignKey' => 'supplier_id',
             'joinType' => 'INNER'
         ]);
+        $this->belongsTo('Trucks', [
+            'foreignKey' => 'truck_id',
+            'joinType' => 'LEFT'
+        ]);
         $this->belongsTo('Users', [
             'foreignKey' => 'user_id',
             'joinType' => 'INNER'

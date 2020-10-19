@@ -201,6 +201,9 @@ $cakeDescription = 'VFM';
                     <li class="<?= ($this->request->getParam('controller') == 'Receivings') ? 'active' : '' ?>"><a class=""  href="<?= ROOT_DIREC ?>/receivings">
                         <span class="fa fa-arrow-right">&nbsp;</span> Réceptions
                     </a></li>
+                    <li class="<?= ($this->request->getParam('controller') == 'Spayments') ? 'active' : '' ?>" ><a class="" href="<?= ROOT_DIREC ?>/spayments">
+                        <span class="fa fa-arrow-right">&nbsp;</span> Paiements
+                    </a></li>
                     <li><a class=""  href="<?= ROOT_DIREC ?>/receivings/add">
                         <span class="fa fa-arrow-right">&nbsp;</span> Nouvelle Réception
                     </a></li>

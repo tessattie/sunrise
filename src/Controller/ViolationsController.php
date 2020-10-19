@@ -114,6 +114,7 @@ class ViolationsController extends AppController
             // die('here');
             $sp->supplier_id = $this->request->getData()['supplier_id'];
             $sp->violation_id = $this->request->getData()['violation_id'];
+            $sp->truck_id = $this->request->getData()['truck_id'];
             $sp->price = $violation->price;
             $sp->user_id = $this->Auth->user()['id'];
             $this->SuppliersViolations->save($sp);

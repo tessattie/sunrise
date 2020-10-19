@@ -94,11 +94,6 @@ class CustomersTable extends Table
             ->integer('credit_limit')
             ->allowEmptyString('credit_limit', false);
 
-
-        $validator
-            ->integer('discount')
-            ->allowEmptyString('discount', false);
-
         $validator
             ->integer('discount_type')
             ->allowEmptyString('discount_type', false);

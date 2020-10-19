@@ -81,10 +81,11 @@ class SuppliersController extends AppController
         $to = $this->request->session()->read("to")." 23:59:59";
 
         $supplier = $this->Suppliers->get($id, [
-            'contain' => ['Trucks', 'SuppliersTrucks' => ['Trucks', 'Items'], 'SuppliersViolations' => ['Violations', 'Users']]
+            'contain' => ['Trucks', 'SuppliersTrucks' => ['Trucks', 'Items'], 'SuppliersViolations' => ['Violations', 'Trucks', 'Users']]
         ]);
-        $supplier->violations = $this->Suppliers->SuppliersViolations->find('all', array('conditions' => array("SuppliersViolations.created >= " => $from, "SuppliersViolations.created <=" => $to, 'supplier_id' => $supplier->id)))->contain(['Violations', "Users"]);
-        $supplier->receivings = $this->Suppliers->Receivings->find('all', array('conditions' => array("Receivings.created >= " => $from, "Receivings.created <=" => $to)))->contain(['Items', "Users", 'Trucks']);
+        $supplier->violations = $this->Suppliers->SuppliersViolations->find('all', array('conditions' => array("SuppliersViolations.created >= " => $from, "SuppliersViolations.created <=" => $to, 'supplier_id' => $supplier->id)))->contain(['Violations', "Users", 'Trucks']);
+        $supplier->receivings = $this->Suppliers->Receivings->find('all', array('conditions' => array("Receivings.created >= " => $from, "Receivings.created <=" => $to, 'supplier_id' => $supplier->id)))->contain(['Items', "Users", 'Trucks']);
+        $supplier->payments = $this->Suppliers->Spayments->find('all', array('conditions' => array("Spayments.created >= " => $from, "Spayments.created <=" => $to, 'supplier_id' => $supplier->id)))->contain(['Rates', "Users"]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $supplier = $this->Suppliers->patchEntity($supplier, $this->request->getData());
             if ($this->Suppliers->save($supplier)) {
@@ -95,7 +96,6 @@ class SuppliersController extends AppController
             $this->Flash->error(__('Impossible de sauvegarder. Contactez votre administrateur'));
         }
         $users = $this->Suppliers->Users->find('list', ['limit' => 200]);
-        $trucks = $this->Suppliers->Trucks->find('list', ['limit' => 200]);
         $products = $this->Suppliers->Items->find("list");
         $types = $this->Suppliers->Receivings->types;
         $violations = $this->Suppliers->SuppliersViolations->Violations->find('list', array('order' => "name ASC"));
@@ -152,134 +152,116 @@ class SuppliersController extends AppController
             $fpdf->Ln();
             $fpdf->Cell(30,7,"DATE",'B,R,L',0, 'C');
             $fpdf->Cell(20,7,"HEURE",'B,R,L',0, 'C');
-            $fpdf->Cell(35,7,"FICHE",'B,R',0, 'C');
-            $fpdf->Cell(35,7,"BUREAU",'B,R',0, 'C');
+            $fpdf->Cell(70,7,"FICHE",'B,R',0, 'C');
             $fpdf->Cell(35,7,"ATV",'B,R',0, 'C');
             $fpdf->Cell(35,7,"STOCK",'B,R',0, 'C');
             $fpdf->Ln();
             $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
             $fpdf->Cell(20,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Ln();
-            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
-            $fpdf->Cell(20,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(70,13,"",'B,R',0, 'C');
             $fpdf->Cell(35,13,"",'B,R',0, 'C');
             $fpdf->Cell(35,13,"",'B,R',0, 'C');
             $fpdf->Ln();
             $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
             $fpdf->Cell(20,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Ln();
-            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
-            $fpdf->Cell(20,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(70,13,"",'B,R',0, 'C');
             $fpdf->Cell(35,13,"",'B,R',0, 'C');
             $fpdf->Cell(35,13,"",'B,R',0, 'C');
             $fpdf->Ln();
             $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
             $fpdf->Cell(20,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Ln();
-            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
-            $fpdf->Cell(20,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(70,13,"",'B,R',0, 'C');
             $fpdf->Cell(35,13,"",'B,R',0, 'C');
             $fpdf->Cell(35,13,"",'B,R',0, 'C');
             $fpdf->Ln();
             $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
             $fpdf->Cell(20,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Ln();
-            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
-            $fpdf->Cell(20,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(70,13,"",'B,R',0, 'C');
             $fpdf->Cell(35,13,"",'B,R',0, 'C');
             $fpdf->Cell(35,13,"",'B,R',0, 'C');
             $fpdf->Ln();
             $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
             $fpdf->Cell(20,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Ln();
-            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
-            $fpdf->Cell(20,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(70,13,"",'B,R',0, 'C');
             $fpdf->Cell(35,13,"",'B,R',0, 'C');
             $fpdf->Cell(35,13,"",'B,R',0, 'C');
             $fpdf->Ln();
             $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
             $fpdf->Cell(20,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Ln();
-            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
-            $fpdf->Cell(20,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(70,13,"",'B,R',0, 'C');
             $fpdf->Cell(35,13,"",'B,R',0, 'C');
             $fpdf->Cell(35,13,"",'B,R',0, 'C');
             $fpdf->Ln();
             $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
             $fpdf->Cell(20,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Ln();
-            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
-            $fpdf->Cell(20,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(70,13,"",'B,R',0, 'C');
             $fpdf->Cell(35,13,"",'B,R',0, 'C');
             $fpdf->Cell(35,13,"",'B,R',0, 'C');
             $fpdf->Ln();
             $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
             $fpdf->Cell(20,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Ln();
-            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
-            $fpdf->Cell(20,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(70,13,"",'B,R',0, 'C');
             $fpdf->Cell(35,13,"",'B,R',0, 'C');
             $fpdf->Cell(35,13,"",'B,R',0, 'C');
             $fpdf->Ln();
             $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
             $fpdf->Cell(20,13,"",'B,R',0, 'C');
+            $fpdf->Cell(70,13,"",'B,R',0, 'C');
             $fpdf->Cell(35,13,"",'B,R',0, 'C');
             $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Ln();
+            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
+            $fpdf->Cell(20,13,"",'B,R',0, 'C');
+            $fpdf->Cell(70,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Ln();
+            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
+            $fpdf->Cell(20,13,"",'B,R',0, 'C');
+            $fpdf->Cell(70,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Ln();
+            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
+            $fpdf->Cell(20,13,"",'B,R',0, 'C');
+            $fpdf->Cell(70,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Ln();
+            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
+            $fpdf->Cell(20,13,"",'B,R',0, 'C');
+            $fpdf->Cell(70,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Ln();
+            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
+            $fpdf->Cell(20,13,"",'B,R',0, 'C');
+            $fpdf->Cell(70,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Ln();
+            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
+            $fpdf->Cell(20,13,"",'B,R',0, 'C');
+            $fpdf->Cell(70,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Ln();
+            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
+            $fpdf->Cell(20,13,"",'B,R',0, 'C');
+            $fpdf->Cell(70,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Cell(35,13,"",'B,R',0, 'C');
+            $fpdf->Ln();
+            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
+            $fpdf->Cell(20,13,"",'B,R',0, 'C');
+            $fpdf->Cell(70,13,"",'B,R',0, 'C');
             $fpdf->Cell(35,13,"",'B,R',0, 'C');
             $fpdf->Cell(35,13,"",'B,R',0, 'C');
             $fpdf->Ln();
         }
 
         $fpdf->Output('I');
-        die('called');
+        die();
     }
 
     /**
@@ -299,5 +281,18 @@ class SuppliersController extends AppController
         } else {
         }
         return $this->redirect(['controller' => 'Suppliers', 'action' => 'edit', $supplier]);
+    }
+
+    public function newpayment(){
+        if ($this->request->is('post')){
+            $spayment = $this->Suppliers->Spayments->newEntity();
+            $spayment = $this->Suppliers->Spayments->patchEntity($spayment, $this->request->getData());
+            $spayment->user_id = $this->Auth->user()['id'];
+            if ($this->Suppliers->Spayments->save($spayment)) {
+                $this->Flash->success(__('Paiement sauvegardé'));
+            }
+            return $this->redirect(['action' => 'edit', $this->request->getData()['supplier_id']]);
+        }
+        return $this->redirect(['action' => 'index']);
     }
 }

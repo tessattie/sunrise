@@ -471,6 +471,9 @@ class SalesController extends AppController
 
         $from = date("Y-m-d 00:00:00");
         $to = date("Y-m-d 23:59:59");
+
+        // $from = "2020-09-10 00:00:00";
+        // $to = '2020-09-10 23:59:59';
         
         require_once(ROOT . DS . 'vendor' . DS  . 'fpdf'  . DS . 'fpdf.php');
         
@@ -479,7 +482,7 @@ class SalesController extends AppController
         $fpdf->Image(ROOT.'/webroot/img/logo.png',10,4,50);
         $fpdf->SetFont('Arial','B',10);
         $fpdf->Cell(190,0,date('l j F Y'),0,0, 'R');
-        $fpdf->Ln(5);
+        $fpdf->Ln(10);
         $fpdf->SetFont('Arial','B',8);
 
         // Tableau Dashboard #2 [ 22 - 42 ] 
@@ -520,12 +523,11 @@ class SalesController extends AppController
             LEFT JOIN categories c ON c.id = p.category_id
             ORDER BY total_sold DESC"); 
         $fpdf->SetFont('Arial','B',8);  
-        $fpdf->Ln(8);
+        $fpdf->Ln(9);
         $fpdf->Cell(70,5,"VENTES PAR PRODUITS","L,B,R,T",0, 'L');
         $fpdf->Cell(20,5,"VOYAGES",'B,R,T',0, 'C');
-        $fpdf->Cell(40,5,"VOLUME (M3)",'B,R,T',0, 'C');
+        $fpdf->Cell(70,5,"VOLUME (M3)",'B,R,T',0, 'C');
         $fpdf->Cell(30,5,"AVG / VOY",'B,R,T',0, 'C');
-        $fpdf->Cell(30,5,"POURCENTAGE",'B,R,T',0, 'C');
         $total=0;$fiches = 0;
         $fpdf->SetFont('Arial','',8);
         $total = 0; $fiches = 0;
@@ -545,10 +547,8 @@ class SalesController extends AppController
                 $fpdf->Ln();
                 $fpdf->Cell(70,5,$product['name'],"L,B,R",0, 'L');
                 $fpdf->Cell(20,5,number_format($product['total_trips'], 0, ".", ","),'B,R',0, 'C');
-                $fpdf->Cell(40,5,number_format($product['total_sold'], 2, ".", ",")." M3",'B,R',0, 'C');
+                $fpdf->Cell(70,5,number_format($product['total_sold'], 2, ".", ",")." M3 (".number_format($pourcentage, 2, ".", ",")."%)",'B,R',0, 'C');
                 $fpdf->Cell(30,5,number_format($average, 3, ".", ",")." M3",'B,R',0, 'C');
-                $fpdf->Cell(30,5,number_format($pourcentage, 3, ".", ",")."%",'B,R',0, 'C');
-                
             }
         }
         $fpdf->SetFont('Arial','B',8);
@@ -556,14 +556,13 @@ class SalesController extends AppController
         $total_average = $total / $fiches;
         $fpdf->Cell(70,5,"TOTAL","L,B,R",0, 'L');
         $fpdf->Cell(20,5,number_format($fiches, 0, ".", ","),'B,R',0, 'C');
-        $fpdf->Cell(40,5,number_format($total, 2, ".", ",")." M3",'B,R',0, 'C');
+        $fpdf->Cell(70,5,number_format($total, 2, ".", ",")." M3",'B,R',0, 'C');
         $fpdf->Cell(30,5,number_format($total_average, 3,".", ",")." M3",'B,R',0, 'C');
-        $fpdf->Cell(30,5,number_format(100, 0, ".", ",")."%",'B,R',0, 'C');
 
 
         // Meilleurs clients crédits
         $best_clients = $this->getBestClients($from,$to);
-        $fpdf->Ln(8);
+        $fpdf->Ln(9);
         $fpdf->SetFont('Arial','B',8);
         $fpdf->Cell(100,5,"MEILLEURS CLIENTS CREDITS","L,B,R,T",0, 'L');
         $fpdf->Cell(45,5,"VOYAGES",'B,R,T',0, 'C');
@@ -579,29 +578,25 @@ class SalesController extends AppController
         }
 
         $truck_ratios = $this->getTrucksRatio($from, $to);
-        $fpdf->Ln(8);
+        $fpdf->Ln(9);
         $fpdf->SetFont('Arial','B',8);
         $tot_voyages = $truck_ratios[0]['value'] + $truck_ratios[1]['value'] + $truck_ratios[2]['value'];
         $fpdf->Cell(55,5,"VOLUMES PAR TYPE DE CAMION","L,T,R",0, 'L');
-        $fpdf->Cell(45,5,"% VOY",'T,R',0, 'C');
-        $fpdf->Cell(45,5,"VOYAGES",'T,R',0, 'C');
-        $fpdf->Cell(45,5,"VOLUME (M3)",'T,R',0, 'C');
+        $fpdf->Cell(60,5,"VOYAGES",'T,R',0, 'C');
+        $fpdf->Cell(75,5,"VOLUME (M3)",'T,R',0, 'C');
         $fpdf->SetFont('Arial','',9);
         $fpdf->Ln();
         $fpdf->Cell(55,5,"10 ROUES","L,R,T",0, 'L');
-        $fpdf->Cell(45,5,number_format(($truck_ratios[0]['value']*100/$tot_voyages), 3, ".", ",")."%",'T,R',0, 'C');
-        $fpdf->Cell(45,5,$truck_ratios[0]['value'] ,'R,T',0, 'C');
-        $fpdf->Cell(45,5,$truck_ratios[0]['volume']." m3",'R,T',0, 'C');
+        $fpdf->Cell(60,5,$truck_ratios[0]['value'] ,'R,T',0, 'C');
+        $fpdf->Cell(75,5,$truck_ratios[0]['volume']." M3 (".number_format(($truck_ratios[0]['value']*100/$tot_voyages), 2, ".", ",")."%)",'R,T',0, 'C');
         $fpdf->Ln();
         $fpdf->Cell(55,5,"6 ROUES","L,B,R,T",0, 'L');
-        $fpdf->Cell(45,5,number_format(($truck_ratios[1]['value']*100/$tot_voyages), 3, ".", ",")."%",'T,R',0, 'C');
-        $fpdf->Cell(45,5,$truck_ratios[1]['value'],'B,R,T',0, 'C');
-        $fpdf->Cell(45,5,$truck_ratios[1]['volume']." m3",'B,R,T',0, 'C');
+        $fpdf->Cell(60,5,$truck_ratios[1]['value'],'B,R,T',0, 'C');
+        $fpdf->Cell(75,5,$truck_ratios[1]['volume']." M3 (".number_format(($truck_ratios[1]['value']*100/$tot_voyages), 2, ".", ",")."%)",'B,R,T',0, 'C');
         $fpdf->Ln();
         $fpdf->Cell(55,5,"CANTERS","L,B,R",0, 'L');
-        $fpdf->Cell(45,5,number_format(($truck_ratios[2]['value']*100/$tot_voyages), 3, ".", ",")."%",'T,R,B',0, 'C');
-        $fpdf->Cell(45,5,$truck_ratios[2]['value'] ,'B,R',0, 'C');
-        $fpdf->Cell(45,5,$truck_ratios[2]['volume']." m3",'B,R',0, 'C');
+        $fpdf->Cell(60,5,$truck_ratios[2]['value'] ,'B,R',0, 'C');
+        $fpdf->Cell(75,5,$truck_ratios[2]['volume']." M3 (".number_format(($truck_ratios[2]['value']*100/$tot_voyages), 2, ".", ",")."%)",'B,R',0, 'C');
 
         $users = $this->Sales->Users->find('all', [ "conditions" => array('id=9 OR id=15 OR id=11'), "order" => ['first_name ASC'],
             'keyField' => 'id',
@@ -616,7 +611,7 @@ class SalesController extends AppController
             $i++;
         }
 
-        $fpdf->Ln(8);
+        $fpdf->Ln(9);
         $fpdf->SetFont('Arial','B',8);
         $fpdf->Cell(55,7,"RAPPORT DE FERMETURE","T,L,B,R",0, 'L');
         $fpdf->Cell(45,7,"#",'T,B,R',0, 'C');
@@ -687,6 +682,7 @@ class SalesController extends AppController
 
         $directoryName = ROOT."/webroot/tmp/rapport_journalier_".date('Ymd').'.pdf'; 
         $fpdf->Output($directoryName, 'F');
+        // $fpdf->Output('I');
         $this->send($directoryName);
         die("DONE WITH DAILY");
     }
