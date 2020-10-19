@@ -125,16 +125,15 @@ class SuppliersController extends AppController
     public function export(){
         if ($this->request->is(['patch', 'post', 'put'])){
             // debug($this->request->getData()); die();
-
+            $from = $this->request->getData()['from']." 00:00:00";
+            $to = $this->request->getData()['to']." 23:59:59";
             $supplier = $this->Suppliers->get($this->request->getData()['supplier_id']);
             $truck = $this->Suppliers->SuppliersTrucks->Trucks->get($this->request->getData()['truck_id']);
-
+            $receivings = $this->Suppliers->Receivings->find('all', array('order' => array('created ASC'), 'conditions' => array('created >=' => $from, "created <=" => $to, 'supplier_id' => $supplier->id)));
             $sp = $this->Suppliers->SuppliersTrucks->get($this->request->getData()['id'], ['contain' => ['Items']]);
 
             require_once(ROOT . DS . 'vendor' . DS  . 'fpdf-barcode-master'  . DS . 'pdf_barcode.php');
 
-            // require(ROOT . DS . 'vendor' . DS  . 'fpdf'  . DS . 'fpdf.php');
-        
             $fpdf = new PDF_BARCODE('P','mm','A4');
             $fpdf->AddPage();
             $fpdf->Image(ROOT.'/webroot/img/logo.png',10,4,50);
@@ -149,115 +148,47 @@ class SuppliersController extends AppController
             $fpdf->Cell(70,25,$fpdf->EAN13(143,21,$sp->code,15,0.4,9),'B,R',0, 'C');
 
             $fpdf->SetFont('Arial','B',9);
+
             $fpdf->Ln();
             $fpdf->Cell(30,7,"DATE",'B,R,L',0, 'C');
             $fpdf->Cell(20,7,"HEURE",'B,R,L',0, 'C');
             $fpdf->Cell(70,7,"FICHE",'B,R',0, 'C');
             $fpdf->Cell(35,7,"ATV",'B,R',0, 'C');
             $fpdf->Cell(35,7,"STOCK",'B,R',0, 'C');
-            $fpdf->Ln();
-            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
-            $fpdf->Cell(20,13,"",'B,R',0, 'C');
-            $fpdf->Cell(70,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Ln();
-            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
-            $fpdf->Cell(20,13,"",'B,R',0, 'C');
-            $fpdf->Cell(70,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Ln();
-            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
-            $fpdf->Cell(20,13,"",'B,R',0, 'C');
-            $fpdf->Cell(70,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Ln();
-            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
-            $fpdf->Cell(20,13,"",'B,R',0, 'C');
-            $fpdf->Cell(70,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Ln();
-            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
-            $fpdf->Cell(20,13,"",'B,R',0, 'C');
-            $fpdf->Cell(70,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Ln();
-            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
-            $fpdf->Cell(20,13,"",'B,R',0, 'C');
-            $fpdf->Cell(70,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Ln();
-            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
-            $fpdf->Cell(20,13,"",'B,R',0, 'C');
-            $fpdf->Cell(70,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Ln();
-            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
-            $fpdf->Cell(20,13,"",'B,R',0, 'C');
-            $fpdf->Cell(70,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Ln();
-            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
-            $fpdf->Cell(20,13,"",'B,R',0, 'C');
-            $fpdf->Cell(70,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Ln();
-            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
-            $fpdf->Cell(20,13,"",'B,R',0, 'C');
-            $fpdf->Cell(70,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Ln();
-            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
-            $fpdf->Cell(20,13,"",'B,R',0, 'C');
-            $fpdf->Cell(70,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Ln();
-            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
-            $fpdf->Cell(20,13,"",'B,R',0, 'C');
-            $fpdf->Cell(70,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Ln();
-            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
-            $fpdf->Cell(20,13,"",'B,R',0, 'C');
-            $fpdf->Cell(70,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Ln();
-            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
-            $fpdf->Cell(20,13,"",'B,R',0, 'C');
-            $fpdf->Cell(70,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Ln();
-            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
-            $fpdf->Cell(20,13,"",'B,R',0, 'C');
-            $fpdf->Cell(70,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Ln();
-            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
-            $fpdf->Cell(20,13,"",'B,R',0, 'C');
-            $fpdf->Cell(70,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Ln();
-            $fpdf->Cell(30,13,"",'B,R,L',0, 'C');
-            $fpdf->Cell(20,13,"",'B,R',0, 'C');
-            $fpdf->Cell(70,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Cell(35,13,"",'B,R',0, 'C');
-            $fpdf->Ln();
+            // require(ROOT . DS . 'vendor' . DS  . 'fpdf'  . DS . 'fpdf.php');
+
+            if($this->request->getData()['type'] == 2){
+                $margin=50; $i=13;
+                foreach($receivings as $receiving){
+                    $fpdf->Ln();
+                    $fpdf->Cell(30,15,date("Y-m-d", strtotime($receiving->created)),'B,R,L',0, 'C');
+                    $fpdf->Cell(20,15,date("H:i", strtotime($receiving->created)),'B,R',0, 'C');
+                    $fpdf->Cell(70,15,"",'B,R',0, 'C');
+                    $fpdf->EAN13(70,$margin,$receiving->receiving_number,9,0.4,9);
+                    $fpdf->Cell(35,15,"",'B,R',0, 'C');
+                    $fpdf->Cell(35,15,"",'B,R',0, 'C'); 
+                    $margin = $margin+15;
+                    $i--;
+                }
+                for ($j=0; $j < $i; $j++) { 
+                    $fpdf->Ln();
+                    $fpdf->Cell(30,15,"",'B,R,L',0, 'C');
+                    $fpdf->Cell(20,15,"",'B,R',0, 'C');
+                    $fpdf->Cell(70,15,"",'B,R',0, 'C');
+                    $fpdf->Cell(35,15,"",'B,R',0, 'C');
+                    $fpdf->Cell(35,15,"",'B,R',0, 'C');
+                }
+
+            }else{
+                for ($i=0; $i < 17; $i++) { 
+                    $fpdf->Ln();
+                    $fpdf->Cell(30,15,"",'B,R,L',0, 'C');
+                    $fpdf->Cell(20,15,"",'B,R',0, 'C');
+                    $fpdf->Cell(70,15,"",'B,R',0, 'C');
+                    $fpdf->Cell(35,15,"",'B,R',0, 'C');
+                    $fpdf->Cell(35,15,"",'B,R',0, 'C');
+                }
+            }               
         }
 
         $fpdf->Output('I');
