@@ -357,7 +357,7 @@
                 <th class="text-center">Réceptions</th>
                 <th class="text-center">Contraventions</th>
                 <th class="text-center">Payé</th>
-                <th class="text-center">Différence</th>
+                <th class="text-center">Balance</th>
             </tr>
         </thead>
         <tbody> 
