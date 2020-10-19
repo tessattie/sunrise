@@ -365,7 +365,7 @@
                 <td class="text-center"><?= number_format($rtotal, 2, ".", ",") ?> HTG</td>
                 <td class="text-center"><?= number_format($ctotal, 2, ".", ",") ?> HTG</td>
                 <td class="text-center"><?= number_format($ptotal, 2, ".", ",") ?> HTG</td>
-                <td class="text-center"><?= number_format(($rtotal+$ctotal-$ptotal), 2, ".", ",") ?> HTG</td>
+                <td class="text-center"><?= number_format(($rtotal-$ctotal-$ptotal), 2, ".", ",") ?> HTG</td>
             </tr>
         </tbody>
     </table>
