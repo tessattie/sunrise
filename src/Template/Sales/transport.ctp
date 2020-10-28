@@ -19,7 +19,7 @@ $ouinon = array(0=> "Non", 1 => "Oui");
 <div class="container-fluid"> 
     <div class="panel panel-default articles">
         <div class="panel-heading">
-            Ventes
+            Rapport Transport
         </div>
     <div class="panel-body articles-container">
     <div class="row">
