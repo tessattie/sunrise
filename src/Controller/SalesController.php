@@ -109,6 +109,9 @@ class SalesController extends AppController
         $condition = "(Sales.status = 1 OR Sales.status = 0 OR Sales.status = 4 OR Sales.status = 6 OR Sales.status = 7)";
 
         if ($this->request->is(['patch', 'post', 'put'])){
+            if(!empty($this->request->getData()['customer_id'])){
+                $condition .= 'AND Sales.customer_id = '. $this->request->getData()['customer_id'];
+            }
             if(!empty($this->request->getData()['immatriculation'])){
                 $immatriculation = $this->request->getData()['immatriculation'];
                 $sales = $this->Sales->find('all', array('order' => array("Sales.created DESC"), "conditions" => array("Sales.created >=" => $from, "Sales.created <=" => $to, "Sales.transport" => 1, $condition)))->contain(['Users', 'Customers', 'Trucks', 'Pointofsales', "ProductsSales" => ['Products']])->matching('Trucks', function ($q) use ($immatriculation) {
@@ -121,7 +124,14 @@ class SalesController extends AppController
         $sales = $this->Sales->find('all', array('order' => array("Sales.created DESC"), "conditions" => array("Sales.created >=" => $from, "Sales.created <=" => $to,  "Sales.transport" => 1, $condition)))->contain(['Users', 'Customers', 'Trucks', 'Pointofsales', "ProductsSales"  => ['Products']]);
         }
         
+        $customers = $this->Customers->find('list', [ "order" => ['first_name ASC'],
+            'keyField' => 'id',
+            'valueField' => function ($c) {
+                return $c->get('name');
+            }
+        ]);  
 
+        $this->set('customers', $customers);
         $this->set(compact('sales'));
     }
 
@@ -581,22 +591,23 @@ class SalesController extends AppController
         $fpdf->Ln(9);
         $fpdf->SetFont('Arial','B',8);
         $tot_voyages = $truck_ratios[0]['value'] + $truck_ratios[1]['value'] + $truck_ratios[2]['value'];
+        $tot_volumes = $truck_ratios[0]['volume'] + $truck_ratios[1]['volume'] + $truck_ratios[2]['volume'];
         $fpdf->Cell(55,5,"VOLUMES PAR TYPE DE CAMION","L,T,R",0, 'L');
         $fpdf->Cell(60,5,"VOYAGES",'T,R',0, 'C');
         $fpdf->Cell(75,5,"VOLUME (M3)",'T,R',0, 'C');
         $fpdf->SetFont('Arial','',9);
         $fpdf->Ln();
         $fpdf->Cell(55,5,"10 ROUES","L,R,T",0, 'L');
-        $fpdf->Cell(60,5,$truck_ratios[0]['value'] ." (".number_format(($truck_ratios[0]['value']*100/$tot_voyages), 2, ".", ",")."%)" ,'R,T',0, 'C');
-        $fpdf->Cell(75,5,$truck_ratios[0]['volume']." M3",'R,T',0, 'C');
+        $fpdf->Cell(60,5,$truck_ratios[0]['value'] ." (".number_format(($truck_ratios[0]['value']*100/$tot_voyages), 0, ".", ",")."%)" ,'R,T',0, 'C');
+        $fpdf->Cell(75,5,$truck_ratios[0]['volume'] ." M3 (".number_format(($truck_ratios[0]['volume']*100/$tot_volumes), 0, ".", ",")."%)" ,'R,T',0, 'C');
         $fpdf->Ln();
         $fpdf->Cell(55,5,"6 ROUES","L,B,R,T",0, 'L');
-        $fpdf->Cell(60,5,$truck_ratios[1]['value'] ." (".number_format(($truck_ratios[1]['value']*100/$tot_voyages), 2, ".", ",")."%)",'B,R,T',0, 'C');
-        $fpdf->Cell(75,5,$truck_ratios[1]['volume']." M3",'B,R,T',0, 'C');
+        $fpdf->Cell(60,5,$truck_ratios[1]['value'] ." (".number_format(($truck_ratios[1]['value']*100/$tot_voyages), 0, ".", ",")."%)",'B,R,T',0, 'C');
+        $fpdf->Cell(75,5,$truck_ratios[1]['volume'] ." M3 (".number_format(($truck_ratios[1]['volume']*100/$tot_volumes), 0, ".", ",")."%)" ,'R,T',0, 'C');
         $fpdf->Ln();
         $fpdf->Cell(55,5,"CANTERS","L,B,R",0, 'L');
-        $fpdf->Cell(60,5,$truck_ratios[2]['value'] ." (".number_format(($truck_ratios[2]['value']*100/$tot_voyages), 2, ".", ",")."%)" ,'B,R',0, 'C');
-        $fpdf->Cell(75,5,$truck_ratios[2]['volume']." M3",'B,R',0, 'C');
+        $fpdf->Cell(60,5,$truck_ratios[2]['value'] ." (".number_format(($truck_ratios[2]['value']*100/$tot_voyages), 0, ".", ",")."%)" ,'B,R',0, 'C');
+        $fpdf->Cell(75,5,$truck_ratios[2]['volume'] ." M3 (".number_format(($truck_ratios[2]['volume']*100/$tot_volumes), 0, ".", ",")."%)" ,'R,T',0, 'C');
 
         $users = $this->Sales->Users->find('all', [ "conditions" => array('id=9 OR id=15 OR id=11'), "order" => ['first_name ASC'],
             'keyField' => 'id',

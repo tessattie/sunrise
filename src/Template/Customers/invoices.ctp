@@ -1,7 +1,3 @@
-<?php 
-$months = array("01" => "Janvier", "02" => "Février", "03" => "Mars", "04" => "Avril", "05" => "Mai","06" => "Juin", "07" => "Juillet", "08" => "Août", "09" => "Septembre","10" => "Octobre", "11" => "Novembre", "12" => "Decembre");
-$years = array("2019" => "2019", "2020" => "2020", "2021" => "2021");
-?>
 
 
 <!-- Modal -->
@@ -17,8 +13,6 @@ $years = array("2019" => "2019", "2020" => "2020", "2021" => "2021");
       <hr>
         <?= $this->Form->control('email', array('class' => 'form-control', "label" => "E-mail", "placeholder" => "E-mail : abc@exemple.com", 'value' => (!empty($customer->email)) ? $customer->email : "")); ?>
         <?= $this->Form->control('customer_id', array("type" => "hidden",'value' => (!empty($customer->id)) ? $customer->id : "")); ?>
-        <?= $this->Form->control('month', array("type" => "hidden",'value' => (!empty($month)) ? $month : "")); ?>
-        <?= $this->Form->control('year', array("type" => "hidden",'value' => (!empty($year)) ? $year : "")); ?>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-dismiss="modal">Fermer</button>
@@ -61,12 +55,6 @@ $years = array("2019" => "2019", "2020" => "2020", "2021" => "2021");
                 <div class="row" style="margin-left:-20px;margin-top:25px">
                     <div class="col-md-3">
                         <?= $this->Form->control('customer_id', array('class' => 'form-control select2', "empty" => "-- Client --", "options" => $customers, "label" => false, "style" => "width:100%")); ?>
-                    </div>
-                    <div class="col-md-3">
-                        <?= $this->Form->control('month', array('class' => 'form-control', "empty" => "-- Mois --", "options" => $months, "label" => false, "style" => "width:100%", "value" => $month)); ?>
-                    </div>
-                    <div class="col-md-3">
-                        <?= $this->Form->control('year', array('class' => 'form-control', "empty" => "-- Année --", "options" => $years, "label" => false, "style" => "width:100%", "value" => $year)); ?>
                     </div>
 
                     <div class="col-md-1">

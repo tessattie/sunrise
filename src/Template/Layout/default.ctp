@@ -166,6 +166,9 @@ $cakeDescription = 'VFM';
                     <li><a class="" href="<?= ROOT_DIREC ?>/sales/status">
                         <span class="fa fa-arrow-right">&nbsp;</span> Chargement et sortie
                     </a></li>
+                    <li><a class="" href="<?= ROOT_DIREC ?>/sales/transport">
+                        <span class="fa fa-arrow-right">&nbsp;</span> Transport
+                    </a></li>
                 </ul>
             </li>
             <?php if($user_connected['role_id'] != 4) : ?>

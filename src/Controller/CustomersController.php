@@ -339,18 +339,16 @@ class CustomersController extends AppController
 
     public function invoices(){
         $sales = array();
-        $month = date("m");
-        $year = date("Y");
+        $month = date("m", strtotime($this->request->session()->read("from")));
+        $year = date("Y", strtotime($this->request->session()->read("from")));
         $customer = "";
         $condition = "(s.status = 0 OR s.status = 4)";
         if ($this->request->is(['patch', 'post', 'put'])){
             $customer = $this->Customers->get($this->request->getData()['customer_id'], ['contain' => [
                 "Rates"
             ]]);
-            $month = $this->request->getData()['month'];
-            $year = $this->request->getData()['year'];
-            $from = $this->request->getData()['year']."-".$this->request->getData()['month']."-01 00:00:00";
-            $to = date("Y-m-t 23:59:59", strtotime($from));
+            $from = $this->request->session()->read("from")." 00:00:00";
+            $to = $this->request->session()->read("to")." 23:59:59";
             $conn = ConnectionManager::get('default');
             $sales = $conn->query("SELECT s.sale_number, ps.quantity, t.immatriculation, p.abbreviation, p.name, s.created, s.total FROM `sales` s 
                 LEFT JOIN products_sales ps on ps.sale_id = s.id

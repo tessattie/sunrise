@@ -215,14 +215,14 @@ class ExportsController extends AppController
     }
 
     public function invoicesPdf(){
-        $from = date("Y-m-d 00:00:00");
-        $to = date("Y-m-d 23:59:59");
+        $from = $this->request->session()->read("from")." 00:00:00";
+        $to = $this->request->session()->read("to")." 23:59:59";
         $products_results = [];
         $email = "";
         if($this->request->is(['patch', 'put', "post"])){
             $customer_id = $this->request->getData()['customer_id'];
-            $month = $this->request->getData()['month'];
-            $year = $this->request->getData()['year'];
+            $month = date("m", strtotime($this->request->session()->read("from")));
+            $year = date("Y", strtotime($this->request->session()->read("from")));
             $email = $this->request->getData()['email'];
         }
 
@@ -239,8 +239,6 @@ class ExportsController extends AppController
         $fpdf->Cell(190,0,"",'B',0, 'R');
         $fpdf->Ln(5);
         $fpdf->SetFont('Arial','B',8);
-        $from = $year."-".$month."-01 00:00:00";
-        $to = date("Y-m-t 23:59:59", strtotime($from));
         $from_a = date("j M Y", strtotime($from));
         $to_a = date("t M Y", strtotime($from));
         $fpdf->Cell(90,0,utf8_decode("RESUME DES VENTES - " . strtoupper(date("M Y", strtotime($from)))),0,0, 'L');
@@ -281,8 +279,8 @@ class ExportsController extends AppController
             $fpdf->Cell(15,7,"VOLUME",'B,R,T',0, 'C');
             $fpdf->Cell(25,7,"PRIX CLIENT",'L,B,R,T',0, 'C');
             $fpdf->Cell(25,7,"PRIX",'L,B,R,T',0, 'C');
-            $fpdf->Cell(25,7,"TOTAL (".$customer->rate->name.")",'B,R,T',0, 'C');
             $fpdf->Cell(20,7,"TRANSPORT",'L,B,R,T',0, 'C');
+            $fpdf->Cell(25,7,"TOTAL (".$customer->rate->name.")",'B,R,T',0, 'C');
             $fpdf->Ln();
             $list_price = 0; $price = 0;
             $k=1;
@@ -301,8 +299,8 @@ class ExportsController extends AppController
                 $fpdf->Cell(15,7,number_format($volume_prod, 2, ".", ",")." m3",'B,R,T',0, 'C');
                 $fpdf->Cell(25,7,number_format($price, 2, ".", ",")." ".$customer->rate->name,'B,R,T',0, 'C');
                 $fpdf->Cell(25,7,number_format($list_price, 2, ".", ",")." ".$customer->rate->name,'B,R,T',0, 'C');
-                $fpdf->Cell(25,7,number_format($total_prod, 2, ".", ",")." ".$customer->rate->name,'B,R,T',0, 'C');
                 $fpdf->Cell(20,7,number_format($transport_fee, 2, ".", ",")." ".$customer->rate->name,'L,B,R,T',0, 'C');
+                $fpdf->Cell(25,7,number_format($total_prod, 2, ".", ",")." ".$customer->rate->name,'B,R,T',0, 'C');
                 $products_results[$product_name] = array("fiches" => $increment_prod, "volume" => $volume_prod, "total" => $total_prod, 'transport' => $transport, 'transport_fee' => $transport_fee);
                 $total_prod = 0;$volume_prod = 0; $increment_prod=0;
                 $fpdf->Ln("15");
@@ -333,12 +331,13 @@ class ExportsController extends AppController
                 $fpdf->Cell(15,7,$sale['quantity']." m3",'R,L'.$top,0, 'C', true);
                 $fpdf->Cell(25,7,number_format($sale['price'], 2, ".", ",")." ".$customer->rate->name,'R,L'.$top,0, 'C', true);
                 $fpdf->Cell(25,7,number_format($sale['list_price'], 2, ".", ",")." ".$customer->rate->name,'R,L'.$top,0, 'C', true);
-                $fpdf->Cell(25,7,number_format($sale['total'], 2, ".", ",")." ".$customer->rate->name,'R,L'.$top,0, 'C', true);
+                
                 if($sale['transport'] == 1){
                     $fpdf->Cell(20,7,number_format($sale['transport_fee'], 2, ".", ",")." ".$customer->rate->name,'L,R'.$top,0, 'C', true);
                 }else{
                     $fpdf->Cell(20,7,"",'L,R'.$top,0, 'C', true);
                 }
+                $fpdf->Cell(25,7,number_format($sale['total'], 2, ".", ",")." ".$customer->rate->name,'R,L'.$top,0, 'C', true);
                 
                 $fpdf->Ln();
                 $fpdf->setFillColor(255,255,255); 
@@ -352,8 +351,8 @@ class ExportsController extends AppController
             $fpdf->Cell(15,7,number_format($volume_prod, 2, ".", ",")." m3",'B,R,T',0, 'C');
             $fpdf->Cell(25,7,number_format($price, 2, ".", ",")." ".$customer->rate->name,'B,R,T',0, 'C');
             $fpdf->Cell(25,7,number_format($list_price, 2, ".", ",")." ".$customer->rate->name,'B,R,T',0, 'C');
-            $fpdf->Cell(25,7,number_format($total_prod, 2, ".", ",")." ".$customer->rate->name,'B,R,T',0, 'C');
             $fpdf->Cell(20,7,number_format($transport_fee, 2, ".", ",")." ".$customer->rate->name,'B,R,T',0, 'C');
+            $fpdf->Cell(25,7,number_format($total_prod, 2, ".", ",")." ".$customer->rate->name,'B,R,T',0, 'C');
             $fpdf->Ln();
             $products_results[$product_name] = array("fiches" => $increment_prod, "volume" => $volume_prod, "total" => $total_prod, 'transport' => $transport, 'transport_fee' => $transport_fee);
             $fpdf->Ln(10);
@@ -365,9 +364,9 @@ class ExportsController extends AppController
             $fpdf->Cell(70,7,"PRODUIT",'L,B,R,T',0, 'L');
             $fpdf->Cell(20,7,"VOYAGES",'B,R,T',0, 'C');
             $fpdf->Cell(25,7,"VOLUME (m3)",'B,R,T',0, 'C');
-            $fpdf->Cell(25,7,"TOTAL (".$customer->rate->name.")",'B,R,T',0, 'C');
             $fpdf->Cell(25,7,"TRANSPORT",'B,R,T',0, 'C');
             $fpdf->Cell(25,7,"FRAIS TRP",'B,R,T',0, 'C');
+            $fpdf->Cell(25,7,"TOTAL (".$customer->rate->name.")",'B,R,T',0, 'C');
             $fpdf->Ln();
 
             $fpdf->SetFont('Arial','',7); 
@@ -394,20 +393,20 @@ class ExportsController extends AppController
                 $fpdf->Cell(60,7,$key,'L,R'.$top,0, 'L', true);
                 $fpdf->Cell(20,7,$value['fiches'],'R,L'.$top,0, 'C', true);
                 $fpdf->Cell(25,7,number_format($value['volume'], 2, ".", ",")." m3",'R,L'.$top,0, 'C', true);
-                $fpdf->Cell(25,7,number_format($value['total'], 2, ".", ",")." ".$customer->rate->name,'R,L'.$top,0, 'C', true);
                 $fpdf->Cell(25,7,$value['transport'],'R,L'.$top,0, 'C', true);
                 $fpdf->Cell(25,7,number_format($value['transport_fee'], 2, ".", ",")." ".$customer->rate->name,'R,L'.$top,0, 'C', true);
+                $fpdf->Cell(25,7,number_format($value['total'], 2, ".", ",")." ".$customer->rate->name,'R,L'.$top,0, 'C', true);
                 $fpdf->Ln();
                 $fpdf->setFillColor(255,255,255); 
                 $i++;
             }   
-            $fpdf->SetFont('Arial','B',9); 
+            $fpdf->SetFont('Arial','B',8); 
             $fpdf->Cell(70,7,"TOTAL (".$customer->rate->name.")",'L,B,R,T',0, 'L');
             $fpdf->Cell(20,7,$fiches_r,'B,R,T',0, 'C');
             $fpdf->Cell(25,7,number_format($volume_r, 2, ".", ",")." m3",'B,R,T',0, 'C');
-            $fpdf->Cell(25,7,number_format($total_r, 2, ".", ",")." ".$customer->rate->name,'B,R,T',0, 'C');
             $fpdf->Cell(25,7,$transport_r,'B,R,T',0, 'C');
             $fpdf->Cell(25,7,number_format($transport_fee_r, 2, ".", ",")." ".$customer->rate->name,'B,R,T',0, 'C');
+            $fpdf->Cell(25,7,number_format($total_r, 2, ".", ",")." ".$customer->rate->name,'B,R,T',0, 'C');
             $fpdf->Ln();
         }
 
