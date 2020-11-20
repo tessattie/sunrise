@@ -48,7 +48,7 @@ class AppController extends Controller
     {
         parent::initialize();
 
-        define("ROOT_DIREC", '/vfm');
+        define("ROOT_DIREC", '/sunrise');
 
         $this->loadComponent('RequestHandler', [
             'enableBeforeRedirect' => false,
@@ -70,10 +70,8 @@ class AppController extends Controller
 
 
     public function beforeFilter(Event $event){
-
+        $this->loadModel('Rates');
         if($this->Auth->user()){
-            $this->loadModel("Receivings");$this->loadModel("Customers");$this->loadModel("Rates");
-            $ticket = $this->Receivings->find("all")->count() + 1 + 250000;
             if(empty($this->request->session()->read("from"))){
                 $this->request->session()->write("from", date("Y-m-d"));
             }
@@ -88,7 +86,6 @@ class AppController extends Controller
             $this->set('status', array(0 => "Inactif", 1 => "Actif"));
             $this->set('types_reductions', array(0 => "USD", 1 => "%"));
             $this->set('user_connected', $this->Auth->user());
-            $this->set('receiving_number', $ticket);
         }
     }
 
@@ -110,8 +107,8 @@ class AppController extends Controller
         if(!$file['error']){
             $extension = explode("/", $file['type'])[1];
             if(in_array($extension, $allowed_extensions)){
-                $dossier = '/var/www/html/app/webroot/img/'.$directory.'/';
-                // $dossier = 'C:/wamp/www'.ROOT_DIREC.'/webroot/img/'.$directory.'/';
+                // $dossier = '/var/www/html/app/webroot/img/'.$directory.'/';
+                $dossier = 'C:/wamp/www'.ROOT_DIREC.'/webroot/img/'.$directory.'/';
                 if(move_uploaded_file($file['tmp_name'], $dossier . $name . "." . $extension)){
                     return $name . "." . $extension;
                 }else{

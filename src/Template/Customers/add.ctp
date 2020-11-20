@@ -40,16 +40,16 @@ $customer_number = rand(1000, 9999);
             </div>
 
             <div class="row" style="margin-top:15px">
-                <div class="col-md-4"><?= $this->Form->control('credit_limit', array('class' => 'form-control', "label" => "Limite de Crédit *", "placeholder" => "Limite de Crédit (USD)")); ?></div>
-                <div class="col-md-4"><?= $this->Form->control('discount', array('class' => 'form-control', "type" => "text", "label" => "Réduction *", "placeholder" => "Réduction (USD)")); ?></div>
+                <div class="col-md-4"><?= $this->Form->control('credit_limit', array('class' => 'form-control', "label" => "Limite de Crédit *", "placeholder" => "Limite de Crédit")); ?></div>
+                <div class="col-md-4"><?= $this->Form->control('discount', array('class' => 'form-control', "type" => "text", "label" => "Réduction *", "placeholder" => "Réduction")); ?></div>
                 <div class="col-md-4"><?= $this->Form->control('discount_type', array('class' => 'form-control', "options" => $types_reductions, 'style' => "height:46px", "label" => "Type de Réduction *")); ?></div>
 
             </div>  
 
             <div class="row" style="margin-top:15px">
                 <div class="col-md-4"><?= $this->Form->control('phone', array('class' => 'form-control', "label" => "Téléphone", "placeholder" => "Téléphone")); ?></div>
-                <div class="col-md-4"><?= $this->Form->control('type', array('class' => 'form-control', "label" => "Type", "options" => array(1 => "Crédit", 2 => "Chèque"))); ?></div>
-                <div class="col-md-2"><?= $this->Form->control('status', array('class' => 'form-control', "label" => "Type", "options" => array(1 => "Actif", 0 => "Bloqué"))); ?></div>
+                <div class="col-md-4"><?= $this->Form->control('type', array('class' => 'form-control', "label" => "Type", "options" => array(1 => "Crédit", 2 => "Prépayé"))); ?></div>
+                <div class="col-md-2"><?= $this->Form->control('status', array('class' => 'form-control', "label" => "Statut", "options" => array(1 => "Actif", 0 => "Bloqué"))); ?></div>
                 <div class="col-md-2"><?= $this->Form->control('rate_id', array('class' => 'form-control', "label" => "Devise", "options" => array(1 => "HTG", 2 => "USD"))); ?></div>
 
             </div>   

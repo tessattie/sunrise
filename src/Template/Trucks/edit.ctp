@@ -33,49 +33,25 @@
             <?= $this->Form->create($truck, array('enctype' => 'multipart/form-data')) ?>
                 <div class="row">
                     <div class="col-md-4"><?= $this->Form->control('name', array('class' => 'form-control', "label" => "Nom *", "placeholder" => 'Nom')); ?></div>
-                    <div class="col-md-4"><?= $this->Form->control('immatriculation', array('class' => 'form-control', "label" => "Immatriculation *", "placeholder" => "Immatriculation")); ?></div>
+                    <div class="col-md-4"><?= $this->Form->control('immatriculation', array('class' => 'form-control', "label" => "Description *", "placeholder" => "Description")); ?></div>
                     <div class="col-md-4"><?= $this->Form->control('status', array('class' => 'form-control', "options" => $status, 'style' => "height:46px", "label" => "Statut *")); ?></div>
                 </div>
-                <hr>
-                <div class="row">
-                    <div class="col-md-6">
-                        <label>Benne : </label>
-                        <div class="row" style="margin-top:15px">
-                            <div class="col-md-4"><?= $this->Form->control('length', array('class' => 'form-control', "label" => "Longueur *", "placeholder" => 'Longueur')); ?></div>
-                            <div class="col-md-4"><?= $this->Form->control('width', array('class' => 'form-control', "label" => "Largeur *", "placeholder" => 'Largeur')); ?></div>
-                            <div class="col-md-4"><?= $this->Form->control('height', array('class' => 'form-control', "label" => "Hauteur *", "placeholder" => 'Hauteur')); ?></div>
-                        </div> 
-                    </div>
-
-                    <div class="col-md-6">
-                        <label>Verrin : </label>
-                        <div class="row" style="margin-top:15px">
-                        <div class="col-md-4"><?= $this->Form->control('lengthv', array('class' => 'form-control', "label" => "Longueur *", "placeholder" => 'Longueur')); ?></div>
-                            <div class="col-md-4"><?= $this->Form->control('widthv', array('class' => 'form-control', "label" => "Largeur *", "placeholder" => 'Largeur')); ?></div>
-                            <div class="col-md-4"><?= $this->Form->control('heightv', array('class' => 'form-control', "label" => "Hauteur *", "placeholder" => 'Hauteur')); ?></div>
-                            
-                        </div> 
-                    </div>
-                </div>
                  
                 <hr>
                 <div class="row">
                     <div class="col-md-6">
-                        <?= $this->Form->control('volume', array('class' => 'form-control', "label" => "Volume *", "placeholder" => 'Volume')); ?>
+                        <?= $this->Form->control('volume', array('class' => 'form-control', "label" => "Poid (LBS) *", "placeholder" => 'Poid (LBS)')); ?>
                     </div>
                 </div>
-                 
                 <hr>
                 <div class="row" style="margin-top:10px">
-                <div class="col-md-2">
-                    <?= $this->Html->image('trucks/'.$truck->photo, ["width" => "100%", "height" => "auto"]); ?>
-                </div>
-                    <div class="col-md-6"><?= $this->Form->control('photo', array('class' => 'form-control', "type" => 'file', 'label' => "Mettre à jour", "required" => false)); ?></div>
+                    <div class="col-md-6"><?= $this->Form->control('photo', array('class' => 'form-control', "type" => 'file', "required" => false)); ?></div>
+                    <div class="col-md-6"><?php if(!empty($truck->photo)) : ?><?= $this->Html->image('trucks/'.$truck->photo, ["width" => "100px", "height" => "auto"]); ?> <?php endif; ?></div>
                 </div> 
+
                 <div class="row">
                     <div class="col-md-12"><?= $this->Form->button(__('Valider'), array('class'=>'btn btn-success', "style"=>"margin-top:25px;float:right")) ?></div>
                 </div>  
-
 
             <?= $this->Form->end() ?>
         </div>

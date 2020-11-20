@@ -64,8 +64,8 @@
 
             <div class="row" style="margin-top:15px">
                 <div class="col-md-4"><?= $this->Form->control('phone', array('class' => 'form-control', "label" => "Téléphone", "placeholder" => "Téléphone", "required" => false)); ?></div>
-                <div class="col-md-4"><?= $this->Form->control('type', array('class' => 'form-control', "label" => "Type", "options" => array(1 => "Crédit", 2 => "Chèque"))); ?></div>
-                 <div class="col-md-2"><?= $this->Form->control('status', array('class' => 'form-control', "label" => "Type", "options" => array(1 => "Actif", 0 => "Bloqué"))); ?></div>
+                <div class="col-md-4"><?= $this->Form->control('type', array('class' => 'form-control', "label" => "Type", "options" => array(1 => "Crédit", 2 => "Prépayé"))); ?></div>
+                 <div class="col-md-2"><?= $this->Form->control('status', array('class' => 'form-control', "label" => "Statut", "options" => array(1 => "Actif", 0 => "Bloqué"))); ?></div>
                 <div class="col-md-2"><?= $this->Form->control('rate_id', array('class' => 'form-control', "label" => "Devise", "options" => array(1 => "HTG", 2 => "USD"))); ?></div>
             </div>   
             <div class="row">

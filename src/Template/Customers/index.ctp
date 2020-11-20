@@ -95,7 +95,7 @@
                     <?php if($customer->type == 1) : ?>
                         <td class="text-center"><span class="label label-info">CREDIT</span></td>
                     <?php else : ?>
-                        <td class="text-center"><span class="label label-warning">CHEQUE</span></td>
+                        <td class="text-center"><span class="label label-warning">PREPAYE</span></td>
                     <?php endif; ?>
 
                     <?php if($customer->rate_id == 1) : ?>

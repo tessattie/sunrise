@@ -12,7 +12,7 @@
  * @since         0.10.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-$cakeDescription = 'VFM';
+$cakeDescription = 'SUNRISE';
 ?>
 <!DOCTYPE html>
 <html>
@@ -80,7 +80,7 @@ $cakeDescription = 'VFM';
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span></button>
-                <a class="navbar-brand" href="#"><span>VFM</span>ATERIAUX</a>
+                <a class="navbar-brand" href="#"><span>SUNRISE</span>AIRWAYS</a>
                 
                 <ul class="nav navbar-top-links navbar-right">
 
@@ -156,18 +156,9 @@ $cakeDescription = 'VFM';
                     <li><a class="" href="<?= ROOT_DIREC ?>/customers/products">
                         <span class="fa fa-arrow-right">&nbsp;</span> Clients
                     </a></li>
-                    <li><a class="" href="<?= ROOT_DIREC ?>/movements">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Coffre
-                    </a></li>
                     <?php endif; ?>
                     <li><a class="" href="<?= ROOT_DIREC ?>/sales/products">
                         <span class="fa fa-arrow-right">&nbsp;</span> Ventes par produits
-                    </a></li>
-                    <li><a class="" href="<?= ROOT_DIREC ?>/sales/status">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Chargement et sortie
-                    </a></li>
-                    <li><a class="" href="<?= ROOT_DIREC ?>/sales/transport">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Transport
                     </a></li>
                 </ul>
             </li>
@@ -187,32 +178,6 @@ $cakeDescription = 'VFM';
                     </a></li>
                 </ul>
             </li>
-
-            <li class="parent <?= ($this->request->getParam('controller') == 'Receivings' || $this->request->getParam('controller') == 'Suppliers') ? 'active' : '' ?>"><a data-toggle="collapse" href="#sub-item-9">
-                <em class="fa fa-refresh">&nbsp;</em> Réceptions <span data-toggle="collapse" href="#sub-item-9" class="icon pull-right"><em class="fa fa-plus"></em></span>
-                </a>
-                <ul class="children collapse" id="sub-item-9">
-                    <li class="<?= ($this->request->getParam('controller') == 'Suppliers') ? 'active' : '' ?>" ><a class="" href="<?= ROOT_DIREC ?>/suppliers">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Fournisseurs
-                    </a></li>
-                    <li class="<?= ($this->request->getParam('controller') == 'Items') ? 'active' : '' ?>" ><a class="" href="<?= ROOT_DIREC ?>/items">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Produits
-                    </a></li>
-                    <li class="<?= ($this->request->getParam('controller') == 'Violations') ? 'active' : '' ?>" ><a class="" href="<?= ROOT_DIREC ?>/violations">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Contraventions
-                    </a></li>
-                    <li class="<?= ($this->request->getParam('controller') == 'Receivings') ? 'active' : '' ?>"><a class=""  href="<?= ROOT_DIREC ?>/receivings">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Réceptions
-                    </a></li>
-                    <li class="<?= ($this->request->getParam('controller') == 'Spayments') ? 'active' : '' ?>" ><a class="" href="<?= ROOT_DIREC ?>/spayments">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Paiements
-                    </a></li>
-                    <li><a class=""  href="<?= ROOT_DIREC ?>/receivings/add">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Nouvelle Réception
-                    </a></li>
-                </ul>
-            </li>
-
 
             <li class="parent <?= ($this->request->getParam('controller') == 'Users' || $this->request->getParam('controller') == 'Roles' || $this->request->getParam('controller') == 'Cards') ? 'active' : '' ?>"><a data-toggle="collapse" href="#sub-item-2">
                 <em class="fa fa-users">&nbsp;</em> Utilisateurs <span data-toggle="collapse" href="#sub-item-2" class="icon pull-right"><em class="fa fa-plus"></em></span>
@@ -247,14 +212,6 @@ $cakeDescription = 'VFM';
                         <span class="fa fa-arrow-right">&nbsp;</span> Spécials
                     </a></li>
 
-                    <li class="<?= ($this->request->getParam('controller') == 'Customers') ? 'active' : '' ?>"><a class=""  href="<?= ROOT_DIREC ?>/customers/simulation">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Simulation
-                    </a></li>
-
-                    <li class="<?= ($this->request->getParam('controller') == 'Requisitions') ? 'active' : '' ?>"><a class=""  href="<?= ROOT_DIREC ?>/requisitions">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Réquisitions
-                    </a></li>
-
                     <li><a class=""  href="<?= ROOT_DIREC ?>/customers/add">
                         <span class="fa fa-arrow-right">&nbsp;</span> Nouveau Client
                     </a></li>
@@ -262,7 +219,7 @@ $cakeDescription = 'VFM';
             </li>
         <?php endif; ?>
             <?php if($user_connected['role_id'] != 4) : ?>
-            <li class="<?= ($this->request->getParam('controller') == 'Trucks') ? 'active' : '' ?>"><a  href="<?= ROOT_DIREC ?>/trucks"><em class="fa fa-truck">&nbsp;</em> Camions</a></li>
+            <li class="<?= ($this->request->getParam('controller') == 'Trucks') ? 'active' : '' ?>"><a  href="<?= ROOT_DIREC ?>/trucks"><em class="fa fa-truck">&nbsp;</em> Paquets</a></li>
         <?php   endif; ?>
         
             <?php if($user_connected['role_id'] != 5 && $user_connected['role_id'] != 4) : ?>
@@ -275,12 +232,6 @@ $cakeDescription = 'VFM';
                     <li class="<?= ($this->request->getParam('controller') == 'Pointofsales') ? 'active' : '' ?>"><a  href="<?= ROOT_DIREC ?>/pointofsales"><em class="fa fa-arrow-right">&nbsp;</em> POS</a></li>
                     <li class="<?= ($this->request->getParam('controller') == 'Rates') ? 'active' : '' ?>"><a class=""  href="<?= ROOT_DIREC ?>/rates">
                         <span class="fa fa-arrow-right">&nbsp;</span> Taux du jour
-                    </a></li>
-                    <li class="<?= ($this->request->getParam('controller') == 'Currencies') ? 'active' : '' ?>"><a class=""  href="<?= ROOT_DIREC ?>/currencies">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Coffre
-                    </a></li>
-                    <li class="<?= ($this->request->getParam('controller') == 'Notes') ? 'active' : '' ?>"><a class=""  href="<?= ROOT_DIREC ?>/notes">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Motifs
                     </a></li>
                     <li  class="<?= ($this->request->getParam('controller') == 'Methods') ? 'active' : '' ?>"><a class=""  href="<?= ROOT_DIREC ?>/methods">
                         <span class="fa fa-arrow-right">&nbsp;</span> Paiements

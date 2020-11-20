@@ -42,11 +42,5 @@ class Truck extends Entity
         'user' => true,
         'sales' => true,
         'name' => true,
-        'length' => true,
-        'width' => true,
-        'height' => true,
-        'widthv' => true,
-        'lengthv' => true,
-        'heightv' => true,
     ];
 }

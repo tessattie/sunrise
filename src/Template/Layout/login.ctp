@@ -13,7 +13,7 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
-$cakeDescription = 'VFM';
+$cakeDescription = 'SUNRISE';
 ?>
 <!DOCTYPE html>
 <html>
@@ -45,7 +45,7 @@ $cakeDescription = 'VFM';
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span></button>
-                <a class="navbar-brand" href="#"><span>VFM</span>ATERIAUX</a>
+                <a class="navbar-brand" href="#"><span>SUNRISE</span>AIRWAYS</a>
 
             </div>
         </div><!-- /.container-fluid -->

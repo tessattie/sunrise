@@ -51,20 +51,6 @@ class TrucksTable extends Table
             'joinType' => 'LEFT'
         ]);
 
-        $this->hasMany('Receivings', [
-            'foreignKey' => 'truck_id'
-        ]);
-
-        $this->belongsToMany('Suppliers', [
-            'foreignKey' => 'truck_id',
-            'targetForeignKey' => 'supplier_id',
-            'joinTable' => 'suppliers_trucks'
-        ]);
-
-        $this->hasMany('SuppliersTrucks', [
-            'foreignKey' => 'truck_id'
-        ]);
-
         $this->setDisplayField('immatriculation');
     }
 
@@ -85,10 +71,6 @@ class TrucksTable extends Table
             ->maxLength('immatriculation', 15)
             ->requirePresence('immatriculation', 'create')
             ->allowEmptyString('immatriculation', false);
-
-        $validator
-            ->scalar('photo')
-            ->maxLength('photo', 255);
 
         $validator
             ->numeric('volume')

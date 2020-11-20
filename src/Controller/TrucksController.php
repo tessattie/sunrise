@@ -26,7 +26,7 @@ class TrucksController extends AppController
         ini_set('memory_limit', '1024M');
         $from = $this->request->session()->read("from")." 00:00:00";
         $to = $this->request->session()->read("to")." 23:59:59";
-        $trucks = $this->Trucks->find('all', array('order' => array("immatriculation ASC")))->contain(['Users', 'Sales' => ['conditions' => ['Sales.created >=' => $from, 'Sales.created <=' => $to]]]);
+        $trucks = $this->Trucks->find('all', array('order' => array("immatriculation ASC"), 'conditions' => array('Trucks.status' => 1)))->contain(['Users', 'Sales' => ['conditions' => ['Sales.created >=' => $from, 'Sales.created <=' => $to]]]);
 
         $this->set(compact('trucks'));
     }
@@ -98,21 +98,29 @@ class TrucksController extends AppController
         if ($this->request->is('post')) {
             $truck = $this->Trucks->patchEntity($truck, $this->request->getData());
             $featured_image = false;
-            // if(!empty($this->request->data['photo']['tmp_name'])){
-            //     $featured_image = $this->checkfile($this->request->data['photo'], $truck->immatriculation, 'trucks');
-            // }
-            // if($featured_image != false){
-            //     $truck->photo = $featured_image;
-            // }
+            
 
-            $truck->photo = $truck->immatriculation.".jpg";
             $truck->user_id = $this->Auth->user()['id']; 
+
+            // debug($truck); die();
             if ($ident = $this->Trucks->save($truck)) {
-                $this->Flash->success(__('Le camion a bien été sauvegardée'));
+               
+                $this->Flash->success(__('Le paquet a bien été sauvegardée'));
+                $tr = $this->Trucks->get($ident['id']);
+
+                if(!empty($this->request->data['photo']['tmp_name'])){
+                    $featured_image = $this->checkfile($this->request->data['photo'], $tr->id, 'trucks');
+                }
+                if($featured_image != false){
+                    $tr->photo = $featured_image;
+                }
+                $this->Trucks->save($tr);
 
                 return $this->redirect(['action' => 'add']);
+            }else{
+                debug("unable to save"); die();
             }
-            $this->Flash->error(__('Nous n\'avons pas pu sauvegarder le camion. Réessayez plus-tard'));
+            $this->Flash->error(__('Nous n\'avons pas pu sauvegarder le paquet. Réessayez plus-tard'));
         }
         $users = $this->Trucks->Users->find('list', ['limit' => 200]);
         $this->set(compact('truck', 'users'));
@@ -170,7 +178,7 @@ class TrucksController extends AppController
             // debug($this->request->getData())
             $truck = $this->getTruck($this->request->getData()['immatriculation']);
             if($truck == false){
-                $this->Flash->error(__('Nous n\'avons pas trouvé un camion avec cette immatriculation.'));
+                $this->Flash->error(__('Nous n\'avons pas trouvé un paquet avec ce nom.'));
             }else{
                 $this->loadModel('SuppliersTrucks'); 
                 $sp = $this->SuppliersTrucks->newEntity();
@@ -207,9 +215,9 @@ class TrucksController extends AppController
         $this->request->allowMethod(['post', 'delete', 'get']);
         $truck = $this->Trucks->get($id);
         if ($this->Trucks->delete($truck)) {
-            $this->Flash->success(__('Camion Supprimé'));
+            $this->Flash->success(__('Paquet Supprimé'));
         } else {
-            $this->Flash->error(__('Impossible de supprimer ce camion.'));
+            $this->Flash->error(__('Impossible de supprimer ce paquet.'));
         }
         return $this->redirect(['action' => 'nosales']);
     }

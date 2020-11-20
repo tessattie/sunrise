@@ -40,8 +40,7 @@
 					<th>Catégorie</th>
                     <th>Produit</th>
                     <th>Abréviation</th>
-                    <th class="text-center">Prix Cash</th>
-                    <th class="text-center">Prix Crédit</th>
+                    <th class="text-center">Prix (USD)</th>
                     <th class="text-center">Statut</th>
                     <th class="text-center">Date de création</th>
                     <th>Favori</th>
@@ -53,7 +52,6 @@
 					<td><?= $product->category->name ?></td>
                     <td><a href="<?= ROOT_DIREC ?>/products/view/<?= $product->id ?>"><?= $product->name ?></a></td>
                     <td><a href="<?= ROOT_DIREC ?>/products/view/<?= $product->id ?>"><?= $product->abbreviation ?></a></td>
-                    <td class="text-center"><?= number_format($product->cash_price, 2, ".", ",") ?> HTG</td>
                     <td class="text-center"><?= number_format($product->credit_price, 2, ".", ",") ?> USD</td>
                     <?php if($product->status == 1) : ?>
                         <td class="text-center">  <span class="label label-success"> <?= $status[$product->status] ?></span></td>

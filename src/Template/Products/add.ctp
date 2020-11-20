@@ -40,8 +40,7 @@
                     
                 </div>  
                 <div class="row" style="margin-top:15px">
-                <div class="col-md-4"><?= $this->Form->control('cash_price', array('class' => 'form-control', "label" => "Prix Cash (HTG) *", "placeholder" => "Prix Cash (HTG)")); ?></div>
-                <div class="col-md-4"><?= $this->Form->control('credit_price', array('class' => 'form-control', "type" => "text", "label" => "Prix Crédit (USD) *", "placeholder" => "Prix crédit (USD)")); ?></div>
+                <div class="col-md-4"><?= $this->Form->control('credit_price', array('class' => 'form-control', "type" => "text", "label" => "Prix (USD) *", "placeholder" => "Prix (USD)")); ?></div>
                     <div class="col-md-4"><?= $this->Form->control('status', array('class' => 'form-control', "options" => $status, 'style' => "height:46px", "label" => "Statut *")); ?></div>
     
                 </div>   
