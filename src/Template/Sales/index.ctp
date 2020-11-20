@@ -36,13 +36,7 @@ $ouinon = array(0=> "Non", 1 => "Oui");
                         <?= $this->Form->control('reussies', array('class' => 'form-control',"options" => array(1 => "Réussies", 2 => "Annulées"), "label" => false, "style" => "width:100%")); ?>
                     </div>
                     <div class="col-md-2">
-                        <?= $this->Form->control('transport', array('class' => 'form-control',"options" => array(1 => "Tous", 2 => "Transport", 3 => "Non-Transport"), "label" => false, "style" => "width:100%")); ?>
-                    </div>
-                    <div class="col-md-2">
-                        <?= $this->Form->control('user_id', array('class' => 'form-control', "empty" => "-- Caissier --", "options" => $users, "label" => false, "style" => "width:100%")); ?>
-                    </div>
-                    <div class="col-md-2">
-                        <?= $this->Form->control('type', array('class' => 'form-control', "empty" => "-- Type --", "options" => array(1 => "Camions", 2 => "Canters"), "label" => false, "style" => "width:100%")); ?>
+                        <?= $this->Form->control('user_id', array('class' => 'form-control', "empty" => "-- Agent --", "options" => $users, "label" => false, "style" => "width:100%")); ?>
                     </div>
 
                     <div class="col-md-1">

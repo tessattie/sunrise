@@ -69,6 +69,16 @@ class SalesTable extends Table
             'foreignKey' => 'sale_id'
         ]);
 
+        $this->belongsTo('Receivers', [
+            'foreignKey' => 'receiver_id',
+            'joinType' => 'INNER'
+        ]);
+
+        $this->belongsTo('Stations', [
+            'foreignKey' => 'station_id',
+            'joinType' => 'INNER'
+        ]);
+
         $this->hasMany('PaymentsSales', [
             'foreignKey' => 'sale_id',
             'joinType' => 'LEFT'

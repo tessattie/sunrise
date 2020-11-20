@@ -2,18 +2,18 @@
     <thead> 
         <th>Numéro</th>
         <th>Type</th>
-        <th class="text-center">Caissier</th>
+        <th class="text-center">Agent</th>
         <th class="text-center">Client</th>
-        <th class="text-center">Camion</th>
-        <th class="text-center">Chargé</th>
-        <th class="text-center">Sortie</th>
+        <th class="text-center">Destinataire</th>
+        <th class="text-center">Paquet</th>
+        <th class="text-center">En Route</th>
+        <th class="text-center">Livré</th>
         <th class="text-center">Produit</th>
-        <th class="text-center">Volume</th>
+        <th class="text-center">Poid (LBS)</th>
         <th class="text-center">Total HTG</th>
         <th class="text-center">Total USD</th>
         <th class="text-center">Date</th>
         <th class="text-center">Heure</th>
-        <th class="text-center">Transport</th>
         <th></th>
     </thead>
     <tbody> 
@@ -42,6 +42,7 @@
         </td>
         <td class="text-center"><?= $sale->has('user') ? $this->Html->link(substr($sale->user->last_name, 0,1).substr($sale->user->first_name, 0,1), ['controller' => 'Users', 'action' => 'view', $sale->user->id]) : '' ?></td>
         <td class="text-center"><?= $sale->has('customer') ? $this->Html->link(substr($sale->customer->first_name." ".$sale->customer->last_name, 0, 15), ['controller' => 'Customers', 'action' => 'view', $sale->customer->id]) : '' ?></td>
+        <td class="text-center"><?= $sale->has('receiver') ? $this->Html->link(substr($sale->receiver->name, 0, 15), ['controller' => 'Receivers', 'action' => 'edit', $sale->receiver->id]) : '' ?></td>
         <td class="text-center"><?= $sale->has('truck') ? $this->Html->link($sale->truck->immatriculation, ['controller' => 'Trucks', 'action' => 'view', $sale->truck->id]) : '' ?></td>
 
         <?php if($sale->charged == 0) : ?>
@@ -88,22 +89,16 @@
         
         <td class="text-center"><?= date('Y-m-d', strtotime($sale->created)) ?></td>
         <td class="text-center"><?= date('h:i A', strtotime($sale->created)) ?></td>
-        <?php if($sale->transport == 0) : ?>
-            <td class="text-center"><span class="label label-default">Non</span></td>
-        <?php else : ?>
-            <td class="text-center"><span class="label label-primary">Oui</span></td>
-        <?php endif; ?>
-        <td class="text-right"><a href="<?= ROOT_DIREC ?>/sales/edit/<?= $sale->id ?>" style="font-size:1.3em!important;"><span class="fa fa-xl fa-pencil color-blue"></span></a></td>
+        <td class="text-right"><a href="<?= ROOT_DIREC ?>/sales/view/<?= $sale->id ?>" style="font-size:1.3em!important;"><span class="fa fa-xl fa-pencil color-blue"></span></a></td>
     </tr>
     <?php endforeach; ?>
     </tbody>
     <tfoot>
-        <th>Total (<?= $increment ?> VOYAGES)</th>
-        <th colspan="7"></th>
+        <th>Total (<?= $increment ?> PAQUETS)</th>
+        <th colspan="8"></th>
         <th class="text-center"><?= number_format($volume, 2, ".", ",") ?></th>
         <th class="text-center"><?= number_format($total, 2, ".", ",") ?></th>
         <th class="text-center"><?= number_format($total_us, 2, ".", ",") ?></th>
-        <th></th>
         <th></th>
         <th></th>
         <th></th>
