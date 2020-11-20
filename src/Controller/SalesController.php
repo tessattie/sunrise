@@ -69,20 +69,20 @@ class SalesController extends AppController
             }
             if($this->request->getData()['type'] == 1){
                 $truck_type = 1;
-                $sales = $this->Sales->find('all', array('order' => array("Sales.created DESC"), "conditions" => array("Sales.created >=" => $from, "Sales.created <=" => $to, $condition)))->contain(['Users', 'Customers', 'Trucks', 'Pointofsales', "ProductsSales" => ['Products']])->matching('ProductsSales', function ($q) {
+                $sales = $this->Sales->find('all', array('order' => array("Sales.created DESC"), "conditions" => array("Sales.created >=" => $from, "Sales.created <=" => $to, $condition)))->contain(['Users', 'Customers', 'Trucks', 'Pointofsales', "ProductsSales" => ['Products'], 'Receivers'])->matching('ProductsSales', function ($q) {
                         return $q->where(['ProductsSales.quantity >' => 3]);
                     });
             }elseif($this->request->getData()['type'] == 2){
                 $truck_type = 2;
-               $sales = $this->Sales->find('all', array('order' => array("Sales.created DESC"), "conditions" => array("Sales.created >=" => $from, "Sales.created <=" => $to, $condition)))->contain(['Users', 'Customers', 'Trucks', 'Pointofsales', "ProductsSales" => ['Products']])->matching('ProductsSales', function ($q) {
+               $sales = $this->Sales->find('all', array('order' => array("Sales.created DESC"), "conditions" => array("Sales.created >=" => $from, "Sales.created <=" => $to, $condition)))->contain(['Users', 'Customers', 'Trucks', 'Pointofsales', "ProductsSales" => ['Products'], 'Receivers'])->matching('ProductsSales', function ($q) {
                         return $q->where(['ProductsSales.quantity <=' => 3]);
                     });
             }else{
                 $truck_type = 0;
-                $sales = $this->Sales->find('all', array('order' => array("Sales.created DESC"), "conditions" => array("Sales.created >=" => $from, "Sales.created <=" => $to, $condition)))->contain(['Users', 'Customers', 'Trucks', 'Pointofsales', 'ProductsSales'  => ['Products']]);
+                $sales = $this->Sales->find('all', array('order' => array("Sales.created DESC"), "conditions" => array("Sales.created >=" => $from, "Sales.created <=" => $to, $condition)))->contain(['Users', 'Customers', 'Trucks', 'Pointofsales', 'ProductsSales'  => ['Products'], 'Receivers']);
             }
         }else{
-		$sales = $this->Sales->find('all', array('order' => array("Sales.created DESC"), "conditions" => array("Sales.created >=" => $from, "Sales.created <=" => $to, $condition)))->contain(['Users', 'Customers', 'Trucks', 'Pointofsales', "ProductsSales"  => ['Products']]);
+		$sales = $this->Sales->find('all', array('order' => array("Sales.created DESC"), "conditions" => array("Sales.created >=" => $from, "Sales.created <=" => $to, $condition)))->contain(['Users', 'Receivers', 'Customers', 'Trucks', 'Pointofsales', "ProductsSales"  => ['Products']]);
         }
 
         $customers = $this->Sales->Customers->find('list', [ "order" => ['last_name ASC'],
