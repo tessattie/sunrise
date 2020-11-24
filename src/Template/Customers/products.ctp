@@ -25,21 +25,19 @@
 <div class="container-fluid"> 
     <div class="panel panel-default articles">
         <div class="panel-heading">
-            Ventes Clients
+            Ventes par clients
         </div>
         <div class="panel-body articles-container">
             <table class="table datatable">
                 <thead>
                     <th style="width:110px"></th>
-                    <th>TOTAL HTG</th>
-                    <th>TOTAL USD</th>
+                    <th class="text-center">TOTAL HTG</th>
+                    <th class="text-center">TOTAL USD</th>
                     <?php $i = 1; ?>
                     <?php foreach($products as $product) : ?>
                         <?php $i = $i+1; ?>
-                        <th><?= $product->abbreviation ?></th>
                     <?php endforeach; ?>
-                    <th>VOLUME</th>
-                    <th>TRANSPORT</th>
+                    <th class="text-right">POID (LBS)</th>
                 </thead>
             
             <tbody>
@@ -56,10 +54,8 @@
                     <?php $volume = 0 ?>
                     <?php foreach($customer->products as $prd) : ?>
                         <?php $volume = $volume + $prd['total_sold'] ?>
-                        <td class="text-center"><?= number_format($prd['total_sold'],2,".",",") ?></td>
                     <?php endforeach; ?>
-                    <th class="text-center"><?= number_format($volume, 2, ".", ",") ?></th>
-                    <td class="text-center"><?= $customer->transport ?></td>
+                    <th class="text-right"><?= number_format($volume, 2, ".", ",") ?> LBS</th>
                     </tr>
                     <?php $number++ ?>
                 <?php endif; ?>
@@ -74,12 +70,7 @@
 <script type="text/javascript">$(document).ready( function () {
     $('.datatable').DataTable({
             "ordering": false,
-            dom: 'Bfrtip',
-            buttons: [
-                'pdf', 'print'
-            ],
             scrollY: "400px",
-            scrollX: "2700px",
             scrollCollapse: true,
             paging: false,
         });

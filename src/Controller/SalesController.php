@@ -92,7 +92,7 @@ class SalesController extends AppController
             }
         ]);  
 
-        $users = $this->Sales->Users->find('all', [ "conditions" => array('id=9 OR id=15 OR id=11'), "order" => ['first_name ASC'],
+        $users = $this->Sales->Users->find('all', ["order" => ['first_name ASC'],
             'keyField' => 'id',
             'valueField' => function ($u) {
                 return $u->get('name');

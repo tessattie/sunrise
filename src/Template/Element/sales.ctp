@@ -8,7 +8,6 @@
         <th class="text-center">Paquet</th>
         <th class="text-center">En Route</th>
         <th class="text-center">Livré</th>
-        <th class="text-center">Produit</th>
         <th class="text-center">Poid (LBS)</th>
         <th class="text-center">Total HTG</th>
         <th class="text-center">Total USD</th>
@@ -64,7 +63,6 @@
                 $increment = $increment + 1;
             ?>
             <?php $volume = $volume + $sale->products_sales[0]->quantity; ?>            
-            <td class="text-center"><?= $sale->products_sales[0]->product->abbreviation ?></td>
             <td class="text-center"><?= $sale->products_sales[0]->quantity ?></td>
             <td class="text-center">-</td>
             <td class="text-center"><?= number_format($sale->total, 2, ".", ",") ?></td>
@@ -74,12 +72,10 @@
                 $increment = $increment + 1;
             ?>
             <?php $volume = $volume + $sale->products_sales[0]->quantity; ?>
-            <td class="text-center"><?= $sale->products_sales[0]->product->abbreviation ?></td>
             <td class="text-center"><?= $sale->products_sales[0]->quantity ?></td>
             <td class="text-center"><?= number_format($sale->total, 2, ".", ",") ?></td>
             <td class="text-center">-</td>
         <?php else : ?>
-            <td class="text-center"><?= $sale->products_sales[0]->product->abbreviation ?></td>
             <td class="text-center"><?= $sale->products_sales[0]->quantity ?></td>
             <td class="text-center">-</td>
             <td class="text-center">-</td>
@@ -95,7 +91,7 @@
     </tbody>
     <tfoot>
         <th>Total (<?= $increment ?> PAQUETS)</th>
-        <th colspan="8"></th>
+        <th colspan="7"></th>
         <th class="text-center"><?= number_format($volume, 2, ".", ",") ?></th>
         <th class="text-center"><?= number_format($total, 2, ".", ",") ?></th>
         <th class="text-center"><?= number_format($total_us, 2, ".", ",") ?></th>

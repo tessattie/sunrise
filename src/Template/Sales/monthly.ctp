@@ -32,9 +32,8 @@ $years = array("2019" => "2019", "2020" => "2020", '2021' => '2021', '2022' => '
                     <?php $i = 1; ?>
                     <?php foreach($products as $product) : ?>
                         <?php $i = $i+1; ?>
-                        <th class="text-center"><?= $product->abbreviation ?></th>
                     <?php endforeach; ?>
-                    <th class="text-center">TOTAL (M3)</th>
+                    <th class="text-right">TOTAL (LBS)</th>
                 </thead>
             
             <tbody>
@@ -59,9 +58,8 @@ $years = array("2019" => "2019", "2020" => "2020", '2021' => '2021', '2022' => '
                                 
                             ?>
                             
-                        <td class="text-center"><?= $volume ?></td>
                     <?php endforeach; ?>
-                        <th class="text-center"><?= number_format($product_total, 2, ".", ",")  ?></th>
+                        <th class="text-right"><?= number_format($product_total, 2, ".", ",")  ?></th>
                     <?php $current = date('Y-m-d', strtotime($current . ' + 1 day')); ?>
                 <?php endwhile; ?>
 
@@ -74,7 +72,7 @@ $years = array("2019" => "2019", "2020" => "2020", '2021' => '2021', '2022' => '
                         <?php $last_total = $last_total + $product->total; ?>
                         <th class="text-center"><?= number_format($product->total, 2, ".", ",") ?></th>
                     <?php endforeach; ?>
-                    <th class="text-center"><?= number_format($last_total, 2, ".", ",") ?></th>
+                    <th class="text-right"><?= number_format($last_total, 2, ".", ",") ?></th>
                 </tr>
             </tfoot>
             </table>
@@ -86,12 +84,7 @@ $years = array("2019" => "2019", "2020" => "2020", '2021' => '2021', '2022' => '
 <script type="text/javascript">$(document).ready( function () {
     $('.datatable').DataTable({
         "ordering": false,
-        dom: 'Bfrtip',
-        buttons: [
-            'pdf', 'print'
-        ],
         scrollY: "400px",
-        scrollX: "2700px",
         scrollCollapse: true,
         paging: false,
     });

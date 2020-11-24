@@ -22,7 +22,9 @@ if($sale->status == 0){
     </ol>
 </div>
 <div id="invoice">
-    <div class="invoice overflow-auto">
+
+<div class="invoice overflow-auto">
+    
 <?php if($sale->status == 0 || $sale->status == 3 || $sale->status == 7 || $sale->status == 8) : ?>
     <p class= "bg bg-info" style="padding:10px;text-align:center"> Fiche Crédit</p>
 <?php endif; ?>
@@ -40,23 +42,17 @@ if($sale->status == 0){
                 <div class="row contacts">
                     <div class="col-md-6 invoice-to">
                         <div class="text-gray-light">FICHE #<?= $sale->sale_number ?></div>
-                        <?php if(!empty($sale->requisitions_sales[0]->requisition->uid)) : ?>
-                            <div class="text-gray-light">REQUISITION #<?= $sale->requisitions_sales[0]->requisition->uid ?></div>
-                        <?php endif; ?>
-                        <div class="text-gray-light">Client : <?= $sale->has('customer') ? $this->Html->link($sale->customer->last_name, ['controller' => 'Customers', 'action' => 'view', $sale->customer->id]) : '' ?></div>
-                        <div class="text-gray-light">Camion : <?= $sale->has('truck') ? $this->Html->link($sale->truck->immatriculation, ['controller' => 'Trucks', 'action' => 'view', $sale->truck->id]) : '' ?></div>
-                        <div class="text-gray-light">Caissier : <?= $sale->has('user') ? $this->Html->link($sale->user->first_name." ".$sale->user->last_name, ['controller' => 'Users', 'action' => 'view', $sale->user->id]) : '' ?></div>
-                        <?php if($sale->transport == 1) : ?>
-                    <span class="label label-default" style="margin-top:7px">Fiche Transport</span>
-                <?php endif; ?>
+                        <div class="text-gray-light">Client (Expéditeur) : <?= $sale->has('customer') ? $this->Html->link(strtoupper($sale->customer->last_name)." ".$sale->customer->first_name, ['controller' => 'Customers', 'action' => 'view', $sale->customer->id]) : '' ?></div>
+                        <div class="text-gray-light">Produit : <?= $sale->has('truck') ? $this->Html->link($sale->truck->immatriculation, ['controller' => 'Trucks', 'action' => 'view', $sale->truck->id]) : '' ?></div>
+                        <div class="text-gray-light">Agent : <?= $sale->has('user') ? $this->Html->link($sale->user->first_name." ".$sale->user->last_name, ['controller' => 'Users', 'action' => 'view', $sale->user->id]) : '' ?></div>
                     </div>
                     <div class="col-md-6 invoice-details">
                     <?php if($sale->status == 0 || $sale->status == 1 || $sale->status == 4|| $sale->status == 6 || $sale->status == 7) : ?>
                     <button class="btn btn-danger" style="margin-bottom:10px"><a href="<?= ROOT_DIREC ?>/sales/cancel/<?= $sale->id ?>" style="color:white">Annuler</a></button>
                 <?php endif; ?>
                         <div class="date">Date : <?= $sale->created ?></div>
-                        <div class="date">Chargé : <?= ($sale->charged == 0) ? "<label class='label label-danger'>Non</label>" : "<label class='label label-success'>Oui</label>" ?></div>
-                        <div class="date">Sorti : <?= ($sale->sortie == 0) ? "<label class='label label-danger'>Non</label>" : "<label class='label label-success'>Oui</label>" ?></div>
+                        <div class="date">En route : <?= ($sale->charged == 0) ? "<label class='label label-danger'>Non</label>" : "<label class='label label-success'>Oui</label>" ?></div>
+                        <div class="date">Livré : <?= ($sale->sortie == 0) ? "<label class='label label-danger'>Non</label>" : "<label class='label label-success'>Oui</label>" ?></div>
 
                     </div>
                 </div>
@@ -66,7 +62,7 @@ if($sale->status == 0){
                             <th>#</th>
                             <th class="text-left">PRODUIT</th>
                             <th class="text-center">PRIX (M3)</th>
-                            <th class="text-center">CAPACITE CAMION</th>
+                            <th class="text-center">POID</th>
                             <th class="text-right">TOTAL</th>
                         </tr>
                     </thead>
@@ -81,7 +77,7 @@ if($sale->status == 0){
                                 </h3>
                             </td>
                             <td class="unit text-center"><?= number_format($sp->price,2, ".", ",") ?> <?= $currency ?></td>
-                            <td class="qty text-center"><?= $sp->quantity ?> m3</td>
+                            <td class="qty text-center"><?= $sp->quantity ?> LBS</td>
                             <td class="total"><?= number_format($sp->price*$sp->quantity,2, ".", ",") ?><?= $currency ?></td>
                         </tr>
                     <?php endforeach; ?>
@@ -91,11 +87,6 @@ if($sale->status == 0){
                             <td colspan="2"></td>
                             <td colspan="2">SOUS-TOTAL</td>
                             <td><?= number_format($sale->subtotal,2, ".", ",") ?> <?= $currency ?></td>
-                        </tr>
-                        <tr>
-                            <td colspan="2"></td>
-                            <td colspan="2">TRANSPORT</td>
-                            <td><?= number_format($sale->transport_fee,2, ".", ",") ?> <?= $currency ?></td>
                         </tr>
                         <tr>
                             <td colspan="2"></td>
@@ -117,7 +108,12 @@ if($sale->status == 0){
             <?php endif; ?>
         </div>
         <!--DO NOT DELETE THIS div. IT is responsible for showing footer always at the bottom-->
-        <div></div>
+        <div class="row" style="margin-bottom:25px">
+        <div class="col-md-4">
+        <label>Photo du colis :</label><br>
+            <?= $this->Html->image('load/truck.jpg', ['alt' => 'CakePHP']); ?>
+        </div>
+    </div>
     </div>
 </div>
 <style type="text/css">

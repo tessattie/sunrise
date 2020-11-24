@@ -13,7 +13,7 @@
     color: white;text-decoration:none!important;cursor:pointer">Exporter</a>
 </div>
 
-<div class="panel panel-container" style="margin-bottom:50px">
+<div class="panel panel-container" style="margin-bottom:20px">
 	<div class="row">
 		<div class="col-xs-6 col-md-3 col-lg-3 no-padding">
 			<div class="panel panel-teal panel-widget border-right">
@@ -35,7 +35,7 @@
 			<div class="panel panel-blue panel-widget border-right">
 				<div class="row no-padding"><em class="fa fa-xl fa-cube color-orange"></em>
 					<div style="font-size:22px;margin-bottom:7px" class="medium"><?= number_format($volume, 2, ".", ",") ?> M3</div>
-					<div class="text-muted">Volume Total</div>
+					<div class="text-muted">Poid Total</div>
 				</div>
 			</div>
 		</div>
@@ -54,7 +54,7 @@
 	<div class="col-lg-12">
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				Ventes Totales</div>
+				Ventes totales</div>
 			<div class="panel-body">
 				<table class="table table-bordered">
 					<thead>
@@ -86,24 +86,12 @@
 	</div>
 	</div>
 
-<div class="row">
-	<div class="col-lg-12">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				Ventes par produit</div>
-			<div class="panel-body">
-				<div class="canvas-wrapper">
-					<canvas class="main-chart" id="bar-chart" height="300" width="600"></canvas>
-				</div>
-			</div>
-		</div>
-	</div>
-</div><!--/.row-->	
+
 <div class="row">
 	<div class="col-md-6">
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				Volumes par type de Camion 
+				Poid par type de paquet 
 				</div>
 			<div class="panel-body">
 				<div class="canvas-wrapper">
@@ -111,9 +99,9 @@
 				</div>
 				<div class="row">
 					<div class="col-md-12">
-						<span class="legendcolor" style="float:right;padding:5px;margin-left:5px;color:white;background:#1ebfae;border-radius:2px">CANTERS : <?= $truck_ratios[2]['value'] ?> VOY</span>
-						<span class="legendcolor" style="float:right;padding:5px;margin-left:5px;color:white;background:#ffb53e;border-radius:2px">6 ROUES : <?= $truck_ratios[1]['value'] ?> VOY</span>
-						<span class="legendcolor" style="float:right;padding:5px;margin-left:5px;color:white;background:#30a5ff;border-radius:2px">10 ROUES : <?= $truck_ratios[0]['value'] ?> VOY</span>
+						<span class="legendcolor" style="float:right;padding:5px;margin-left:5px;color:white;background:#1ebfae;border-radius:2px">PETITS : <?= $truck_ratios[2]['value'] ?> VOY</span>
+						<span class="legendcolor" style="float:right;padding:5px;margin-left:5px;color:white;background:#ffb53e;border-radius:2px">MOYENS : <?= $truck_ratios[1]['value'] ?> VOY</span>
+						<span class="legendcolor" style="float:right;padding:5px;margin-left:5px;color:white;background:#30a5ff;border-radius:2px">GROS : <?= $truck_ratios[0]['value'] ?> VOY</span>
 					</div>
 				</div>
 			</div>
@@ -122,7 +110,7 @@
 	<div class="col-md-6">
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				Qté de Fiches Chèque / Cash / Crédit</div>
+				Qté de fiches Chèque / Cash / Crédit</div>
 			<div class="panel-body">
 				<div class="canvas-wrapper">
 					<canvas class="chart" id="doughnut-chart" ></canvas>
@@ -132,7 +120,6 @@
 						<span class="legendcolor" style="float:right;padding:5px;margin-left:5px;color:white;background:#30a5ff;border-radius:2px">CASH : <?= $transport_ratios[0]['value'] ?></span>
 						<span class="legendcolor" style="float:right;padding:5px;margin-left:5px;color:white;background:#ffb53e;border-radius:2px">CREDIT : <?= $transport_ratios[1]['value'] ?></span>
 						<span class="legendcolor" style="float:right;padding:5px;margin-left:5px;color:white;background:#1ebfae;border-radius:2px">CHEQUE : <?= $transport_ratios[2]['value'] ?></span>
-						<span class="legendcolor" style="float:right;padding:5px;margin-left:5px;color:white;background:#FF0000;border-radius:2px">TRANSPORT : <?= $transport_ratios[3]['value'] ?></span>
 					</div>
 				</div>
 			</div>
@@ -143,7 +130,7 @@
 	<div class="col-md-6">
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				Meilleurs Clients</div>
+				Meilleurs clients</div>
 			<div class="panel-body" style="height:420px">
 				<ul class="todo-list">
 				<?php foreach($best_clients as $b) : ?>
@@ -166,7 +153,7 @@
 	<div class="col-md-6">
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				Meilleurs Camions Cash</div>
+				Paquets les plus vendus</div>
 			<div class="panel-body" style="height:420px">
 				<ul class="todo-list">
 				<?php foreach($best_trucks as $b) : ?>
@@ -196,7 +183,7 @@
 	<div class="col-md-6">
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				Fiches non sorties</div>
+				Paquets non livrés</div>
 			<div class="panel-body" style="height:430px;overflow-y: scroll;">
 				<ul class="todo-list">
 				<?php foreach($sales as $sale) : ?>
@@ -218,7 +205,7 @@
 	<div class="col-md-6">
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				Rapport de Caisse</div>
+				Rapport de caisse</div>
 			<div class="panel-body" style="height:430px;overflow-y:scroll">
 					<?php foreach($closing as $report) : ?>
             <table class="table table-bordered datatable" style="margin-top:15px">

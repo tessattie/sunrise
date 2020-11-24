@@ -29,18 +29,17 @@ class ExportsController extends AppController
     private $sales_header = array(
         "A" => "Numéro",
         "B" => "Type",
-        "C" => "Caissier",
+        "C" => "Agent",
         "D" => "Client",
-        "E" => "Camion",
-        "F" => "Chargé",
-        "G" => "Sortie",
-        "H" => "Produit",
-        "I" => "Volume (M3)",
+        "E" => "Destinataire",
+        "F" => "Paquet",
+        "G" => "En route",
+        "H" => "Livré",
+        "I" => "Poid",
         "J" => "Total HTG",
         "K" => "Total USD",
         "L" => "Date",
-        "M" => "Heure",
-        "N" => "Transport"
+        "M" => "Heure"
     );
 
     private $invoices_header = array(
@@ -68,7 +67,7 @@ class ExportsController extends AppController
     private $products_header = array(
         "A" => "Produit",
         "B" => "Fiches",
-        "C" => "Volume",
+        "C" => "Poid",
         "D" => "Pourcentage",
         "E" => "Cummulé",
     );
@@ -101,17 +100,17 @@ class ExportsController extends AppController
 
 
     public function sales($type, $customer, $user, $reussies, $transport){
-        $this->setDocument("VFM System", "VFM System", "VFM Sales Report - [ FROM : ".$this->from." ] - [ TO : ".$this->to." ]", "VFM Sales Report", "VFM Sales Report");
+        $this->setDocument("BELGAZ System", "BELGAZ System", "BELGAZ Sales Report - [ FROM : ".$this->from." ] - [ TO : ".$this->to." ]", "BELGAZ Sales Report", "BELGAZ Sales Report");
         $this->setDates();
         $sales = $this->getSales($type, $customer, $user, $reussies, $transport);
-        $this->setHeader($this->sales_header, "Ventes VFM [".$sales->count()." FICHES]");
+        $this->setHeader($this->sales_header, "Ventes BELGAZ [".$sales->count()." FICHES]");
     
         $i=4;
          $total = 0; $total_us = 0; $volume=0; 
         foreach($sales as $sale){
 
             if($sale->status == 0 || $sale->status == 4 || $sale->status == 6 || $sale->status == 7){
-                $this->excel->getActiveSheet()->getStyle('A'.$i.":N".$i)->applyFromArray(
+                $this->excel->getActiveSheet()->getStyle('A'.$i.":M".$i)->applyFromArray(
                     array(
                         'fill' => array(
                             'type' => PHPExcel_Style_Fill::FILL_SOLID,
@@ -160,19 +159,21 @@ class ExportsController extends AppController
             }else{
                 $this->excel->getActiveSheet()->SetCellValue("D".$i, substr(strtoupper($sale->customer->last_name." ".$sale->customer->first_name), 0, 15)); 
             }
-            $this->excel->getActiveSheet()->SetCellValue("E".$i, $sale->truck->immatriculation); 
+            $this->excel->getActiveSheet()->SetCellValue("E".$i, substr($sale->receiver->name, 0, 15));
+            $this->excel->getActiveSheet()->SetCellValue("F".$i, $sale->truck->immatriculation);
+
             if($sale->charged == 0){
-                $this->excel->getActiveSheet()->SetCellValue("F".$i, "NON");
-            }else{
-                $this->excel->getActiveSheet()->SetCellValue("F".$i, date("Y-m-d H:i", strtotime($sale->charged_time)));
-            }
-            if($sale->sortie == 0){
                 $this->excel->getActiveSheet()->SetCellValue("G".$i, "NON");
             }else{
-                $this->excel->getActiveSheet()->SetCellValue("G".$i, date("Y-m-d H:i", strtotime($sale->sortie_time)));
+                $this->excel->getActiveSheet()->SetCellValue("G".$i, date("Y-m-d H:i", strtotime($sale->charged_time)));
+            }
+
+            if($sale->sortie == 0){
+                $this->excel->getActiveSheet()->SetCellValue("H".$i, "NON");
+            }else{
+                $this->excel->getActiveSheet()->SetCellValue("H".$i, date("Y-m-d H:i", strtotime($sale->sortie_time)));
             }
              
-            $this->excel->getActiveSheet()->SetCellValue("H".$i, $sale->products_sales[0]->product->abbreviation); 
             $this->excel->getActiveSheet()->SetCellValue("I".$i, $sale->products_sales[0]->quantity); 
             if($sale->status == 0 || $sale->status == 6 || $sale->status == 10){
                 $this->excel->getActiveSheet()->SetCellValue("K".$i, number_format($aff_us, 2, ".", '')); 
@@ -183,26 +184,13 @@ class ExportsController extends AppController
             $this->excel->getActiveSheet()->SetCellValue("L".$i, date('Y-m-d', strtotime($sale->created))); 
             $this->excel->getActiveSheet()->SetCellValue("M".$i, date('h:i A', strtotime($sale->created))); 
 
-            if($sale->transport == 0){
-                $this->excel->getActiveSheet()->SetCellValue("N".$i, "NON"); 
-            }else{
-                $this->excel->getActiveSheet()->SetCellValue("N".$i, "OUI"); 
-                $this->excel->getActiveSheet()->getStyle("N".$i)->applyFromArray(
-                    array(
-                        'fill' => array(
-                            'type' => PHPExcel_Style_Fill::FILL_SOLID,
-                            'color' => array('rgb' => '9ACD32')
-                        )
-                    )
-                );
-            }
             $i++;
         }
         $this->excel->getActiveSheet()->SetCellValue("A3", "TOTAL"); 
         $this->excel->getActiveSheet()->SetCellValue("I3", number_format($volume, 2, ".", '')); 
         $this->excel->getActiveSheet()->SetCellValue("J3", number_format($total, 2, ".", '')); 
         $this->excel->getActiveSheet()->SetCellValue("K3", number_format($total_us, 2, ".", '')); 
-        $this->excel->getActiveSheet()->getStyle("A3:N3")->applyFromArray(
+        $this->excel->getActiveSheet()->getStyle("A3:M3")->applyFromArray(
             array(
                 'fill' => array(
                     'type' => PHPExcel_Style_Fill::FILL_SOLID,
@@ -419,10 +407,10 @@ class ExportsController extends AppController
 
     public function send($file, $mail){
         $email = new Email('default');
-        $message = "Bonjour,\n\nTrouvez en pièce jointe le résumé de vos ventes à la VFM.\n\n Nous vous remercions pour votre confiance. \n\n L'équipe VFM";
-        $email->from(['vfmsysteme@gmail.com' => 'VFM'])
+        $message = "Bonjour,\n\nTrouvez en pièce jointe le résumé de vos ventes à la BELGAZ.\n\n Nous vous remercions pour votre confiance. \n\n L'équipe BELGAZ";
+        $email->from(['BELGAZsysteme@gmail.com' => 'BELGAZ'])
             ->to($mail)
-            ->subject('VFM - Résumé ventes')
+            ->subject('BELGAZ - Résumé ventes')
             ->attachments(array(1 => $file))
             ->send($message);
     }
@@ -430,7 +418,7 @@ class ExportsController extends AppController
     public function invoices($customer_id,$month,$year){
         $this->loadModel('Customers'); 
         $customer = $this->Customers->get($customer_id, ["contain" => ['Rates']]);
-        $this->setDocument("VFM System", "VFM System", "VFM Facture Client - [ PERIODE : ".$month."/".$year." ] - [ CLIENT : ".$customer->name." ]", "VFM Facture Client", "VFM Facture Client");
+        $this->setDocument("BELGAZ System", "BELGAZ System", "BELGAZ Facture Client - [ PERIODE : ".$month."/".$year." ] - [ CLIENT : ".$customer->name." ]", "BELGAZ Facture Client", "BELGAZ Facture Client");
         $from = $year."-".$month."-01 00:00:00";
         $to = date("Y-m-t 23:59:59", strtotime($from));
         $conn = ConnectionManager::get('default');
@@ -440,7 +428,7 @@ class ExportsController extends AppController
             LEFT JOIN products p ON p.id = ps.product_id
             WHERE s.customer_id = ".$customer_id." AND s.created >= '".$from."' AND s.created <= '".$to."' AND (s.status = 0 OR s.status = 4 OR s.status = 6 OR s.status = 7) 
             ORDER BY ps.product_id ASC, s.created ASC"); 
-        $this->setHeader($this->invoices_header, "VFM Facture Client - [ PERIODE : ".$month."/".$year." ] - [ CLIENT : ".$customer->name." ]");
+        $this->setHeader($this->invoices_header, "BELGAZ Facture Client - [ PERIODE : ".$month."/".$year." ] - [ CLIENT : ".$customer->name." ]");
         if(!empty($sales)){
             $product_name = "ab";$total_prod=0;$total=0;$volume_prod=0;$volume=0;$increment_prod=0;$increment=0;
             $i=3;
@@ -536,10 +524,10 @@ class ExportsController extends AppController
     }
 
     public function status(){
-        $this->setDocument("VFM System", "VFM System", "VFM Status Report - [ FROM : ".$this->from." ] - [ TO : ".$this->to." ]", "VFM Status Report", "VFM Status Report");
+        $this->setDocument("BELGAZ System", "BELGAZ System", "BELGAZ Status Report - [ FROM : ".$this->from." ] - [ TO : ".$this->to." ]", "BELGAZ Status Report", "BELGAZ Status Report");
         $this->setDates();
         $sales = $this->getSales(3, '99999', '99999', 1, 1);
-        $this->setHeader($this->status_header, "Chargements et Sorties VFM [ ".$sales->count()." Voyages ]");
+        $this->setHeader($this->status_header, "Chargements et Sorties BELGAZ [ ".$sales->count()." Voyages ]");
     
         $i=3;
         foreach($sales as $sale){
@@ -569,9 +557,9 @@ class ExportsController extends AppController
     }
 
     public function customers(){
-        $this->setDocument("VFM System", "VFM System", "VFM Customers Report", "VFM Customers Report", "VFM Customers Report");
+        $this->setDocument("BELGAZ System", "BELGAZ System", "BELGAZ Customers Report", "BELGAZ Customers Report", "BELGAZ Customers Report");
         $this->setDates(); $this->loadModel("Customers");
-        $this->setHeader($this->customers_header, "Liste des clients VFM");
+        $this->setHeader($this->customers_header, "Liste des clients BELGAZ");
         $customers = $this->Customers->find("all"); 
         $i=3;
         $types = array(1 => "CREDIT", 2 => "CHEQUE");
@@ -604,8 +592,8 @@ class ExportsController extends AppController
         $to = date("Y-m-t 23:59:59", strtotime($this->from));
         $month = date("F Y", strtotime($from));
         $last = $this->setMonthlyHeader($products);
-        $this->setDocument("VFM System", "VFM System", "VFM Monthly Report - [ MONTH : ".$month." ]", "VFM Monthly Report", "VFM Monthly Report");
-        $this->setHeader($this->monthly_header, "Rapport Mensuel VFM [" . $month . "]");
+        $this->setDocument("BELGAZ System", "BELGAZ System", "BELGAZ Monthly Report - [ MONTH : ".$month." ]", "BELGAZ Monthly Report", "BELGAZ Monthly Report");
+        $this->setHeader($this->monthly_header, "Rapport Mensuel BELGAZ [" . $month . "]");
 
         $current = $from;
         $monthly = $this->getMonthly($from, $to);
@@ -636,10 +624,9 @@ class ExportsController extends AppController
                 $product->total = $product->total + $volume;
                 $product_total = $product_total + $volume;
                 $volume = number_format($volume, 2, ".", "");
-                $this->excel->getActiveSheet()->SetCellValue($this->alphabet[$j].$i, $volume);
                 $j++;
             }
-            $this->excel->getActiveSheet()->SetCellValue('B'.$i, $product_total);
+            $this->excel->getActiveSheet()->SetCellValue('B'.$i, number_format($product_total,2,".",","));
             $current = date('Y-m-d', strtotime($current . ' + 1 day'));
             $i++;
         }
@@ -649,7 +636,7 @@ class ExportsController extends AppController
         $last_total = 0;
         foreach($products as $product){
             $last_total = $last_total + $product->total;
-            $this->excel->getActiveSheet()->SetCellValue($this->alphabet[$l].$i, number_format($product->total,2));
+            // $this->excel->getActiveSheet()->SetCellValue($this->alphabet[$l].$i, number_format($product->total,2));
             $l++;
         }
         $this->excel->getActiveSheet()->SetCellValue("B".$i, number_format($last_total, 2));
@@ -664,14 +651,14 @@ class ExportsController extends AppController
         $this->loadModel("Products"); 
         $products = $this->Products->find("all", array("order" => array("position ASC")));
         $last = $this->setMonthlyHeader($products, 3);
-        $this->setDocument("VFM System", "VFM System", "Rapport Client par Produits - [ DE : ".$this->from." ] - [ A : ".$this->to." ]", "VFM Rapport Client par Produits", "VFM Rapport Client par Produits");
-        $this->setHeader($this->monthly_header, "Rapport Client par Produits VFM [ DE : ".$this->from." ] - [ A : ".$this->to." ]");
+        $this->setDocument("BELGAZ System", "BELGAZ System", "Rapport Client par Produits - [ DE : ".$this->from." ] - [ A : ".$this->to." ]", "BELGAZ Rapport Client par Produits", "BELGAZ Rapport Client par Produits");
+        $this->setHeader($this->monthly_header, "Rapport Client par Produits BELGAZ [ DE : ".$this->from." ] - [ A : ".$this->to." ]");
 
         $customers = $this->getMonthlyCustomers($this->from, $this->to);
         $i = 3;
         $number = 1;
         $last_column = $this->excel->getActiveSheet()->getHighestColumn();
-        $realtotal = 0; $realtotal_usd = 0;
+        $realtotal = 0; $realtotal_usd = 0; $real_volume = 0;
         foreach($customers as $customer){
             if($customer->total->count() > 0){
             $j=4;
@@ -692,7 +679,6 @@ class ExportsController extends AppController
                 $total = 0;
                 foreach($customer->total as $tot){
                     $total = $tot['total'];
-                    
                 }
                 $realtotal_usd = $realtotal_usd+$total;
                 $this->excel->getActiveSheet()->SetCellValue('B'.$i, "0");
@@ -718,17 +704,18 @@ class ExportsController extends AppController
                         $prod->total = $prod->total + $prd['total_sold'];
                     }
                 }
-                $this->excel->getActiveSheet()->getStyle("D".$i)->getNumberFormat()->setFormatCode( '#,##0.00 "m3"' );
+                $this->excel->getActiveSheet()->getStyle("D".$i)->getNumberFormat()->setFormatCode( '#,##0.00 "LBS"' );
                 $this->excel->getActiveSheet()->SetCellValue("D".$i, number_format($volume,2,".",""));
-               $this->excel->getActiveSheet()->SetCellValue($this->alphabet[$j].$i, number_format($prd['total_sold'],2,".",""));
-               $this->excel->getActiveSheet()->getStyle($this->alphabet[$j].$i)->getNumberFormat()->setFormatCode( '#,##0.00 "m3"' );
+                $real_volume = $real_volume + $volume;
+               // $this->excel->getActiveSheet()->SetCellValue($this->alphabet[$j].$i, number_format($prd['total_sold'],2,".",""));
+               // $this->excel->getActiveSheet()->getStyle($this->alphabet[$j].$i)->getNumberFormat()->setFormatCode( '#,##0.00 "m3"' );
                $j++; 
             }
             $transport = 0;
             foreach($customer->transport as $t){
                 $transport = $t['transport'];
             }
-            $this->excel->getActiveSheet()->SetCellValue($this->alphabet[$j].$i, number_format($transport, 2, ".", ""));
+            // $this->excel->getActiveSheet()->SetCellValue($this->alphabet[$j].$i, number_format($transport, 2, ".", ""));
             $number++; $i++;}
         }
         $last_row = $this->excel->getActiveSheet()->getHighestRow();
@@ -744,23 +731,31 @@ class ExportsController extends AppController
             'B'.($last_row +1),
             $realtotal
         );
+
         $this->excel->getActiveSheet()->getStyle('C'.($last_row +1))->getNumberFormat()->setFormatCode( '"$" #,##0.00' );
         $this->excel->getActiveSheet()
         ->setCellValue(
             'C'.($last_row +1),
             number_format($realtotal_usd, 2, ".", "")
         );
+
+        $this->excel->getActiveSheet()->getStyle('D'.($last_row +1))->getNumberFormat()->setFormatCode( '#,##0.00 "LBS"' );
+        $this->excel->getActiveSheet()
+        ->setCellValue(
+            'D'.($last_row +1),
+            number_format($real_volume, 2, ".", "")
+        );
         
-        $in = 3;
-        foreach($products as $product){
-            $this->excel->getActiveSheet()
-            ->setCellValue(
-                $this->alphabet[$in].($last_row +1),
-                $product->total
-            );
-            $this->excel->getActiveSheet()->getStyle($this->alphabet[$in].($last_row +1))->getNumberFormat()->setFormatCode( '#,##0.00 "m3"' );
-            $in++;
-        }
+        // $in = 3;
+        // foreach($products as $product){
+        //     $this->excel->getActiveSheet()
+        //     ->setCellValue(
+        //         $this->alphabet[$in].($last_row +1),
+        //         $product->total
+        //     );
+        //     $this->excel->getActiveSheet()->getStyle($this->alphabet[$in].($last_row +1))->getNumberFormat()->setFormatCode( '#,##0.00 "m3"' );
+        //     $in++;
+        // }
         $this->excel->getActiveSheet()
         ->getStyle("A".($last_row+1).":".$last_column.($last_row+1))
         ->getFill()
@@ -789,7 +784,7 @@ class ExportsController extends AppController
     public function products($customer = false){
         $this->setDates();
         $this->loadModel("Customers");
-        $this->setDocument("VFM Système", "VFM Système", "Rapport Produits - [ De : ".$this->from." ] - [ A : ".$this->to." ]", "VFM Rapport / Produits", "VFM Rapport / Produits");
+        $this->setDocument("BELGAZ Système", "BELGAZ Système", "Rapport Produits - [ De : ".$this->from." ] - [ A : ".$this->to." ]", "BELGAZ Rapport / Produits", "BELGAZ Rapport / Produits");
         if($customer != "99999"){
             $cust = $this->Customers->get($customer);
             $name = " - [ CLIENT : " . $cust->name . " ]";
@@ -814,7 +809,7 @@ class ExportsController extends AppController
             }
             $this->excel->getActiveSheet()->SetCellValue("A".$i, strtoupper($product['name'])); 
             $this->excel->getActiveSheet()->SetCellValue("B".$i, $product['total_trips']); 
-            $this->excel->getActiveSheet()->SetCellValue("C".$i, number_format($product['total_sold'],2,".", "")."M3"); 
+            $this->excel->getActiveSheet()->SetCellValue("C".$i, number_format($product['total_sold'],2,".", "")." LBS"); 
             $this->excel->getActiveSheet()->SetCellValue("D".$i, number_format($pourcentage, 3, ".", "")."%");
             $this->excel->getActiveSheet()->SetCellValue("E".$i, number_format($cummule, 3, ".", "")."%");
             $i++; 
@@ -909,19 +904,13 @@ class ExportsController extends AppController
             $result["A"] = "CLIENT";
             $result["B"] = "TOTAL HTG";
             $result["C"] = "TOTAL USD";
-            $result["D"] = "VOLUME";
+            $result["D"] = "POID (LBS)";
             $i++;
         }else{
             $result["A"] = "DATE";
             $result["B"] = "TOTAL";
-            $i=2;
+            $i=1;
         }
-        foreach($products as $product){
-            $result[$this->alphabet[$i]] = $product->abbreviation;
-            
-            $i++;
-        }
-        $result[$this->alphabet[$i]] = "TRANSPORT";
         $last = $this->alphabet[$i];
         $this->monthly_header = $result;
 
@@ -935,13 +924,13 @@ class ExportsController extends AppController
 
         $this->excel = new PHPExcel();
         
-        $this->excel->getProperties()->setCreator("VFM")
-             ->setLastModifiedBy("VFM POS System")
-             ->setTitle("VFM Exports")
-             ->setSubject("VFM Exports")
-             ->setDescription("VFM Exports");
+        $this->excel->getProperties()->setCreator("BELGAZ")
+             ->setLastModifiedBy("BELGAZ POS System")
+             ->setTitle("BELGAZ Exports")
+             ->setSubject("BELGAZ Exports")
+             ->setDescription("BELGAZ Exports");
         $this->excel->setActiveSheetIndex(0);
-        $this->excel->getActiveSheet()->setTitle('VFM Sales');
+        $this->excel->getActiveSheet()->setTitle('BELGAZ Sales');
     } 
 
     private function setHeader($header, $title){
@@ -1175,16 +1164,15 @@ class ExportsController extends AppController
         $this->excel->getActiveSheet()->getColumnDimension('B')->setWidth(10);
         $this->excel->getActiveSheet()->getColumnDimension('C')->setWidth(7);
         $this->excel->getActiveSheet()->getColumnDimension('D')->setWidth(25);
-        $this->excel->getActiveSheet()->getColumnDimension('E')->setWidth(12);
-        $this->excel->getActiveSheet()->getColumnDimension('F')->setWidth(6.5);
-        $this->excel->getActiveSheet()->getColumnDimension('G')->setWidth(6.5);
-        $this->excel->getActiveSheet()->getColumnDimension('H')->setWidth(15);
-        $this->excel->getActiveSheet()->getColumnDimension('I')->setWidth(13);
+        $this->excel->getActiveSheet()->getColumnDimension('E')->setWidth(15);
+        $this->excel->getActiveSheet()->getColumnDimension('F')->setWidth(10);
+        $this->excel->getActiveSheet()->getColumnDimension('G')->setWidth(8);
+        $this->excel->getActiveSheet()->getColumnDimension('H')->setWidth(8);
+        $this->excel->getActiveSheet()->getColumnDimension('I')->setWidth(10);
         $this->excel->getActiveSheet()->getColumnDimension('J')->setWidth(13);
         $this->excel->getActiveSheet()->getColumnDimension('K')->setWidth(13);
         $this->excel->getActiveSheet()->getColumnDimension('L')->setWidth(11);
         $this->excel->getActiveSheet()->getColumnDimension('M')->setWidth(9);
-        $this->excel->getActiveSheet()->getColumnDimension('N')->setWidth(8);
 
         $this->excel->getActiveSheet()
             ->getPageSetup()
@@ -1204,7 +1192,7 @@ class ExportsController extends AppController
 
         $this->excel->getActiveSheet()
             ->getPageSetup()
-            ->setPrintArea('A1:N'.$last_row);
+            ->setPrintArea('A1:M'.$last_row);
     }
 
 
@@ -1296,15 +1284,15 @@ class ExportsController extends AppController
 
 
         if($type == 1){
-            $sales = $this->Sales->find('all', array('order' => array("Sales.created DESC"), "conditions" => array("Sales.created >=" => $from, "Sales.created <=" => $to, $condition)))->contain(['Users', 'Customers', 'Trucks', 'Pointofsales', "ProductsSales" => ['Products']])->matching('ProductsSales', function ($q) {
+            $sales = $this->Sales->find('all', array('order' => array("Sales.created DESC"), "conditions" => array("Sales.created >=" => $from, "Sales.created <=" => $to, $condition)))->contain(['Users', 'Customers', 'Trucks', 'Pointofsales', "ProductsSales" => ['Products'], 'Receivers'])->matching('ProductsSales', function ($q) {
                     return $q->where(['ProductsSales.quantity >' => 3]);
                 });
         }elseif($type == 2){
-           $sales = $this->Sales->find('all', array('order' => array("Sales.created DESC"), "conditions" => array("Sales.created >=" => $from, "Sales.created <=" => $to, $condition)))->contain(['Users', 'Customers', 'Trucks', 'Pointofsales', "ProductsSales" => ['Products']])->matching('ProductsSales', function ($q) {
+           $sales = $this->Sales->find('all', array('order' => array("Sales.created DESC"), "conditions" => array("Sales.created >=" => $from, "Sales.created <=" => $to, $condition)))->contain(['Users', 'Customers', 'Trucks', 'Pointofsales', "ProductsSales" => ['Products'], 'Receivers'])->matching('ProductsSales', function ($q) {
                     return $q->where(['ProductsSales.quantity <=' => 3]);
                 });
         }else{
-            $sales = $this->Sales->find('all', array('order' => array("Sales.created DESC"), "conditions" => array("Sales.created >=" => $from, "Sales.created <=" => $to, $condition)))->contain(['Users', 'Customers', 'Trucks', 'Pointofsales', 'ProductsSales'  => ['Products']]);
+            $sales = $this->Sales->find('all', array('order' => array("Sales.created DESC"), "conditions" => array("Sales.created >=" => $from, "Sales.created <=" => $to, $condition)))->contain(['Users', 'Customers', 'Trucks', 'Pointofsales', 'ProductsSales'  => ['Products'], 'Receivers']);
         }
 
         return $sales;

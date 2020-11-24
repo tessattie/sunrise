@@ -342,7 +342,7 @@ class CustomersController extends AppController
         $month = date("m", strtotime($this->request->session()->read("from")));
         $year = date("Y", strtotime($this->request->session()->read("from")));
         $customer = "";
-        $condition = "(s.status = 0 OR s.status = 4)";
+        $condition = "(s.status = 0 OR s.status = 4 OR s.status = 6 OR s.status = 7)";
         if ($this->request->is(['patch', 'post', 'put'])){
             $customer = $this->Customers->get($this->request->getData()['customer_id'], ['contain' => [
                 "Rates"
@@ -372,7 +372,6 @@ class CustomersController extends AppController
     }
 
     public function products(){
-        ini_set('memory_limi',"128MB");
         $this->loadModel('Products');
         $conn = ConnectionManager::get('default');
         $from = $this->request->session()->read("from");
@@ -405,13 +404,7 @@ class CustomersController extends AppController
             foreach($query as $q){
                 $customer->total = $q['total'];
             }
-            $query = $conn->query("SELECT  COUNT(o.transport) as transport FROM sales o WHERE o.customer_id = ".$customer->id." AND o.transport = 1 AND o.created >= '".$from_s."' AND o.created <= '".$to_s."' AND ".$condition."
-                GROUP BY o.customer_id 
-                ORDER BY o.customer_id"); 
             $customer->transport = 0;
-            foreach($query as $q){
-                $customer->transport = $q['transport'];
-            }
         }
         $this->set(compact('sales', "products", "from", "to", "customers"));
     }
