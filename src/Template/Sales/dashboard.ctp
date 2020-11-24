@@ -43,7 +43,7 @@
 			<div class="panel panel-orange panel-widget border-right">
 				<div class="row no-padding"><em class="fa fa-xl fa-file color-teal"></em>
 					<div style="font-size:22px;margin-bottom:7px" class="medium"><?= $count ?></div>
-					<div class="text-muted">Nb de Fiches</div>
+					<div class="text-muted">Nb de Paquets</div>
 				</div>
 			</div>
 		</div>
