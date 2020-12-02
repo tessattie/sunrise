@@ -100,10 +100,10 @@ class ExportsController extends AppController
 
 
     public function sales($type, $customer, $user, $reussies, $transport){
-        $this->setDocument("BELGAZ System", "BELGAZ System", "BELGAZ Sales Report - [ FROM : ".$this->from." ] - [ TO : ".$this->to." ]", "BELGAZ Sales Report", "BELGAZ Sales Report");
+        $this->setDocument("Sunrise System", "Sunrise System", "Sunrise Sales Report - [ FROM : ".$this->from." ] - [ TO : ".$this->to." ]", "Sunrise Sales Report", "Sunrise Sales Report");
         $this->setDates();
         $sales = $this->getSales($type, $customer, $user, $reussies, $transport);
-        $this->setHeader($this->sales_header, "Ventes BELGAZ [".$sales->count()." FICHES]");
+        $this->setHeader($this->sales_header, "Ventes Sunrise [".$sales->count()." FICHES]");
     
         $i=4;
          $total = 0; $total_us = 0; $volume=0; 
@@ -202,17 +202,11 @@ class ExportsController extends AppController
         $this->output("export_ventes_".date("Ymd"));
     }
 
-    public function invoicesPdf(){
+    public function invoicesPdf($customer_id, $month, $year){
         $from = $this->request->session()->read("from")." 00:00:00";
         $to = $this->request->session()->read("to")." 23:59:59";
         $products_results = [];
         $email = "";
-        if($this->request->is(['patch', 'put', "post"])){
-            $customer_id = $this->request->getData()['customer_id'];
-            $month = date("m", strtotime($this->request->session()->read("from")));
-            $year = date("Y", strtotime($this->request->session()->read("from")));
-            $email = $this->request->getData()['email'];
-        }
 
         $this->loadModel('Customers');
         $customer = $this->Customers->get($customer_id, ["contain" => ['Rates']]);
@@ -407,10 +401,10 @@ class ExportsController extends AppController
 
     public function send($file, $mail){
         $email = new Email('default');
-        $message = "Bonjour,\n\nTrouvez en pièce jointe le résumé de vos ventes à la BELGAZ.\n\n Nous vous remercions pour votre confiance. \n\n L'équipe BELGAZ";
-        $email->from(['BELGAZsysteme@gmail.com' => 'BELGAZ'])
+        $message = "Bonjour,\n\nTrouvez en pièce jointe le résumé de vos ventes à la Sunrise.\n\n Nous vous remercions pour votre confiance. \n\n L'équipe Sunrise";
+        $email->from(['Sunrisesysteme@gmail.com' => 'Sunrise'])
             ->to($mail)
-            ->subject('BELGAZ - Résumé ventes')
+            ->subject('Sunrise - Résumé ventes')
             ->attachments(array(1 => $file))
             ->send($message);
     }
@@ -418,7 +412,7 @@ class ExportsController extends AppController
     public function invoices($customer_id,$month,$year){
         $this->loadModel('Customers'); 
         $customer = $this->Customers->get($customer_id, ["contain" => ['Rates']]);
-        $this->setDocument("BELGAZ System", "BELGAZ System", "BELGAZ Facture Client - [ PERIODE : ".$month."/".$year." ] - [ CLIENT : ".$customer->name." ]", "BELGAZ Facture Client", "BELGAZ Facture Client");
+        $this->setDocument("Sunrise System", "Sunrise System", "Sunrise Facture Client - [ PERIODE : ".$month."/".$year." ] - [ CLIENT : ".$customer->name." ]", "Sunrise Facture Client", "Sunrise Facture Client");
         $from = $year."-".$month."-01 00:00:00";
         $to = date("Y-m-t 23:59:59", strtotime($from));
         $conn = ConnectionManager::get('default');
@@ -428,7 +422,7 @@ class ExportsController extends AppController
             LEFT JOIN products p ON p.id = ps.product_id
             WHERE s.customer_id = ".$customer_id." AND s.created >= '".$from."' AND s.created <= '".$to."' AND (s.status = 0 OR s.status = 4 OR s.status = 6 OR s.status = 7) 
             ORDER BY ps.product_id ASC, s.created ASC"); 
-        $this->setHeader($this->invoices_header, "BELGAZ Facture Client - [ PERIODE : ".$month."/".$year." ] - [ CLIENT : ".$customer->name." ]");
+        $this->setHeader($this->invoices_header, "Sunrise Facture Client - [ PERIODE : ".$month."/".$year." ] - [ CLIENT : ".$customer->name." ]");
         if(!empty($sales)){
             $product_name = "ab";$total_prod=0;$total=0;$volume_prod=0;$volume=0;$increment_prod=0;$increment=0;
             $i=3;
@@ -524,10 +518,10 @@ class ExportsController extends AppController
     }
 
     public function status(){
-        $this->setDocument("BELGAZ System", "BELGAZ System", "BELGAZ Status Report - [ FROM : ".$this->from." ] - [ TO : ".$this->to." ]", "BELGAZ Status Report", "BELGAZ Status Report");
+        $this->setDocument("Sunrise System", "Sunrise System", "Sunrise Status Report - [ FROM : ".$this->from." ] - [ TO : ".$this->to." ]", "Sunrise Status Report", "Sunrise Status Report");
         $this->setDates();
         $sales = $this->getSales(3, '99999', '99999', 1, 1);
-        $this->setHeader($this->status_header, "Chargements et Sorties BELGAZ [ ".$sales->count()." Voyages ]");
+        $this->setHeader($this->status_header, "Chargements et Sorties Sunrise [ ".$sales->count()." Voyages ]");
     
         $i=3;
         foreach($sales as $sale){
@@ -557,9 +551,9 @@ class ExportsController extends AppController
     }
 
     public function customers(){
-        $this->setDocument("BELGAZ System", "BELGAZ System", "BELGAZ Customers Report", "BELGAZ Customers Report", "BELGAZ Customers Report");
+        $this->setDocument("Sunrise System", "Sunrise System", "Sunrise Customers Report", "Sunrise Customers Report", "Sunrise Customers Report");
         $this->setDates(); $this->loadModel("Customers");
-        $this->setHeader($this->customers_header, "Liste des clients BELGAZ");
+        $this->setHeader($this->customers_header, "Liste des clients Sunrise");
         $customers = $this->Customers->find("all"); 
         $i=3;
         $types = array(1 => "CREDIT", 2 => "CHEQUE");
@@ -592,8 +586,8 @@ class ExportsController extends AppController
         $to = date("Y-m-t 23:59:59", strtotime($this->from));
         $month = date("F Y", strtotime($from));
         $last = $this->setMonthlyHeader($products);
-        $this->setDocument("BELGAZ System", "BELGAZ System", "BELGAZ Monthly Report - [ MONTH : ".$month." ]", "BELGAZ Monthly Report", "BELGAZ Monthly Report");
-        $this->setHeader($this->monthly_header, "Rapport Mensuel BELGAZ [" . $month . "]");
+        $this->setDocument("Sunrise System", "Sunrise System", "Sunrise Monthly Report - [ MONTH : ".$month." ]", "Sunrise Monthly Report", "Sunrise Monthly Report");
+        $this->setHeader($this->monthly_header, "Rapport Mensuel Sunrise [" . $month . "]");
 
         $current = $from;
         $monthly = $this->getMonthly($from, $to);
@@ -651,8 +645,8 @@ class ExportsController extends AppController
         $this->loadModel("Products"); 
         $products = $this->Products->find("all", array("order" => array("position ASC")));
         $last = $this->setMonthlyHeader($products, 3);
-        $this->setDocument("BELGAZ System", "BELGAZ System", "Rapport Client par Produits - [ DE : ".$this->from." ] - [ A : ".$this->to." ]", "BELGAZ Rapport Client par Produits", "BELGAZ Rapport Client par Produits");
-        $this->setHeader($this->monthly_header, "Rapport Client par Produits BELGAZ [ DE : ".$this->from." ] - [ A : ".$this->to." ]");
+        $this->setDocument("Sunrise System", "Sunrise System", "Rapport Client par Produits - [ DE : ".$this->from." ] - [ A : ".$this->to." ]", "Sunrise Rapport Client par Produits", "Sunrise Rapport Client par Produits");
+        $this->setHeader($this->monthly_header, "Rapport Client par Produits Sunrise [ DE : ".$this->from." ] - [ A : ".$this->to." ]");
 
         $customers = $this->getMonthlyCustomers($this->from, $this->to);
         $i = 3;
@@ -784,7 +778,7 @@ class ExportsController extends AppController
     public function products($customer = false){
         $this->setDates();
         $this->loadModel("Customers");
-        $this->setDocument("BELGAZ Système", "BELGAZ Système", "Rapport Produits - [ De : ".$this->from." ] - [ A : ".$this->to." ]", "BELGAZ Rapport / Produits", "BELGAZ Rapport / Produits");
+        $this->setDocument("Sunrise Système", "Sunrise Système", "Rapport Produits - [ De : ".$this->from." ] - [ A : ".$this->to." ]", "Sunrise Rapport / Produits", "Sunrise Rapport / Produits");
         if($customer != "99999"){
             $cust = $this->Customers->get($customer);
             $name = " - [ CLIENT : " . $cust->name . " ]";
@@ -924,13 +918,13 @@ class ExportsController extends AppController
 
         $this->excel = new PHPExcel();
         
-        $this->excel->getProperties()->setCreator("BELGAZ")
-             ->setLastModifiedBy("BELGAZ POS System")
-             ->setTitle("BELGAZ Exports")
-             ->setSubject("BELGAZ Exports")
-             ->setDescription("BELGAZ Exports");
+        $this->excel->getProperties()->setCreator("Sunrise")
+             ->setLastModifiedBy("Sunrise POS System")
+             ->setTitle("Sunrise Exports")
+             ->setSubject("Sunrise Exports")
+             ->setDescription("Sunrise Exports");
         $this->excel->setActiveSheetIndex(0);
-        $this->excel->getActiveSheet()->setTitle('BELGAZ Sales');
+        $this->excel->getActiveSheet()->setTitle('Sunrise Sales');
     } 
 
     private function setHeader($header, $title){

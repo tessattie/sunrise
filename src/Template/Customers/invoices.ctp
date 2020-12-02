@@ -1,28 +1,3 @@
-
-
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-    <?= $this->Form->create("", array('url' => "/exports/invoices_pdf")) ?>
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Exporter en PDF</h5>
-      </div>
-      <div class="modal-body">
-      <label>Pour envoyer par e-mail, indiquez l'adresse du client ci-dessous. Pour exporter sans envoyez, laissez le champ ci-dessous vide.</label>
-      <hr>
-        <?= $this->Form->control('email', array('class' => 'form-control', "label" => "E-mail", "placeholder" => "E-mail : abc@exemple.com", 'value' => (!empty($customer->email)) ? $customer->email : "")); ?>
-        <?= $this->Form->control('customer_id', array("type" => "hidden",'value' => (!empty($customer->id)) ? $customer->id : "")); ?>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Fermer</button>
-        <?= $this->Form->button(__('Valider'), array('class'=>'btn btn-success', "style"=>"float:right")) ?>
-      </div>
-      <?= $this->Form->end() ?>
-    </div>
-  </div>
-</div>
-
 <div class="row" style="margin-bottom:15px">
     <ol class="breadcrumb">
         <li><a href="<?= ROOT_DIREC ?>/sales/dashboard">
@@ -37,7 +12,7 @@
     padding: 3px 10px;
     background: black;
     color: white;text-decoration:none!important;cursor:pointer">Excel</a>
-    <a href="<?= "#" ?>" target="_blank" data-toggle="modal" data-target="#exampleModal" style="float:right;
+    <a href="<?= (!empty($customer) ? ROOT_DIREC.'/exports/invoices_pdf/'.$customer->id.'/'.$month.'/'.$year : '#') ?>" style="float:right;
     margin-top: -34px;
     margin-right: 100px;
     padding: 3px 10px;
@@ -71,7 +46,6 @@
                 <th class="text-center">Date</th>
                 <th class="text-center">Heure</th>
                 <th class="text-center">Vente #</th>
-                <th class="text-center">Camion</th>
                 <th class="text-center">Produit</th>
                 <th class="text-center">Volume</th>
                 <th class="text-center">Total</th>
@@ -79,7 +53,7 @@
         </thead>
         <tbody>
             <?php if(empty($sales)) : ?>
-                <tr><td colspan="7" class="text-center">Choisissez le client et le mois correspondant...</td></tr>
+                <tr><td colspan="6" class="text-center">Choisissez le client et le mois correspondant...</td></tr>
             <?php else : ?>
                 <?php $product_name = "ab"; $total_prod = 0; $total = 0; $volume=0;$volume_prod=0; $increment = 0;$increment_prod=0;?>
                 <?php foreach($sales as $sale) : ?>
@@ -99,14 +73,13 @@
                         <td class="text-center"><?= date("d/m/Y", strtotime($sale['created'])) ?></td>
                         <td class="text-center"><?= date("g:i A", strtotime($sale['created'])) ?></td>
                         <td class="text-center"><?= $sale['sale_number'] ?></td>
-                        <td class="text-center"><?= $sale['immatriculation'] ?></td>
                         <td class="text-center"><?= $sale['abbreviation'] ?></td>
-                        <td class="text-center"><?= $sale['quantity'] ?> M3</td>
+                        <td class="text-center"><?= $sale['quantity'] ?> LBS</td>
                         <td class="text-center"><?= number_format($sale['total'], 2, ".", ",") ?> <?= $customer->rate->name ?></td>
                     </tr>
                 <?php endforeach; ?>
-                <tr style="background:#F2F2F2"><th colspan="4">TOTAL</th><th class="text-center"><?= $increment_prod ?></th><th class="text-center"><?= $volume_prod ?> M3</th><th class="text-center"><?= number_format($total_prod, 2, ".", ",") ?> <?= $customer->rate->name ?></th></tr>
-                <tr style="background:#DC143C;color:white"><th colspan="4">TOTAL</th><th class="text-center"><?= $increment ?></th><th class="text-center"><?= $volume ?> M3</th><th class="text-center"><?= number_format($total, 2, ".", ",") ?> <?= $customer->rate->name ?></th></tr>
+                <tr style="background:#F2F2F2"><th colspan="3">TOTAL</th><th class="text-center"><?= $increment_prod ?></th><th class="text-center"><?= $volume_prod ?> LBS</th><th class="text-center"><?= number_format($total_prod, 2, ".", ",") ?> <?= $customer->rate->name ?></th></tr>
+                <tr style="background:#DC143C;color:white"><th colspan="3">TOTAL</th><th class="text-center"><?= $increment ?></th><th class="text-center"><?= $volume ?> LBS</th><th class="text-center"><?= number_format($total, 2, ".", ",") ?> <?= $customer->rate->name ?></th></tr>
             <?php endif; ?>
         </tbody>
     </table>

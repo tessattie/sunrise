@@ -15,7 +15,7 @@ if($sale->status == 0){
         <li><a href="<?= ROOT_DIREC ?>/sales/dashboard">
             <em class="fa fa-home"></em>
         </a></li>
-        <li><a href="<?= ROOT_DIREC ?>/ventes">
+        <li><a href="<?= ROOT_DIREC ?>/sales">
             Ventes
         </a></li>
         <li class="active">Fiche #<?= $sale->sale_number ?></li>
@@ -110,7 +110,7 @@ if($sale->status == 0){
         <!--DO NOT DELETE THIS div. IT is responsible for showing footer always at the bottom-->
         <div class="row" style="margin-bottom:25px">
         <div class="col-md-4">
-        <label>Photo du colis :</label><br>
+        <label>Photo du paquet :</label><br>
             <?= $this->Html->image('load/truck.jpg', ['alt' => 'CakePHP']); ?>
         </div>
     </div>
