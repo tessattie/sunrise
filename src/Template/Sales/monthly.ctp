@@ -67,10 +67,9 @@ $years = array("2019" => "2019", "2020" => "2020", '2021' => '2021', '2022' => '
             <tfoot>
                 <tr>
                 <?php $last_total = 0; ?>
-                    <th>TOTAL (M3)</th>
+                    <th>TOTAL (LBS)</th>
                     <?php foreach($products as $product) : ?>
                         <?php $last_total = $last_total + $product->total; ?>
-                        <th class="text-center"><?= number_format($product->total, 2, ".", ",") ?></th>
                     <?php endforeach; ?>
                     <th class="text-right"><?= number_format($last_total, 2, ".", ",") ?></th>
                 </tr>

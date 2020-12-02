@@ -93,7 +93,7 @@ class AppController extends Controller
     protected function getBalance($customer){
         $balance = 0;
         $conn = ConnectionManager::get('default');
-        $sql = "SELECT c.id, c.last_name, (SELECT SUM(s.total) FROM sales s WHERE s.customer_id = c.id AND (s.status = 0 OR s.status = 4 OR s.status = 6 OR s.status = 7 OR s.status = 1) GROUP BY c.id ORDER BY c.id) as purchased, (SELECT SUM(p.amount) FROM payments p WHERE customer_id = c.id GROUP BY c.id ORDER BY c.id) as paid FROM customers c WHERE c.id = ".$customer;
+        $sql = "SELECT c.id, c.last_name, (SELECT SUM(s.total) FROM sales s WHERE s.customer_id = c.id AND (s.status = 0 OR s.status = 4 OR s.status = 6 OR s.status = 7) GROUP BY c.id ORDER BY c.id) as purchased, (SELECT SUM(p.amount) FROM payments p LEFT JOIN payments_sales ps ON ps.payment_id = p.id  LEFT JOIN sales s ON ps.sale_id = s.id WHERE p.customer_id = c.id AND s.status = 0 GROUP BY c.id ORDER BY c.id) as paid FROM customers c WHERE c.id = ".$customer;
         $balances = $conn->query($sql);
         foreach($balances as $b){
             $balance = $b['purchased'] - $b['paid'] ;

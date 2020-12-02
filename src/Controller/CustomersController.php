@@ -54,7 +54,7 @@ class CustomersController extends AppController
     {
         $from = $this->request->session()->read("from")." 00:00:00";
         $to = $this->request->session()->read("to")." 23:59:59";
-        $customers = $this->Customers->find("all", array("order" => array("last_name ASC"), 'conditions' => array("Customers.id <>" => 1)))->contain(['Rates', 'Payments', 'Sales' => ['conditions' => ['Sales.created >=' => $from, 'Sales.created <=' => $to]]]);
+        $customers = $this->Customers->find("all", array("order" => array("last_name ASC"), 'conditions' => array("Customers.id <>" => 1, 'Customers.type <>' => 3)))->contain(['Rates', 'Payments', 'Sales' => ['conditions' => ['Sales.created >=' => $from, 'Sales.created <=' => $to]]]);
 
         $this->set(compact('customers'));
     }
@@ -192,6 +192,8 @@ class CustomersController extends AppController
         if ($this->request->is('post')) {
             $customer = $this->Customers->patchEntity($customer, $this->request->getData());
             $customer->user_id = $this->Auth->user()['id'];
+            $customer->type = 1;
+            $customer->rate_id = 2;
             if ($ident = $this->Customers->save($customer)) {
                 $this->Flash->success(__('Le client a bien été sauvegardée'));
 

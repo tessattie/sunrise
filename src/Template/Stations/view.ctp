@@ -58,10 +58,6 @@
                 <th scope="col"><?= __('Sortie User Id') ?></th>
                 <th scope="col"><?= __('Transport') ?></th>
                 <th scope="col"><?= __('Transport Fee') ?></th>
-                <th scope="col"><?= __('Image Path') ?></th>
-                <th scope="col"><?= __('Receiver Id') ?></th>
-                <th scope="col"><?= __('Station Id') ?></th>
-                <th scope="col"><?= __('Destination Station Id') ?></th>
                 <th scope="col" class="actions"><?= __('Actions') ?></th>
             </tr>
             <?php foreach ($station->sales as $sales): ?>
@@ -90,10 +86,6 @@
                 <td><?= h($sales->sortie_user_id) ?></td>
                 <td><?= h($sales->transport) ?></td>
                 <td><?= h($sales->transport_fee) ?></td>
-                <td><?= h($sales->image_path) ?></td>
-                <td><?= h($sales->receiver_id) ?></td>
-                <td><?= h($sales->station_id) ?></td>
-                <td><?= h($sales->destination_station_id) ?></td>
                 <td class="actions">
                     <?= $this->Html->link(__('View'), ['controller' => 'Sales', 'action' => 'view', $sales->id]) ?>
                     <?= $this->Html->link(__('Edit'), ['controller' => 'Sales', 'action' => 'edit', $sales->id]) ?>

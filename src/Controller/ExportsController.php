@@ -1153,13 +1153,13 @@ class ExportsController extends AppController
             )
         );
 
-        $this->excel->getActiveSheet()->getStyle( "A3:N3" )->getFont()->setBold( true );
-        $this->excel->getActiveSheet()->getStyle("A3:N3")->getFont()
+        $this->excel->getActiveSheet()->getStyle( "A3:M3" )->getFont()->setBold( true );
+        $this->excel->getActiveSheet()->getStyle("A3:M3")->getFont()
                                 ->getColor()->setRGB('FFFFFF');
 
         $this->excel->getActiveSheet()->getRowDimension('3')->setRowHeight(15);
         $last_row = $this->excel->getActiveSheet()->getHighestRow();
-        $this->excel->getActiveSheet()->getStyle('A1:N'.$last_row)->applyFromArray($styleArray);
+        $this->excel->getActiveSheet()->getStyle('A1:M'.$last_row)->applyFromArray($styleArray);
         $this->excel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
         $this->excel->getActiveSheet()->getColumnDimension('B')->setWidth(10);
         $this->excel->getActiveSheet()->getColumnDimension('C')->setWidth(7);

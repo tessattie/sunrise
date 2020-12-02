@@ -50,6 +50,11 @@ class UsersTable extends Table
             'foreignKey' => 'role_id',
             'joinType' => 'INNER'
         ]);
+
+        $this->belongsTo('Stations', [
+            'foreignKey' => 'station_id'
+        ]);
+
         $this->hasMany('Customers', [
             'foreignKey' => 'user_id'
         ]);

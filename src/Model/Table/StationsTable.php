@@ -9,7 +9,6 @@ use Cake\Validation\Validator;
 /**
  * Stations Model
  *
- * @property \App\Model\Table\SalesTable|\Cake\ORM\Association\HasMany $Sales
  * @property \App\Model\Table\UsersTable|\Cake\ORM\Association\HasMany $Users
  *
  * @method \App\Model\Entity\Station get($primaryKey, $options = [])
@@ -37,9 +36,6 @@ class StationsTable extends Table
         $this->setDisplayField('name');
         $this->setPrimaryKey('id');
 
-        $this->hasMany('Sales', [
-            'foreignKey' => 'station_id'
-        ]);
         $this->hasMany('Users', [
             'foreignKey' => 'station_id'
         ]);

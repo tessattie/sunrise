@@ -62,7 +62,8 @@ class UsersController extends AppController
         }
         $roles = $this->Users->Roles->find('list', ['limit' => 200]);
         $cards = $this->Users->Cards->find('list', ['limit' => 200]);
-        $this->set(compact('user', 'roles', 'cards'));
+        $stations = $this->Users->Stations->find('list', ['limit' => 200]);
+        $this->set(compact('user', 'roles', 'cards', 'stations'));
     }
 
     /**
@@ -87,7 +88,8 @@ class UsersController extends AppController
         }
         $roles = $this->Users->Roles->find('list', ['limit' => 200]);
         $cards = $this->Users->Cards->find('list', ['limit' => 200]);
-        $this->set(compact('user', 'roles', 'cards'));
+        $stations = $this->Users->Stations->find('list', ['limit' => 200]);
+        $this->set(compact('user', 'roles', 'cards', 'stations'));
     }
 
     /**

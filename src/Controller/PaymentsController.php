@@ -25,7 +25,7 @@ class PaymentsController extends AppController
         $this->loadModel("Sales");
         if($customer != false){
             // search for payments for this customer and show them
-            $payments = $this->Payments->find("all", array("conditions" => array("Payments.customer_id" => $customer), "order" => array('Payments.created DESC')))->contain(['Customers', 'PaymentsSales' => ['Sales'], 'Rates', 'Methods']);
+            $payments = $this->Payments->find("all", array("conditions" => array("Payments.customer_id" => $customer, 'Payments.type' => 2), "order" => array('Payments.created DESC')))->contain(['Customers', 'PaymentsSales' => ['Sales'], 'Rates', 'Methods']);
             $cust = $this->Payments->Customers->get($customer);
             $cust->balance = $this->getBalance($customer);
         }else{
@@ -34,7 +34,7 @@ class PaymentsController extends AppController
         }
         $from = $this->request->session()->read("from")." 00:00:00";
         $to = $this->request->session()->read("to")." 23:59:59";
-        $customers = $this->Payments->Customers->find('list', ['conditions' => ['id <>' => 1, 'status' => 1]]);
+        $customers = $this->Payments->Customers->find('list', ['conditions' => ['id <>' => 1, 'status' => 1, 'type <>' => 3]]);
 
 
         $this->set(compact('payments', 'customers', 'cust', 'customer'));
@@ -75,13 +75,13 @@ class PaymentsController extends AppController
         $sales = array();
 
         if(!empty($customer)){
-            $sales = $this->Payments->PaymentsSales->Sales->find('all', array('conditions' => array("customer_id" => $customer), "order" => array('Sales.created ASC')))->contain(['ProductsSales' => ['Products'], 'Customers' , "PaymentsSales" => ['Payments']]);
+            $sales = $this->Payments->PaymentsSales->Sales->find('all', array('conditions' => array("customer_id" => $customer, "Sales.status" => 0), "order" => array('Sales.created ASC')))->contain(['ProductsSales' => ['Products'], 'Customers' , "PaymentsSales" => ['Payments']]);
             $customer = $this->Payments->PaymentsSales->Sales->Customers->get($customer, ['contain' => ['Rates']]);
         }
         
         if ($this->request->is(["patch", "put", 'post'])){
             if(!empty($this->request->getData()['customer_id']) && empty($this->request->getData()['amount'])){
-                $sales = $this->Payments->PaymentsSales->Sales->find('all', array('conditions' => array("customer_id" => $this->request->getData()['customer_id']), "order" => array('created ASC')))->contain(['ProductsSales' => ['Products'], "PaymentsSales" => ['Payments']]);
+                $sales = $this->Payments->PaymentsSales->Sales->find('all', array('conditions' => array("customer_id" => $this->request->getData()['customer_id'], "Sales.status" => 0), "order" => array('created ASC')))->contain(['ProductsSales' => ['Products'], "PaymentsSales" => ['Payments']]);
                 $customer = $this->Payments->PaymentsSales->Sales->Customers->get($this->request->getData()['customer_id'], ['contain' => ['Rates']]);
             }
             if(!empty($this->request->getData()['amount'])){
@@ -91,8 +91,8 @@ class PaymentsController extends AppController
                 $payment->method_id = $this->request->getData()['method_id'];
                 $payment->memo = $this->request->getData()['memo'];  
                 $payment->rate_id = $customer->rate_id;
-                $payment->sale_id = 57249;
                 $payment->customer_id = $this->request->getData()['customer_id'];
+                $payment->type = 2;
                 
                 if($pm = $this->Payments->save($payment)){
                     $accounts = $this->Payments->PaymentsSales->Sales->Customers->Accounts->find('all', array('conditions' => array('customer_id' => $customer->id, 'rate_id' => $customer->rate_id)));
