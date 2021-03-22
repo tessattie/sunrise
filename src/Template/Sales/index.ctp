@@ -45,7 +45,7 @@ $ouinon = array(0=> "Non", 1 => "Oui");
                 </div>
             <?= $this->Form->end() ?>
         </div>
-    <div class="panel-body articles-container">
+        <div class="panel-body articles-container">
             <?php echo $this->element('sales'); ?>
         </div>
         

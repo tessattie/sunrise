@@ -34,7 +34,7 @@
 		<div class="col-xs-6 col-md-3 col-lg-3 no-padding">
 			<div class="panel panel-blue panel-widget border-right">
 				<div class="row no-padding"><em class="fa fa-xl fa-cube color-orange"></em>
-					<div style="font-size:22px;margin-bottom:7px" class="medium"><?= number_format($volume, 2, ".", ",") ?> M3</div>
+					<div style="font-size:22px;margin-bottom:7px" class="medium"><?= number_format($volume, 2, ".", ",") ?> LBS</div>
 					<div class="text-muted">Poid Total</div>
 				</div>
 			</div>
@@ -99,9 +99,9 @@
 				</div>
 				<div class="row">
 					<div class="col-md-12">
-						<span class="legendcolor" style="float:right;padding:5px;margin-left:5px;color:white;background:#1ebfae;border-radius:2px">PETITS : <?= $truck_ratios[2]['value'] ?> VOY</span>
-						<span class="legendcolor" style="float:right;padding:5px;margin-left:5px;color:white;background:#ffb53e;border-radius:2px">MOYENS : <?= $truck_ratios[1]['value'] ?> VOY</span>
-						<span class="legendcolor" style="float:right;padding:5px;margin-left:5px;color:white;background:#30a5ff;border-radius:2px">GROS : <?= $truck_ratios[0]['value'] ?> VOY</span>
+						<span class="legendcolor" style="float:right;padding:5px;margin-left:5px;color:white;background:#1ebfae;border-radius:2px">PETITS : <?= $truck_ratios[2]['value'] ?> FICHES</span>
+						<span class="legendcolor" style="float:right;padding:5px;margin-left:5px;color:white;background:#ffb53e;border-radius:2px">MOYENS : <?= $truck_ratios[1]['value'] ?> FICHES</span>
+						<span class="legendcolor" style="float:right;padding:5px;margin-left:5px;color:white;background:#30a5ff;border-radius:2px">GROS : <?= $truck_ratios[0]['value'] ?> FICHES</span>
 					</div>
 				</div>
 			</div>

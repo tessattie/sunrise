@@ -77,54 +77,37 @@ $rates = array(1=>"HTG", 2=>"USD")
     <table class="table datable table-striped">
         <thead>
             <tr>
+                <th></th>
                 <th>#</th>
                 <th class="text-center">Montant</th>
-                <th class="text-center">Ventes</th>
-                <th class="text-center">Payé</th>
-                <th class="text-center">Restant</th>
+                <th class="text-center">Taux</th>
                 <th class="text-center">Méthode</th>
                 <th class="text-center">Mémo</th>
+                <th class="text-center">Statut</th>
                 <th class="text-right"></th>
             </tr>
         </thead>
         <tbody>
             <?php foreach($payments as $payment) : ?>
-                <?php 
-                $used = 0; 
-                foreach($payment->payments_sales as $ps){
-                    $used = $used + $ps->amount;
-                }
-                ?>
                 <tr>
-                    <td><?= $payment->id ?></td>
+                    <?php if($payment->status == 0) : ?>
+                        <td><a onclick="return confirm('Etes-vous sur de vouloir réactiver ce paiement?')" href="<?= ROOT_DIREC ?>/payments/cancel/<?= $payment->id ?>" style="font-size:1.3em!important;"><span class="fa fa-xl fa-check color-green" style="color:green"></span></a></td>
+                    <?php else : ?>
+                        <td><a onclick="return confirm('Etes-vous sur de vouloir annuler ce paiement?')" href="<?= ROOT_DIREC ?>/payments/cancel/<?= $payment->id ?>" style="font-size:1.3em!important;"><span class="fa fa-xl fa-remove color-red"></span></a></td>
+                    <?php endif; ?>
+                    
+                    <td>10<?= $payment->id ?></td>
                     <td class="text-center"><?= number_format($payment->amount, 2, ".", ",") . " " . $payment->rate->name ?></td>
-                    <td class="text-center"><span class="label label-warning"><?= count($payment->payments_sales) ?></span></td>
-                    <td class="text-center"><?= number_format($used, 2, ".", ",") . " " . $payment->rate->name ?></td>
-                    <td class="text-center"><?= number_format(($payment->amount - $used), 2, ".", ",") . " " . $payment->rate->name ?></td>
+                    <td class="text-center"><?= $payment->daily_rate ?></td>
                     <td class="text-center"><?= $payment->method->name ?></td>
                     <td class="text-center"><?= $payment->memo ?></td>
-                    <td class="text-right"><a href="<?= ROOT_DIREC ?>/payments/edit/<?= $payment->id ?>" style="font-size:1.3em!important;"><span class="fa fa-xl fa-pencil color-blue"></span></a><a target="_blank" href="<?= ROOT_DIREC ?>/payments/receipt/<?= $payment->id ?>" style="font-size:1.3em!important;color:green"> <span class="fa fa-xl fa-eye color-yellow"></span></a><a target="_blank" href="#" style="font-size:1.3em!important;color:red" data-toggle="modal" data-target="#exampleModal<?= $payment->id ?>" > <span class="fa fa-xl fa-envelope color-yellow"></span></a></td>
+                    <?php if($payment->status == 0) : ?>
+                        <td class="text-center"><span class="label label-danger">Annulé</span></td>
+                    <?php else : ?>
+                        <td class="text-center"><span class="label label-success">Actif</span></td>
+                    <?php endif; ?>
+                    <td class="text-right"><a href="<?= ROOT_DIREC ?>/payments/edit/<?= $payment->id ?>" style="font-size:1.3em!important;"><span class="fa fa-xl fa-pencil color-blue"></span></a> <a target="_blank" href="<?= ROOT_DIREC ?>/payments/receipt/<?= $payment->id ?>" style="font-size:1.3em!important;color:green"> <span class="fa fa-xl fa-eye color-yellow"></span></a></td>
 
-                    <div class="modal fade" id="exampleModal<?= $payment->id ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                      <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                        <?= $this->Form->create("", array('url' => "/payments/receipt/".$payment->id)) ?>
-                          <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Envoyer par email</h5>
-                          </div>
-                          <div class="modal-body">
-                          <label>Pour envoyer par e-mail, indiquez l'adresse du client ci-dessous.</label>
-                          <hr>
-                            <?= $this->Form->control('email', array('class' => 'form-control', "label" => "E-mail", "placeholder" => "E-mail : abc@exemple.com", 'value' => (!empty($payment->customer->email)) ? $payment->customer->email : "")); ?>
-                          </div>
-                          <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" data-dismiss="modal">Fermer</button>
-                            <?= $this->Form->button(__('Valider'), array('class'=>'btn btn-success', "style"=>"float:right")) ?>
-                          </div>
-                          <?= $this->Form->end() ?>
-                        </div>
-                      </div>
-                    </div>
                 </tr>
             <?php endforeach; ?>
         </tbody>

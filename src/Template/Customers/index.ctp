@@ -72,6 +72,7 @@
     <div class="panel-body articles-container">
             <table class="table table-stripped datatable">
                 <thead> 
+                    <th>#</th>
                     <th>Client</th>
                     <th class="text-center">Type</th>
                     <th class="text-center">Devise</th>
@@ -86,6 +87,7 @@
         <?php foreach($customers as $customer) : ?>
             <?php if($customer->id != 1) : ?>
                 <tr>
+                    <td class="text-center"><?= $customer->customer_number ?></td>
                     <?php if(!empty($customer->last_name)) : ?>
                         <td><a href="<?= ROOT_DIREC ?>/customers/view/<?= $customer->id ?>" target="_blank"><?= strtoupper($customer->last_name) ?></a></td>
                     <?php else : ?>
@@ -94,7 +96,7 @@
                     
                     <?php if($customer->type == 1) : ?>
                         <td class="text-center"><span class="label label-info">CREDIT</span></td>
-                    <?php else : ?>
+                    <?php else : ?>s
                         <td class="text-center"><span class="label label-warning">PREPAYE</span></td>
                     <?php endif; ?>
 
@@ -117,7 +119,7 @@
                     <td class="text-center"><span class="label label-info"><?= count($customer->payments) ?></span></td>
                     <td class="text-right">
                     <?php if(count($customer->sales) == 0 && count($customer->payments) == 0) : ?>
-                        <a href="<?= ROOT_DIREC ?>/trucks/customers/<?= $customer->id ?>" style="font-size:1.3em!important;margin-right:5px"><span class="fa fa-xl fa-trash color-red"></span></a>
+                        <a href="<?= ROOT_DIREC ?>/customers/delete/<?= $customer->id ?>" style="font-size:1.3em!important;margin-right:5px"><span class="fa fa-xl fa-trash color-red"></span></a>
                     <?php endif; ?>
                     <a href="<?= ROOT_DIREC ?>/customers/edit/<?= $customer->id ?>" style="font-size:1.3em!important;"><span class="fa fa-xl fa-pencil color-blue"></span></a>
                      </td>

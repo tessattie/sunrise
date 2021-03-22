@@ -93,10 +93,55 @@ class AppController extends Controller
     protected function getBalance($customer){
         $balance = 0;
         $conn = ConnectionManager::get('default');
-        $sql = "SELECT c.id, c.last_name, (SELECT SUM(s.total) FROM sales s WHERE s.customer_id = c.id AND (s.status = 0 OR s.status = 4 OR s.status = 6 OR s.status = 7) GROUP BY c.id ORDER BY c.id) as purchased, (SELECT SUM(p.amount) FROM payments p LEFT JOIN payments_sales ps ON ps.payment_id = p.id  LEFT JOIN sales s ON ps.sale_id = s.id WHERE p.customer_id = c.id AND s.status = 0 GROUP BY c.id ORDER BY c.id) as paid FROM customers c WHERE c.id = ".$customer;
+        $this->loadModel('Customers'); 
+        $cust = $this->Customers->get($customer);
+        if($cust->rate_id == 1){
+            $sql = "SELECT c.id, c.last_name, (SELECT SUM(s.total) FROM sales s WHERE s.customer_id = c.id AND (s.status = 1 OR s.status = 0 OR s.status = 4 OR s.status = 6 OR s.status = 7 OR s.status = 10) GROUP BY c.id ORDER BY c.id) as purchased, (SELECT SUM(p.amount) FROM payments p WHERE customer_id = c.id AND rate_id = 1 AND status = 1 AND method_id != 3 GROUP BY c.id ORDER BY c.id) as paid_htg, (SELECT SUM(p.amount*p.daily_rate) FROM payments p WHERE customer_id = c.id AND rate_id = 2 AND status = 1 AND method_id != 3 GROUP BY c.id ORDER BY c.id) as paid_usd FROM customers c WHERE c.id = ".$customer;
+        }else{
+            $sql = "SELECT c.id, c.last_name, (SELECT SUM(s.total) FROM sales s WHERE s.customer_id = c.id AND (s.status = 1 OR s.status = 0 OR s.status = 4 OR s.status = 6 OR s.status = 7 OR s.status = 10) GROUP BY c.id ORDER BY c.id) as purchased, (SELECT SUM(p.amount/p.daily_rate) FROM payments p WHERE customer_id = c.id AND rate_id = 1 AND status = 1 AND method_id != 3 GROUP BY c.id ORDER BY c.id) as paid_htg, (SELECT SUM(p.amount) FROM payments p WHERE customer_id = c.id AND rate_id = 2 AND status = 1 AND method_id != 3 GROUP BY c.id ORDER BY c.id) as paid_usd FROM customers c WHERE c.id = ".$customer;
+        }
+        
         $balances = $conn->query($sql);
         foreach($balances as $b){
-            $balance = $b['purchased'] - $b['paid'] ;
+            // debug($b); die();
+            $balance = $b['purchased'] - $b['paid_htg'] - $b['paid_usd'] ;
+        } 
+        return $balance;
+    }
+
+    protected function getBalanceByDate($customer, $date){
+        debug($date);
+        debug($customer);
+        $balance = 0;
+        $conn = ConnectionManager::get('default');
+
+        $this->loadModel('Customers'); 
+        $cust = $this->Customers->get($customer);
+        if($cust->rate_id == 1){
+            $sql = "SELECT c.id, c.last_name, (SELECT SUM(s.total) FROM sales s WHERE s.customer_id = c.id AND (s.status = 0 OR s.status = 4 OR s.status = 6 OR s.status = 7 )R s.status=1 AND s.created < '".$date."' GROUP BY c.id ORDER BY c.id) as purchased, (SELECT SUM(p.amount) FROM payments p WHERE p.customer_id = c.id  AND p.created < '".$date."' AND p.rate_id = 1 AND p.status = 1 AND method_id != 3 GROUP BY c.id ORDER BY c.id) as paid_htg, (SELECT SUM(p.amount*p.daily_rate) FROM payments p WHERE p.customer_id = c.id  AND p.created < '".$date."' AND p.rate_id = 2 AND p.status = 1 AND method_id != 3 GROUP BY c.id ORDER BY c.id) as paid_usd FROM customers c WHERE c.id = ".$customer;
+        }else{
+            $sql = "SELECT c.id, c.last_name, (SELECT SUM(s.total) FROM sales s WHERE s.customer_id = c.id AND (s.status = 0 OR s.status = 4 OR s.status = 6 OR s.status = 7) AND s.created < '".$date."' GROUP BY c.id ORDER BY c.id) as purchased, (SELECT SUM(p.amount/p.daily_rate) FROM payments p WHERE p.customer_id = c.id  AND p.created < '".$date."' AND p.rate_id = 1 AND p.status = 1 AND method_id != 3 GROUP BY c.id ORDER BY c.id) as paid_htg, (SELECT SUM(p.amount) FROM payments p WHERE p.customer_id = c.id  AND p.created < '".$date."' AND p.rate_id = 2 AND p.status = 1 AND method_id != 3 GROUP BY c.id ORDER BY c.id) as paid_usd FROM customers c WHERE c.id = ".$customer;
+        }
+
+        
+        $balances = $conn->query($sql);
+
+        foreach($balances as $b){
+            debug($b); die();
+            $balance = $b['purchased'] - $b['paid_htg'] - $b['paid_usd'] ;
+        } 
+        return $balance;
+    }
+
+    protected function getPaymentsByDate($customer, $date){
+        $balance = 0;
+        $conn = ConnectionManager::get('default');
+        $sql = "SELECT c.id, c.last_name, (SELECT SUM(s.total) FROM sales s WHERE s.customer_id = c.id AND (s.status = 0 OR s.status = 4 OR s.status = 6 OR s.status = 7) AND s.created < '".$date."' GROUP BY c.id ORDER BY c.id) as purchased, (SELECT SUM(p.amount) FROM payments p WHERE p.customer_id = c.id  AND p.created < '".$date."' and p.status = 1 GROUP BY c.id ORDER BY c.id) as paid FROM customers c WHERE c.id = ".$customer;
+        
+        $balances = $conn->query($sql);
+
+        foreach($balances as $b){
+            $balance = $b['paid'] ;
         } 
         return $balance;
     }

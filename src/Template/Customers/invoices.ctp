@@ -54,7 +54,7 @@
         <tbody>
             <?php if(empty($sales)) : ?>
                 <tr><td colspan="6" class="text-center">Choisissez le client et le mois correspondant...</td></tr>
-            <?php else : ?>
+            <?php else : ?>w
                 <?php $product_name = "ab"; $total_prod = 0; $total = 0; $volume=0;$volume_prod=0; $increment = 0;$increment_prod=0;?>
                 <?php foreach($sales as $sale) : ?>
                     <?php $total = $total + $sale['total']; $volume = $volume + $sale['quantity']; $increment = $increment + 1;  ?>

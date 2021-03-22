@@ -14,131 +14,43 @@
 </div>
 <?= $this->Flash->render() ?>
 <?= $this->Form->create($payment, array('id' => "customerform")) ?>
+<input type="hidden" name="customer_id" value="<?= $customer->id ?>">
 <div class="container-fluid"> 
     <div class="panel panel-default articles">
         <div class="panel-heading">
-            Edition Paiement
+            Edition Paiement : <label>Client : <?= (empty($payment->customer->last_name)) ? $payment->customer->first_name : $payment->customer->last_name ?></label>
+            <?php if($payment->status == 0) : ?>
+                <a onclick="return confirm('Etes-vous sur de vouloir réactiver ce paiement?')" href="<?= ROOT_DIREC ?>/payments/cancel/<?= $payment->id ?>" style="font-size:1.3em!important;float:right"><button type="button" class="btn btn-success">Réactiver</button></a>
+            <?php else : ?>
+                <a onclick="return confirm('Etes-vous sur de vouloir annuler ce paiement?')" href="<?= ROOT_DIREC ?>/payments/cancel/<?= $payment->id ?>" style="font-size:1.8em!important;float:right"><button type="button" class="btn btn-danger">Annuler</button></a>
+            <?php endif; ?>
         </div>
         <div class="panel-body articles-container">
-        <label>Client : <?= (empty($payment->customer->last_name)) ? $payment->customer->first_name : $payment->customer->last_name ?></label>
-        <hr>    
-        <div class="row">
-            <div class="col-md-2">
-                <?= $this->Form->control('amount', array('class' => 'form-control total_amount', "placeholder" => "Montant", "label" => false, "style" => "margin-left:4px")); ?>
+        
+          
+        <div class="row" style="padding-top:20px;padding-bottom:30px;border:1px solid #ddd;margin-bottom:20px;margin-top:10px">
+            <div class="col-md-4">
+                <?= $this->Form->control('amount', array('class' => 'form-control total_amount', "placeholder" => "Montant", "label" => "Montant", "style" => "margin-left:4px")); ?>
             </div>
-            <div class="col-md-3">
-                <?= $this->Form->control('method_id', array('class' => 'form-control', "empty" => "-- Méthode de paiement --", "options" => $methods, "label" => false, "style" => "margin-left:4px;height:46px", "required" => true)); ?>
+            <div class="col-md-4">
+                <?= $this->Form->control('rate_id', array('class' => 'form-control', "empty" => "-- Devise --", "options" => $rates, "label" => 'Devise', "style" => "margin-left:4px;height:46px", "required" => true, 'value' => 1)); ?>
             </div>
-            <div class="col-md-3">
-                <?= $this->Form->control('memo', array('class' => 'form-control', "placeholder" => "Mémo", "label" => false, "style" => "margin-left:4px")); ?>
+            <div class="col-md-4">
+                <?= $this->Form->control('method_id', array('class' => 'form-control', "empty" => "-- Méthode de paiement --", "options" => $methods, "label" => 'Méthode', "style" => "margin-left:4px;height:46px", "required" => true)); ?>
             </div>
-            <div class="col-md-2">
-                <?= $this->Form->control('daily_rate', array('class' => 'form-control', "label" => false, "style" => "margin-left:4px;height:46px", "required" => true, 'placeholder' => "Taux du Jour", 'value' => $payment->daily_rate)); ?>
+            </div>   
+            <div class="row">
+               <div class="col-md-4">
+                    <?= $this->Form->control('memo', array('class' => 'form-control', "placeholder" => "Mémo", "label" => 'Mémo', "style" => "margin-left:4px")); ?>
+                </div>
+                <div class="col-md-4">
+                    <?= $this->Form->control('daily_rate', array('class' => 'form-control', "label" => 'Taux du Jour', "style" => "margin-left:4px;height:46px", "required" => true, 'placeholder' => "Taux du Jour", 'value' => $payment->daily_rate)); ?>
+                </div>
+                <div class="col-md-4">
+                    <label>Date</label><br>
+                    <input value="<?= date("Y-m-d", strtotime($payment->created))  ?>" type="date" name="created" style="height: 45px;">
+                </div> 
             </div>
-            <div class="col-md-2">
-                <input value="<?= date("Y-m-d", strtotime($payment->created))  ?>" type="date" name="created" style="height: 45px;">
-            </div>
-        </div>
-        <hr>    
-
-    <table class="datatable">
-        <thead> 
-            <tr>
-            <th></th>
-            <th class="text-center">DATE</th>
-            <th class="text-center">VENTE</th>
-            <th class="text-center">TOTAL</th>
-            <th class="text-center">DUE</th>
-            <th class="text-right">PAIEMENT</th>
-            </tr>
-        </thead>
-        <tbody> 
-        <?php $total = 0; $due = 0; $paid = 0; $in_array = array();  ?>
-        <?php foreach($sales as $sale) : ?>
-            <?php if(!in_array($sale->id, $in_array)) : ?>
-            <?php 
-                if(!in_array($sale->id, $in_array)){
-                    array_push($in_array, $sale->id);
-                }
-            ?>
-            
-            <?php $already=0; $already_paid = 0; ?>
-            <?php foreach($sale->payments_sales as $ps) : ?>
-                <?php $already = $already + $ps->amount ?>
-                <?php if($ps->payment_id == $payment->id) : ?>
-                    <?php $already_paid = $already_paid + $ps->amount; ?>
-                <?php endif; ?>
-            <?php endforeach; ?>
-            <?php $total = $total + $sale->total ?>
-            <?php $due = $due + ($sale->total - $already) ?>
-            <?php $paid = $paid + $already_paid ?>
-            <tr class="sale">
-                <th style="color:#8ad919;" class="check text-center">
-                    <?php if(($sale->total - $already) <= 0) : ?>
-                        <span class="fa fa-check"></span>
-                    <?php endif; ?>
-                </th>
-                <td class="text-center"><?= date("d/m/Y", strtotime($sale['created'])) ?> <?= date("g:i A", strtotime($sale['created'])) ?></td>
-                <td class="text-center"><?= $sale->sale_number ?></td>
-                <td class="text-center">
-                    <span class="sale_total"><?= number_format($sale->total, 2, ".", ",") ?></span> <?= $customer->rate->name ?>
-                </td>
-                <td class="text-center">
-                    <span class="sale_due"><?= number_format(($sale->total - $already), 2, ".", ",") ?></span> <?= $customer->rate->name ?> <input type="hidden" name="sale_id[]" value="<?= $sale->id ?>">
-                    <input type="hidden" class="due" name="due" value="<?= ($sale->total - $already) ?>">
-                </td>
-                <td class="text-right clickoninput" style="cursor:pointer">
-                    <input step="any" type="number" class="amount" name="amounts[]" value="<?= $already_paid ?>" style="width:130px;cursor:pointer">
-                </td>
-            </tr>
-        <?php endif; ?>
-        <?php endforeach; ?>
-        <?php foreach($sales2 as $sale) : ?>
-            <?php if(!in_array($sale->id, $in_array)) : ?>
-            <?php 
-                if(!in_array($sale->id, $in_array)){
-                    array_push($in_array, $sale->id);
-                }
-            ?>
-            
-            <?php $already_paid = 0; $already=0;   ?>
-            <?php foreach($sale->payments_sales as $ps) : ?>
-                <?php $already = $already + $ps->amount ?>
-            <?php endforeach; ?>
-            <?php $total = $total + $sale->total ?>
-            <?php $due = $due + ($sale->total - $already) ?>
-            <?php $paid = $paid + $already_paid ?>
-            <tr class="sale">
-                <th style="color:#8ad919;" class="check text-center">
-                    <?php if(($sale->total - $already) <= 0) : ?>
-                        <span class="fa fa-check"></span>
-                    <?php endif; ?>
-                </th>
-                <td class="text-center"><?= date("d/m/Y", strtotime($sale['created'])) ?> <?= date("g:i A", strtotime($sale['created'])) ?></td>
-                <td class="text-center"><?= $sale->sale_number ?></td>
-                <td class="text-center">
-                    <span class="sale_total"><?= number_format($sale->total, 2, ".", ",") ?></span> <?= $customer->rate->name ?>
-                </td>
-                <td class="text-center">
-                    <span class="sale_due"><?= number_format(($sale->total - $already), 2, ".", ",") ?></span> <?= $customer->rate->name ?> <input type="hidden" name="sale_id[]" value="<?= $sale->id ?>">
-                    <input type="hidden" class="due" name="due" value="<?= ($sale->total - $already) ?>">
-                </td>
-                <td class="text-right clickoninput" style="cursor:pointer">
-                    <input step="any" type="number" class="amount" name="amounts[]" value="<?= $already_paid ?>" style="width:130px;cursor:pointer">
-                </td>
-            </tr>
-        <?php endif; ?>
-        <?php endforeach; ?>
-        </tbody>
-        <tfoot class="todisplay">
-            <tr>
-                <th></th><th></th><th></th>
-                <th class="text-center"><?= number_format($total, 2, ".", ",") ?> <?= $customer->rate->name ?></th>
-                <th class="text-center" ><span class="dueall"><?= number_format($due, 2, ".", ",") ?></span> <?= $customer->rate->name ?></th>
-                <th class="text-right paid"><span class="paidall"><?= number_format($paid, 2, ".", ",") ?></span> <?= $customer->rate->name ?></th>
-            </tr>
-        </tfoot>
-        </table>
          <?= $this->Form->button(__('Valider'), array('class'=>'btn btn-success', "style" => "height: 46px;border-radius: 0px;margin-top:20px;margin-right:15px;float:right")) ?>
         </div>
         
@@ -185,13 +97,56 @@
 <script type="text/javascript">
     $(document).ready(function(){
         var check = '<span class="fa fa-check"></span>';
+
+        choose();
+
+        // when we change customers - if we come to add payment without having a customer
         $(".customer_id").change(function(){
             $("#customerform").submit();
         }); 
 
+
         $(".total_amount").change(function(){
             choose();
         })
+
+
+        $("#rate-id").change(function(){
+            choose();
+        })
+
+
+        $("#daily-rate").change(function(){
+            choose();
+        })
+       
+
+        $("#amount").focus(function(){
+            $(this).select();
+            $(this).data('val', $(this).val());
+        })
+
+
+        $("#memo").focus(function(){
+            $(this).select();
+        })
+
+
+        $("#daily-rate").focus(function(){
+            $(this).select();
+        })
+
+        $(".total_amount").change(function(){
+            choose();
+        });
+
+        $("#rate-id").change(function(){
+            choose();
+        });
+
+        $("#daily-rate").change(function(){
+            choose();
+        });
 
         $('.check').click(function(){
             var total = $(this).parent().find('.due').val(); 
@@ -206,7 +161,7 @@
             }
         })
 
-        $(".amount").focus(function(){
+        $("#amount").focus(function(){
             $(this).select();
             $(this).data('val', $(this).val());
         }).change(function(){
@@ -215,15 +170,26 @@
             calculate(previous,element);
         })
 
+        $("#memo").focus(function(){
+            $(this).select();
+        })
+
+        $("#daily-rate").focus(function(){
+            $(this).select();
+        })
+
+        // this checks the icon if it isnt checked and needs to be checked
         function check_icon(element){
             element.find('.check').empty();
             element.find('.check').append(check);
         }
 
+        // this calculates whats already been paid
         function calculate2(){
             var c_total = 0;
 
             $('.sale').each(function(){
+                alert($(this).find('.amount').val());
                 if($(this).find('.amount').val() != ""){
                    c_total = c_total + parseFloat($(this).find('.amount').val());  
                 }
@@ -235,6 +201,7 @@
 
         function verify(){
             var total = calculate2(); 
+            // montant inputed by the user
             var total_amount = $('.total_amount').val();
             if(total_amount <= total){
                 return false;
@@ -245,6 +212,7 @@
 
 
         function calculate(previous, element){
+            // total amount that the customer paid and was inputed in the amount input above the table
             var total = $('.total_amount').val();
             var c_total = 0;
 
@@ -277,8 +245,20 @@
 
         function choose(){
             var total = parseFloat($('.total_amount').val()); //45942.5
+            var daily_rate = parseFloat($("#daily-rate").val());
+            var payment_rate_id = $("#rate-id").val();
+
+            var customer_rate_id = $("#customer_rate_id").val();
+            
+            if(payment_rate_id != customer_rate_id){
+                if(payment_rate_id == 1){
+                    total = total/daily_rate;
+                }else{
+                    total = total*daily_rate;
+                }
+            }
             // var already_paid = calculate();
-            var payment = total
+            var payment = total;
             $('.sale').each(function(){
                 duee = 0;
                 var amount = $(this).find('.amount').val();

@@ -22,10 +22,12 @@ class PaymentsController extends AppController
      */
     public function index($customer = false)
     {
+        $from = $this->request->session()->read("from")." 00:00:00";
+        $to = $this->request->session()->read("to")." 23:59:59";
         $this->loadModel("Sales");
         if($customer != false){
             // search for payments for this customer and show them
-            $payments = $this->Payments->find("all", array("conditions" => array("Payments.customer_id" => $customer, 'Payments.type' => 2), "order" => array('Payments.created DESC')))->contain(['Customers', 'PaymentsSales' => ['Sales'], 'Rates', 'Methods']);
+            $payments = $this->Payments->find("all", array("conditions" => array("Payments.customer_id" => $customer,"Payments.created >=" => $from, "Payments.created <=" => $to, "Payments.method_id <>" => 3), "order" => array('Payments.created DESC')))->contain(['Customers', 'Rates', 'Methods']);
             $cust = $this->Payments->Customers->get($customer);
             $cust->balance = $this->getBalance($customer);
         }else{
@@ -34,8 +36,7 @@ class PaymentsController extends AppController
         }
         $from = $this->request->session()->read("from")." 00:00:00";
         $to = $this->request->session()->read("to")." 23:59:59";
-        $customers = $this->Payments->Customers->find('list', ['conditions' => ['id <>' => 1, 'status' => 1, 'type <>' => 3]]);
-
+        $customers = $this->Payments->Customers->find('list', ['conditions' => ['id <>' => 1, 'status' => 1]]);
 
         $this->set(compact('payments', 'customers', 'cust', 'customer'));
     }
@@ -75,13 +76,13 @@ class PaymentsController extends AppController
         $sales = array();
 
         if(!empty($customer)){
-            $sales = $this->Payments->PaymentsSales->Sales->find('all', array('conditions' => array("customer_id" => $customer, "Sales.status" => 0), "order" => array('Sales.created ASC')))->contain(['ProductsSales' => ['Products'], 'Customers' , "PaymentsSales" => ['Payments']]);
+            $sales = $this->Payments->PaymentsSales->Sales->find('all', array('conditions' => array("customer_id" => $customer, 'OR' => array("Sales.status = 0","Sales.status = 4")), "order" => array('Sales.created ASC')))->contain(['ProductsSales' => ['Products'], 'Customers' , "PaymentsSales" => ['Payments']]);
             $customer = $this->Payments->PaymentsSales->Sales->Customers->get($customer, ['contain' => ['Rates']]);
         }
         
         if ($this->request->is(["patch", "put", 'post'])){
             if(!empty($this->request->getData()['customer_id']) && empty($this->request->getData()['amount'])){
-                $sales = $this->Payments->PaymentsSales->Sales->find('all', array('conditions' => array("customer_id" => $this->request->getData()['customer_id'], "Sales.status" => 0), "order" => array('created ASC')))->contain(['ProductsSales' => ['Products'], "PaymentsSales" => ['Payments']]);
+                $sales = $this->Payments->PaymentsSales->Sales->find('all', array('conditions' => array("customer_id" => $this->request->getData()['customer_id'], 'OR' => array("Sales.status = 0","Sales.status = 4")), "order" => array('created ASC')))->contain(['ProductsSales' => ['Products'], "PaymentsSales" => ['Payments']]);
                 $customer = $this->Payments->PaymentsSales->Sales->Customers->get($this->request->getData()['customer_id'], ['contain' => ['Rates']]);
             }
             if(!empty($this->request->getData()['amount'])){
@@ -90,30 +91,13 @@ class PaymentsController extends AppController
                 $payment->amount = $this->request->getData()['amount']; 
                 $payment->method_id = $this->request->getData()['method_id'];
                 $payment->memo = $this->request->getData()['memo'];  
-                $payment->rate_id = $customer->rate_id;
-                $payment->customer_id = $this->request->getData()['customer_id'];
+                $payment->rate_id = $this->request->getData()['rate_id']; 
+                $payment->daily_rate = $this->request->getData()['daily_rate']; 
                 $payment->type = 2;
+                $payment->customer_id = $this->request->getData()['customer_id'];
                 
                 if($pm = $this->Payments->save($payment)){
-                    $accounts = $this->Payments->PaymentsSales->Sales->Customers->Accounts->find('all', array('conditions' => array('customer_id' => $customer->id, 'rate_id' => $customer->rate_id)));
-                    foreach($accounts as $a){
-                        $account = $a;
-                    }
-                    if(!empty($account)){
-                        $account->balance = $this->getBalance($customer->id);
-                        $this->Payments->PaymentsSales->Sales->Customers->Accounts->save($account);
-                    }
-                    for($i=0;$i < count($this->request->getData()['amounts']); $i++){
-                        if($this->request->getData()['amounts'][$i] != 0){
-                            if($this->request->getData()['amounts'][$i] != 0){
-                                $ps = $this->Payments->PaymentsSales->newEntity();
-                                $ps->sale_id = $this->request->getData()['sale_id'][$i];
-                                $ps->amount = $this->request->getData()['amounts'][$i];
-                                $ps->payment_id = $pm['id'];
-                                $this->Payments->PaymentsSales->save($ps);
-                            }
-                        }
-                    }
+  
                 }
                 return $this->redirect(['action' => "index", $pm['customer_id']]);
             }
@@ -123,37 +107,47 @@ class PaymentsController extends AppController
             
         }
 
-
-
         $methods = $this->Payments->Methods->find('list', ['conditions' => ['id <>' => 3]]);
-
-        $customers = $this->Payments->Customers->find('list', ['conditions' => ['id <>' => 1]]);  
-        $this->set(compact('payment', 'customers', 'sales', 'methods', 'rates', 'users', "customer"));
+        $rates = $this->Payments->Rates->find('list', ['limit' => 200]);
+        $daily_rate = $this->Payments->Rates->get(2)->amount;
+        $this->set(compact('payment',  'sales', 'methods', 'rates',"customer", 'daily_rate'));
     }
 
 
     public function receipt($id){
-        $payment = $this->Payments->get($id, ['contain' => ['Customers' => ['Rates']]]);
+        $payment = $this->Payments->get($id, ['contain' => ['Customers' => ['Rates'], 'Rates']]);
         $email = "";
         if($this->request->is(['patch', 'put', "post"])){
             $email = $this->request->getData()['email'];
         }
-
+        $status = array(0=>"Annulé", 1=> "Actif");
         $this->loadModel('Customers');
         $customer = $payment->customer;
+        $customer->balance_at_payment = $this->getBalanceByDate($customer->id, date("Y-m-d H:i:s",strtotime($payment->created)));
         $customer->balance = $this->getBalance($customer->id);
+        if($payment->rate_id == 2){
+            $customer->balance_after_payment = $customer->balance_at_payment - $payment->amount*$payment->daily_rate;
+            if($payment->status == 0){
+                $customer->balance_after_payment = $customer->balance_at_payment;
+            }
+        }else{
+            $customer->balance_after_payment = $customer->balance_at_payment - $payment->amount;
+            if($payment->status == 0){
+                $customer->balance_after_payment = $customer->balance_at_payment;
+            }
+        }
         require_once(ROOT . DS . 'vendor' . DS  . 'fpdf'  . DS . 'fpdf.php');
         
         $fpdf = new FPDF();
         $fpdf->AddPage();
-        $fpdf->Image(ROOT.'/webroot/img/logo.png',10,4,50);
+        $fpdf->Image(ROOT.'/webroot/img/logo.png',10,4,20);
         $fpdf->SetFont('Arial','B',11);
-        $fpdf->Cell(190,0,date('l j F Y'),0,0, 'R');
-        $fpdf->Ln(7);
+        $fpdf->Cell(190,10,date('l j F Y'),0,0, 'R');
+        $fpdf->Ln(15);
         $fpdf->Cell(190,0,"",'B',0, 'R');
         $fpdf->Ln(7);
         $fpdf->SetFont('Arial','B',11);
-        $fpdf->Cell(90,0,utf8_decode("RECU DE PAIEMENT - #" . $payment->id),0,0, 'L');
+        $fpdf->Cell(90,0,utf8_decode("RECU DE PAIEMENT #" . $payment->id),0,0, 'L');
         if(!empty($customer->first_name)){
             $fpdf->Cell(100,0,utf8_decode("CLIENT #".$customer->customer_number." - ".strtoupper($customer->first_name)),0,0, 'R');
         }else{
@@ -161,14 +155,35 @@ class PaymentsController extends AppController
         }
         $fpdf->SetFont('Arial','',12);
         $fpdf->Ln(7);
+        $fpdf->Cell(190,0,utf8_decode("Statut du paiement : ".$status[$payment->status]),'',0, 'R');
+        $fpdf->Ln(7);
+        $fpdf->Cell(190,0,"",'B',0, 'R');
+        $fpdf->Ln(7);
+        $fpdf->Cell(90,0,utf8_decode("Balance avant paiement"),0,0, 'L');
+        $fpdf->Cell(100,0,utf8_decode(number_format($customer->balance_at_payment, 2, ".", ",") . " " . $customer->rate->name),0,0, 'R');
+        $fpdf->Ln(7);
         $fpdf->Cell(190,0,"",'B',0, 'R');
         $fpdf->Ln(7);
         $fpdf->Cell(90,0,utf8_decode("Montant payé"),0,0, 'L');
-        $fpdf->Cell(100,0,utf8_decode(number_format($payment->amount, 2, ".", ",") ." ". $customer->rate->name),0,0, 'R');
+        $fpdf->Cell(100,0,utf8_decode(number_format($payment->amount, 2, ".", ",") ." ". $payment->rate->name),0,0, 'R');
         $fpdf->Ln(9);
-        $fpdf->Cell(90,0,utf8_decode("Mémo"),0,0, 'L');
+        if($payment->rate_id == 2){
+            $fpdf->Cell(90,0,utf8_decode("Taux"),0,0, 'L');
+            $fpdf->Cell(100,0,utf8_decode("1 USD = ".number_format($payment->daily_rate, 2, ".", ",")." HTG"),0,0, 'R');
+        }
+        if(!empty($payment->memo)){
+            $fpdf->Ln(7);
+           $fpdf->Cell(90,0,utf8_decode("Mémo"),0,0, 'L');
         $fpdf->Cell(100,0,utf8_decode($payment->memo),0,0, 'R');
-        $fpdf->Ln(9);
+        }
+        $fpdf->Ln(7);
+        $fpdf->Cell(190,0,"",'B',0, 'R');
+        $fpdf->Ln(7);
+        $fpdf->Cell(90,0,utf8_decode("Balance après paiement"),0,0, 'L');
+        $fpdf->Cell(100,0,utf8_decode(number_format($customer->balance_after_payment, 2, ".", ",") . " " . $customer->rate->name),0,0, 'R');
+        $fpdf->Ln(7);
+        $fpdf->Cell(190,0,"",'B',0, 'R');
+        $fpdf->Ln(7);
         $fpdf->Cell(90,0,utf8_decode("Balance courante"),0,0, 'L');
         $fpdf->Cell(100,0,utf8_decode(number_format($customer->balance, 2, ".", ",") . " " . $customer->rate->name),0,0, 'R');
         $fpdf->Ln(7);
@@ -178,18 +193,11 @@ class PaymentsController extends AppController
         $fpdf->SetFont('Arial','',11);
         $fpdf->Cell(190,0,utf8_decode("Nous vous remercions pour votre confiance et espérons vous revoir très bientôt."),0,0, 'L');
         $fpdf->Ln(15);
-        $fpdf->SetFont('Arial','',10);
-        $fpdf->Cell(190,0,utf8_decode("Téléphone : +509-2813-0700"),0,0, 'L');
+        $fpdf->Cell(190,0,utf8_decode("Site Web : www.belgazhaiti.com"),0,0, 'L');
         $fpdf->Ln(7);
-        $fpdf->Cell(190,0,utf8_decode("Adresse : Tabarre 41, Route de Tabarre, en face Parc Unibank"),0,0, 'L');
+        $fpdf->Cell(190,0,utf8_decode("E-mail : info@belgaz-admin.com"),0,0, 'L');
         $fpdf->Ln(7);
-        $fpdf->Cell(190,0,utf8_decode("Site Web : www.vfmateriaux.com"),0,0, 'L');
-        $fpdf->Ln(7);
-        $fpdf->Cell(190,0,utf8_decode("E-mail : comptabilite@vfmateriaux.com"),0,0, 'L');
-        $fpdf->Ln(7);
-        $fpdf->Cell(190,0,utf8_decode("Chèques à l'ordre de : VFM S.A."),0,0, 'L');
-        $fpdf->Ln(7);
-        $fpdf->Cell(190,0,utf8_decode("Virements : Capital Bank [ HTG : 030011008494 ] - [ USD : 03102447749 ]"),0,0, 'L');
+        $fpdf->Cell(190,0,utf8_decode("Chèques à l'ordre de : Belgaz S.A."),0,0, 'L');
 
         $directoryName = ROOT."/webroot/tmp/VFM_RECU_PM_".$customer->customer_number."_".date('Ymd').'.pdf'; 
         
@@ -227,35 +235,18 @@ class PaymentsController extends AppController
         $payment = $this->Payments->get($id, 
             ['contain' => ['PaymentsSales' => ["Sales"], 'Customers']
         ]);
+        
         $customer = $this->Payments->Customers->get($payment->customer_id, ['contain' => ['Rates']]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $payment = $this->Payments->patchEntity($payment, $this->request->getData());
-            $payment->sale_id = 55;
             $payment->created = $this->request->getData()['created']." 12:00:00";
             if ($pm = $this->Payments->save($payment)) {
-               $payments_sales = $this->Payments->PaymentsSales->find("all", array("conditions" => array("payment_id" => $payment->id))); 
-               foreach($payments_sales as $ps){
-                    $this->Payments->PaymentsSales->delete($ps);
-               }
-               for($i=0;$i < count($this->request->getData()['amounts']); $i++){
-                    if($this->request->getData()['amounts'][$i] != 0){
-                        if($this->request->getData()['amounts'][$i] != 0){
-                            $ps = $this->Payments->PaymentsSales->newEntity();
-                            $ps->sale_id = $this->request->getData()['sale_id'][$i];
-                            $ps->amount = $this->request->getData()['amounts'][$i];
-                            $ps->payment_id = $pm['id'];
-                            $this->Payments->PaymentsSales->save($ps);
-                        }
-                    }
-                }
+               $payments_sales = $this->Payments->PaymentsSales->find("all", array("conditions" => array("payment_id" => $payment->id)));  
             }
         }
-        $sales = $this->getPaymentSales($payment->id);
-        $sales2 = $this->getUnpaidSales($customer->id);
-        $methods = $this->Payments->Methods->find('list', ['limit' => 200]);
+        $methods = $this->Payments->Methods->find('list', ['limit' => 200, 'conditions' => ['id <>' => 3]]);
         $rates = $this->Payments->Rates->find('list', ['limit' => 200]);
-        $customers = $this->Payments->Customers->find('list', ['conditions' => ['id <>' => 1]]); 
-        $this->set(compact('payment', 'sales', 'methods', 'rates', 'users', 'customer', 'sales2', 'customers'));
+        $this->set(compact('payment', 'methods', 'rates', 'customer'));
     }
 
     private function getPaymentSales($payment_id){
@@ -307,5 +298,22 @@ class PaymentsController extends AppController
         }
 
         return $this->redirect(['action' => 'index']);
+    }
+
+    public function cancel($id){
+        $payment = $this->Payments->get($id);
+        $customer = $payment->customer_id;
+        $ps = $this->Payments->PaymentsSales->find("all", array("conditions" => array("payment_id" => $id)));
+        if($payment->status == 0){
+            $payment->status = 1;
+        }else{
+            $payment->status = 0;
+            // delete all related connected invoices
+            foreach($ps as $p){
+                $this->Payments->PaymentsSales->delete($p);
+            }
+        }
+        $this->Payments->save($payment); 
+        return $this->redirect(['action' => 'index', $customer]);
     }
 }

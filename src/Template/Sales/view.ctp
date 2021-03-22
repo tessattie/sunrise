@@ -111,7 +111,7 @@ if($sale->status == 0){
         <div class="row" style="margin-bottom:25px">
         <div class="col-md-4">
         <label>Photo du paquet :</label><br>
-            <?= $this->Html->image('load/truck.jpg', ['alt' => 'CakePHP']); ?>
+            <?= $this->Html->image('sales/'.$sale->image_path, ['alt' => 'CakePHP']); ?>
         </div>
     </div>
     </div>

@@ -120,9 +120,7 @@ class UsersController extends AppController
                 if($user['status'] == false){
                     $this->Flash->error(__('Ce compte est bloqué. Contactez votre administrateur'));
                 }else{
-                    if($user['role_id'] == 1 || $user['role_id'] == 5 || 
-                       $user['role_id'] == 4 || $user['role_id'] == 6 ||
-                       $user['role_id'] == 8 || $user['role_id'] == 9){
+                    if($user['role_id'] == 1 || $user['role_id'] == 3){
                         $this->Auth->setUser($user);
                         if($user['role_id'] == 8){
                             return $this->redirect(['controller' => "Receivings", "action" => "index"]);

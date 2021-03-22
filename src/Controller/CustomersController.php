@@ -59,6 +59,32 @@ class CustomersController extends AppController
         $this->set(compact('customers'));
     }
 
+    public function statements(){
+        $from = $this->request->session()->read("from")." 00:00:00";
+        $to = $this->request->session()->read("to")." 23:59:59";
+        $customers = $this->Customers->find("list");
+        $sales = array();
+        $payments = array();
+        $customer_balance = 0;
+        $customer_balance_before = 0;
+        if($this->request->is(['patch', 'put', 'post'])){
+            $sales = $this->Customers->Sales->find("all", array("conditions" => array("customer_id" => $this->request->getData()['customer_id'], "OR" => array("Sales.status = 0", "Sales.status = 1", 'Sales.status = 4', 'Sales.status = 6', "Sales.status = 7"), 'Sales.created >=' => $from, 'Sales.created <=' => $to)))->contain(['Customers' => ['Rates']]);
+            $payments = $this->Customers->Payments->find("all", array("conditions" => array("customer_id" => $this->request->getData()['customer_id'], "status" => 1, 'Payments.created >=' => $from, 'Payments.created <=' => $to)))->contain(['Rates']);
+            $customer = $this->Customers->get($this->request->getData()['customer_id'], ['contain' => ['Rates']]);
+            $customer_balance = $this->getBalance($this->request->getData()['customer_id']);
+            $customer_balance_before = $this->getBalanceByDate($this->request->getData()['customer_id'], $from);
+        }
+        
+        $this->set("customers", $customers); 
+        $this->set("customer", $customer); 
+        $this->set("sales", $sales); 
+        $this->set("from", $from); 
+        $this->set("to", $to); 
+        $this->set("payments" ,$payments);
+        $this->set("customer_balance" ,$customer_balance);
+        $this->set("customer_balance_before" ,$customer_balance_before);
+   }
+
     public function reset(){
         $sales = $this->Customers->Sales->find('all', array('conditions' => array('customer_id' => 736, "Sales.created >=" => "2020-08-31 00:00:00", "Sales.created <=" => "2020-08-31 23:59:59")))->contain(['Trucks', 'ProductsSales']);
         foreach($sales as $sale){
@@ -240,12 +266,12 @@ class CustomersController extends AppController
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete', "get"]);
-        // $customer = $this->Customers->get($id);
-        // if ($this->Customers->delete($customer)) {
-        //     $this->Flash->success(__('The customer has been deleted.'));
-        // } else {
-        //     $this->Flash->error(__('The customer could not be deleted. Please, try again.'));
-        // }
+        $customer = $this->Customers->get($id);
+        if ($this->Customers->delete($customer)) {
+            $this->Flash->success(__('The customer has been deleted.'));
+        } else {
+            $this->Flash->error(__('The customer could not be deleted. Please, try again.'));
+        }
 
         return $this->redirect(['action' => 'index']);
     }

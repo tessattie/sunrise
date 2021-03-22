@@ -20,12 +20,9 @@ class SuppliersController extends AppController
      */
     public function index()
     {
-        $this->paginate = [
-            'contain' => ['Users']
-        ];
         $suppliers = $this->Suppliers->find("all", array("order" => array("Suppliers.name ASC")))->contain(['Items']);
 
-        $this->set(compact('products', 'suppliers'));
+        $this->set(compact('suppliers'));
     }
 
     /**
