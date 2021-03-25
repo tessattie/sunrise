@@ -434,7 +434,7 @@ class CustomersController extends AppController
             }
             $customer->transport = 0;
         }
-        $this->set(compact('sales', "products", "from", "to", "customers"));
+        $this->set(compact("products", "from", "to", "customers"));
     }
 
     private function getCustomerBalance($customer, $date){

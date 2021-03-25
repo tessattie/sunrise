@@ -582,12 +582,12 @@ class ExportsController extends AppController
         $this->setDates();
         $this->loadModel("Products"); 
         $products = $this->Products->find("all", array("order" => array("position ASC")));
-        $from = date("Y-m-01 00:00:00", strtotime($this->from));
-        $to = date("Y-m-t 23:59:59", strtotime($this->from));
+        $from = date("Y-m-d 00:00:00", strtotime($this->from));
+        $to = date("Y-m-d 23:59:59", strtotime($this->to));
         $month = date("F Y", strtotime($from));
         $last = $this->setMonthlyHeader($products);
-        $this->setDocument("Sunrise System", "Sunrise System", "Sunrise Monthly Report - [ MONTH : ".$month." ]", "Sunrise Monthly Report", "Sunrise Monthly Report");
-        $this->setHeader($this->monthly_header, "Rapport Mensuel Sunrise [" . $month . "]");
+        $this->setDocument("Sunrise System", "Sunrise System", "Sunrise daily Report", "Sunrise daily Report", "Sunrise daily Report");
+        $this->setHeader($this->monthly_header, "Rapport journalier Sunrise");
 
         $current = $from;
         $monthly = $this->getMonthly($from, $to);

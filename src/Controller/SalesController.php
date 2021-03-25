@@ -151,10 +151,10 @@ class SalesController extends AppController
 
     public function monthly(){
         $this->loadModel('Products');
-        $from = date("Y-m-01", strtotime($this->request->session()->read("from")));
-        $to = date("Y-m-t", strtotime($this->request->session()->read("from")));
-        $from_s = date("Y-m-01", strtotime($this->request->session()->read("from")))." 00:00:00";
-        $to_s = date("Y-m-t", strtotime($this->request->session()->read("from")))." 23:59:59";
+        $from = date("Y-m-d", strtotime($this->request->session()->read("from")));
+        $to = date("Y-m-d", strtotime($this->request->session()->read("to")));
+        $from_s = date("Y-m-d", strtotime($this->request->session()->read("from")))." 00:00:00";
+        $to_s = date("Y-m-d", strtotime($this->request->session()->read("to")))." 23:59:59";
 
         $products = $this->Products->find("all", array("order" => array("position ASC")));
 
@@ -169,6 +169,24 @@ class SalesController extends AppController
         $this->set(compact('sales', "products", "from", "to"));
     }
 
+    public function colis(){
+        $from = $this->request->session()->read("from")." 00:00:00";
+        $to = $this->request->session()->read("to")." 23:59:59";
+        $this->loadModel("Stations"); 
+        if($this->Auth->user()['role_id'] == 4){
+            $stations = $this->Stations->find("all", array("conditions" => array("id" => $this->Auth->user()['station_id']))); 
+        }else{
+            $stations = $this->Stations->find("all"); 
+        }
+        
+        $condition = "(Sales.status = 1 OR Sales.status = 0 OR Sales.status = 4 OR Sales.status = 6 OR Sales.status = 7)";
+        foreach($stations as $station){
+            $station->sales = $this->Sales->find("all", array("conditions" => array("Sales.created >= " => $from, "Sales.created <= " => $to, 'Sales.destination_station_id' => $station->id, $condition)))->contain(['Users', 'Receivers', 'Stations', 'Customers', 'ProductsSales']);
+        }
+
+        $this->set("stations", $stations);
+    }
+
     /**
      * Index method
      *
@@ -180,9 +198,6 @@ class SalesController extends AppController
         $to = $this->request->session()->read("to")." 23:59:59";
 
         $condition = "(Sales.status = 1 OR Sales.status = 0 OR Sales.status = 4 OR Sales.status = 6 OR Sales.status = 7)";
-        if($this->Auth->user()['role_id'] == 6){
-            $condition  ="(Sales.status = 0 OR Sales.status = 4 OR Sales.status = 6 OR Sales.status = 7)";
-        }
 
         $sales = $this->Sales->find('all', array('order' => array("Sales.created DESC"), "conditions" => array("Sales.created >=" => $from, "Sales.created <=" => $to, $condition)))->contain(['Users', 'Customers', 'Trucks', 'Pointofsales', "ProductsSales"  => ['Products']]);        
 

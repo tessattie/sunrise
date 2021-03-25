@@ -38,20 +38,17 @@
     <div class="panel-body articles-container">
             <table class="table table-stripped datatable">
                 <thead> 
-                    <th class="text-left">Photo</th>
                     <th class="text-left">Nom</th>
-                    <th class="text-center">Poid (LBS)</th>
+                    <th class="text-center">Poid (KG)</th>
                     <th class="text-center">Ventes</th>
                     <th class="text-center"></th>
                 </thead>
             <tbody> 
             <?php foreach($trucks as $truck) : ?>
                 <tr>
-                    <td><?php if(!empty($truck->photo)) : ?><?= $this->Html->image('trucks/'.$truck->photo, ["width" => "50px", "height" => "auto"]); ?> <?php endif; ?></td>
-                        <td class="text-left"><a href="<?= ROOT_DIREC ?>/trucks/view/<?= $truck->id ?>">
-                        
-                        <?= $truck->immatriculation ?></a></td>
-                        <td class="text-center"><?= $truck->volume ?> LBS</td>
+        
+                        <td class="text-left"><a href="<?= ROOT_DIREC ?>/trucks/view/<?= $truck->id ?>"><?= $truck->immatriculation ?></a></td>
+                        <td class="text-center"><?= $truck->volume ?> KG</td>
                         <td class="text-center"><span class="label label-default"><?= count($truck->sales) ?></span></td>
                         <td class="text-right">
                             <a href="<?= ROOT_DIREC ?>/trucks/edit/<?= $truck->id ?>" style="font-size:1.3em!important;"><span class="fa fa-xl fa-pencil color-blue"></span></a>

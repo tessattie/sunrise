@@ -129,7 +129,7 @@ $cakeDescription = 'SUNRISE';
         <?= $this->Form->end() ?>
         <div class="divider"></div>
         <ul class="nav menu" style="margin-top:0px">
-            <?php if($user_connected['role_id'] ==1 || $user_connected['role_id'] ==3) : ?>
+            <?php if($user_connected['role_id'] ==1 || $user_connected['role_id'] ==3 || $user_connected['role_id'] ==4) : ?>
             <li class="parent <?= ($this->request->getParam('controller') == 'Sales') ? 'active' : '' ?>"><a data-toggle="collapse" href="#sub-item-4">
                 <em class="fa fa-cc">&nbsp;</em> Rapports <span data-toggle="collapse" href="#sub-item-4" class="icon pull-right"><em class="fa fa-plus"></em></span>
                 </a>
@@ -138,7 +138,7 @@ $cakeDescription = 'SUNRISE';
                         <span class="fa fa-arrow-right">&nbsp;</span> Ventes détaillées
                     </a></li>
                     <li><a class="" href="<?= ROOT_DIREC ?>/sales/monthly">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Ventes par mois
+                        <span class="fa fa-arrow-right">&nbsp;</span> Ventes Journalières
                     </a></li>
                     <li><a class="" href="<?= ROOT_DIREC ?>/customers/statements">
                         <span class="fa fa-arrow-right">&nbsp;</span> Etat de Compte
@@ -151,6 +151,9 @@ $cakeDescription = 'SUNRISE';
                     </a></li>
                     <li><a class="" href="<?= ROOT_DIREC ?>/sales/products">
                         <span class="fa fa-arrow-right">&nbsp;</span> Ventes par produits
+                    </a></li>
+                    <li><a class="" href="<?= ROOT_DIREC ?>/sales/colis">
+                        <span class="fa fa-arrow-right">&nbsp;</span> Colis Attendus
                     </a></li>
                 </ul>
             </li>
