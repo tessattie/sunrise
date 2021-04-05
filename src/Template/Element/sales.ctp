@@ -18,7 +18,7 @@
     <tbody> 
     <?php $increment=0; $sous = 0; $reductions = 0; $total = 0; $sous_us = 0; $reductions_us = 0; $total_us = 0; $volume=0; foreach ($sales as $sale): ?>
     <tr <?php if($sale->status == 0 || $sale->status == 4 || $sale->status == 6 || $sale->status == 7) : ?> style="background:#d9edf7" <?php endif; ?>>
-        <td class="text-left">target="_blank"><?= $sale->sale_number ?></td>
+        <td class="text-left"><?= $sale->sale_number ?></td>
         <td class="text-center">
             <?php if($sale->status == 0 || $sale->status == 7) : ?>
                 <span class="label label-info">CR</span>
@@ -35,12 +35,12 @@
             <?php if($sale->status == 4 || $sale->status == 5 || $sale->status == 7 || $sale->status == 8) : ?>
                 <span class= "label label-primary">HTG</span>
             <?php endif; ?>
-            <?php if($sale->status == 2 || $sale->status == 3 || $sale->status == 5 || $sale->status == 8 || $sale->status == 9 || $sale->status == 11) : ?>
+            <?php if($sale->status == 2 || $sale->status == 3 || $sale->status == 5 || $sale->status == 9 || $sale->status == 10 || $sale->status == 11) : ?>
                 <span class= "label label-danger">X</span>
             <?php endif; ?>
         </td>
 
-        <td class="text-center"><?= substr($sale->user->last_name, 0,1).substr($sale->user->first_name) ?></td>
+        <td class="text-center"><?= substr($sale->user->last_name, 0,1).substr($sale->user->first_name, 0,1) ?></td>
 
         <td class="text-center"><?= substr($sale->customer->first_name." ".$sale->customer->last_name, 0, 15) ?></td>
 

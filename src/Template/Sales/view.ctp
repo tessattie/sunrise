@@ -42,9 +42,9 @@ if($sale->status == 0){
                 <div class="row contacts">
                     <div class="col-md-6 invoice-to">
                         <div class="text-gray-light">FICHE #<?= $sale->sale_number ?></div>
-                        <div class="text-gray-light">Client (Expéditeur) : <?= $sale->has('customer') ? $this->Html->link(strtoupper($sale->customer->last_name)." ".$sale->customer->first_name, ['controller' => 'Customers', 'action' => 'view', $sale->customer->id]) : '' ?></div>
-                        <div class="text-gray-light">Produit : <?= $sale->has('truck') ? $this->Html->link($sale->truck->immatriculation, ['controller' => 'Trucks', 'action' => 'view', $sale->truck->id]) : '' ?></div>
-                        <div class="text-gray-light">Agent : <?= $sale->has('user') ? $this->Html->link($sale->user->first_name." ".$sale->user->last_name, ['controller' => 'Users', 'action' => 'view', $sale->user->id]) : '' ?></div>
+                        <div class="text-gray-light">Client (Expéditeur) : <?= strtoupper($sale->customer->last_name)." ".$sale->customer->first_name ?></div>
+                        <div class="text-gray-light">Produit : <?= $sale->truck->immatriculation ?></div>
+                        <div class="text-gray-light">Agent : <?= $sale->user->first_name." ".$sale->user->last_name ?></div>
                     </div>
                     <div class="col-md-6 invoice-details">
                     <?php if($sale->status == 0 || $sale->status == 1 || $sale->status == 4|| $sale->status == 6 || $sale->status == 7) : ?>
