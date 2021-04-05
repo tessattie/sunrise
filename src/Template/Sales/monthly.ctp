@@ -9,7 +9,7 @@ $years = array("2019" => "2019", "2020" => "2020", '2021' => '2021', '2022' => '
         <li><a href="<?= ROOT_DIREC ?>/sales/dashboard">
             <em class="fa fa-home"></em>
         </a></li>
-        <li class="active">Ventes Mensuelles</li>
+        <li class="active">Ventes Journalières</li>
     </ol>
     <a href="<?= ROOT_DIREC ?>/exports/monthly" target="_blank" style="float:right;
         margin-top: -34px;
@@ -22,7 +22,7 @@ $years = array("2019" => "2019", "2020" => "2020", '2021' => '2021', '2022' => '
 <div class="container-fluid"> 
     <div class="panel panel-default articles">
         <div class="panel-heading">
-            Ventes Mensuelles
+            Ventes Journalières
         </div>
         <div class="panel-body articles-container">
             <!--End .article-->
@@ -33,7 +33,7 @@ $years = array("2019" => "2019", "2020" => "2020", '2021' => '2021', '2022' => '
                     <?php foreach($products as $product) : ?>
                         <?php $i = $i+1; ?>
                     <?php endforeach; ?>
-                    <th class="text-right">TOTAL (LBS)</th>
+                    <th class="text-right">TOTAL (KG)</th>
                 </thead>
             
             <tbody>
@@ -67,7 +67,7 @@ $years = array("2019" => "2019", "2020" => "2020", '2021' => '2021', '2022' => '
             <tfoot>
                 <tr>
                 <?php $last_total = 0; ?>
-                    <th>TOTAL (LBS)</th>
+                    <th>TOTAL (KG)</th>
                     <?php foreach($products as $product) : ?>
                         <?php $last_total = $last_total + $product->total; ?>
                     <?php endforeach; ?>

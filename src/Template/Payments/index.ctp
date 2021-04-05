@@ -79,6 +79,7 @@ $rates = array(1=>"HTG", 2=>"USD")
             <tr>
                 <th></th>
                 <th>#</th>
+                <th class="text-center">Date</th>
                 <th class="text-center">Montant</th>
                 <th class="text-center">Taux</th>
                 <th class="text-center">Méthode</th>
@@ -97,6 +98,7 @@ $rates = array(1=>"HTG", 2=>"USD")
                     <?php endif; ?>
                     
                     <td>10<?= $payment->id ?></td>
+                    <td class="text-center"><?= date("d M Y", strtotime($payment->created)) ?></td>
                     <td class="text-center"><?= number_format($payment->amount, 2, ".", ",") . " " . $payment->rate->name ?></td>
                     <td class="text-center"><?= $payment->daily_rate ?></td>
                     <td class="text-center"><?= $payment->method->name ?></td>
@@ -107,7 +109,6 @@ $rates = array(1=>"HTG", 2=>"USD")
                         <td class="text-center"><span class="label label-success">Actif</span></td>
                     <?php endif; ?>
                     <td class="text-right"><a href="<?= ROOT_DIREC ?>/payments/edit/<?= $payment->id ?>" style="font-size:1.3em!important;"><span class="fa fa-xl fa-pencil color-blue"></span></a> <a target="_blank" href="<?= ROOT_DIREC ?>/payments/receipt/<?= $payment->id ?>" style="font-size:1.3em!important;color:green"> <span class="fa fa-xl fa-eye color-yellow"></span></a></td>
-
                 </tr>
             <?php endforeach; ?>
         </tbody>

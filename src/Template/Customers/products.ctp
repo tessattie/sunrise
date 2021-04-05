@@ -37,7 +37,7 @@
                     <?php foreach($products as $product) : ?>
                         <?php $i = $i+1; ?>
                     <?php endforeach; ?>
-                    <th class="text-right">POID (LBS)</th>
+                    <th class="text-right">POID (KG)</th>
                 </thead>
             
             <tbody>
@@ -55,7 +55,7 @@
                     <?php foreach($customer->products as $prd) : ?>
                         <?php $volume = $volume + $prd['total_sold'] ?>
                     <?php endforeach; ?>
-                    <th class="text-right"><?= number_format($volume, 2, ".", ",") ?> LBS</th>
+                    <th class="text-right"><?= number_format($volume, 2, ".", ",") ?> KG</th>
                     </tr>
                     <?php $number++ ?>
                 <?php endif; ?>

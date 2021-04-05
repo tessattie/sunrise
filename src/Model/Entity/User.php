@@ -46,6 +46,7 @@ class User extends Entity
         'modified' => true,
         'status' => true,
         'role' => true,
+        'station_id' => true,
         'customers' => true,
         'invoices' => true,
         'payments' => true,

@@ -110,15 +110,13 @@ class AppController extends Controller
     }
 
     protected function getBalanceByDate($customer, $date){
-        debug($date);
-        debug($customer);
         $balance = 0;
         $conn = ConnectionManager::get('default');
 
         $this->loadModel('Customers'); 
         $cust = $this->Customers->get($customer);
         if($cust->rate_id == 1){
-            $sql = "SELECT c.id, c.last_name, (SELECT SUM(s.total) FROM sales s WHERE s.customer_id = c.id AND (s.status = 0 OR s.status = 4 OR s.status = 6 OR s.status = 7 )R s.status=1 AND s.created < '".$date."' GROUP BY c.id ORDER BY c.id) as purchased, (SELECT SUM(p.amount) FROM payments p WHERE p.customer_id = c.id  AND p.created < '".$date."' AND p.rate_id = 1 AND p.status = 1 AND method_id != 3 GROUP BY c.id ORDER BY c.id) as paid_htg, (SELECT SUM(p.amount*p.daily_rate) FROM payments p WHERE p.customer_id = c.id  AND p.created < '".$date."' AND p.rate_id = 2 AND p.status = 1 AND method_id != 3 GROUP BY c.id ORDER BY c.id) as paid_usd FROM customers c WHERE c.id = ".$customer;
+            $sql = "SELECT c.id, c.last_name, (SELECT SUM(s.total) FROM sales s WHERE s.customer_id = c.id AND (s.status = 0 OR s.status = 4 OR s.status = 6 OR s.status = 7 ) AND s.status=1 AND s.created < '".$date."' GROUP BY c.id ORDER BY c.id) as purchased, (SELECT SUM(p.amount) FROM payments p WHERE p.customer_id = c.id  AND p.created < '".$date."' AND p.rate_id = 1 AND p.status = 1 AND method_id != 3 GROUP BY c.id ORDER BY c.id) as paid_htg, (SELECT SUM(p.amount*p.daily_rate) FROM payments p WHERE p.customer_id = c.id  AND p.created < '".$date."' AND p.rate_id = 2 AND p.status = 1 AND method_id != 3 GROUP BY c.id ORDER BY c.id) as paid_usd FROM customers c WHERE c.id = ".$customer;
         }else{
             $sql = "SELECT c.id, c.last_name, (SELECT SUM(s.total) FROM sales s WHERE s.customer_id = c.id AND (s.status = 0 OR s.status = 4 OR s.status = 6 OR s.status = 7) AND s.created < '".$date."' GROUP BY c.id ORDER BY c.id) as purchased, (SELECT SUM(p.amount/p.daily_rate) FROM payments p WHERE p.customer_id = c.id  AND p.created < '".$date."' AND p.rate_id = 1 AND p.status = 1 AND method_id != 3 GROUP BY c.id ORDER BY c.id) as paid_htg, (SELECT SUM(p.amount) FROM payments p WHERE p.customer_id = c.id  AND p.created < '".$date."' AND p.rate_id = 2 AND p.status = 1 AND method_id != 3 GROUP BY c.id ORDER BY c.id) as paid_usd FROM customers c WHERE c.id = ".$customer;
         }
@@ -127,7 +125,6 @@ class AppController extends Controller
         $balances = $conn->query($sql);
 
         foreach($balances as $b){
-            debug($b); die();
             $balance = $b['purchased'] - $b['paid_htg'] - $b['paid_usd'] ;
         } 
         return $balance;

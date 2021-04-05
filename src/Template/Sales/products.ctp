@@ -40,7 +40,7 @@
                 <thead>
                         <th>Produit</th>
                         <th class="text-center">Fiches</th>
-                        <th class="text-center">Poid (LBS)</th>
+                        <th class="text-center">Poid (KG)</th>
                         <th class="text-center">Pourcentage</th>
                         <th class="text-right">Cummulé</th>
                 </thead>
@@ -61,7 +61,7 @@
                     <tr>
                         <td><a href="<?= ROOT_DIREC ?>/products/view/<?= $product['id'] ?>" target="_blank"><?= $product['name'] ?></a></td>
                         <th class="text-center"><?= $product['total_trips'] ?></th>
-                        <th class="text-center"><?= number_format($product['total_sold'],2,".", " ") ?> LBS</th>
+                        <th class="text-center"><?= number_format($product['total_sold'],2,".", " ") ?> KG</th>
                         <th class="text-center"><?= number_format($pourcentage, 3, ".", ",") ?>%</th>
                         <th class="text-right"><?= number_format($cummule, 3, ".", ",") ?>%</th>
                     </tr>
@@ -71,7 +71,7 @@
             <tr>
                 <th>TOTAL</th>
                 <th class="text-center"><?= $total_trips  ?></th>
-                <th class="text-center"><?= number_format($total_volume, 2, ".", ",") ?> LBS</th>
+                <th class="text-center"><?= number_format($total_volume, 2, ".", ",") ?> KG</th>
                 <th class="text-center">100.00%</th>
                     <th class="text-right">100.000%</th>
             </tr>
