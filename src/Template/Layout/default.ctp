@@ -145,9 +145,6 @@ $cakeDescription = 'SUNRISE';
                     <li><a class="" href="<?= ROOT_DIREC ?>/sales/closing">
                         <span class="fa fa-arrow-right">&nbsp;</span> Fermeture de caisse
                     </a></li>
-                    <li><a class="" href="<?= ROOT_DIREC ?>/customers/products">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Clients
-                    </a></li>
                     <li><a class="" href="<?= ROOT_DIREC ?>/sales/products">
                         <span class="fa fa-arrow-right">&nbsp;</span> Ventes par produits
                     </a></li>

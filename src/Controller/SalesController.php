@@ -161,10 +161,10 @@ class SalesController extends AppController
         $conn = ConnectionManager::get('default');
         $sales = $conn->query("SELECT SUM(sp.quantity) AS total, DATE(s.created) as date, p.name as product, p.id
             FROM sales s 
-            LEFT JOIN products_sales sp ON sp.sale_id = s.id 
+            INNER JOIN products_sales sp ON sp.sale_id = s.id 
             LEFT JOIN products p ON p.id = sp.product_id 
-            WHERE s.created >='".$from_s."' AND s.created <= '".$to_s."' AND (s.status = 0 OR s.status = 1 OR s.status =4 OR s.status = 6 OR s.status =7)
-            GROUP BY DATE(s.created), sp.product_id"); 
+            WHERE s.created >='".$from_s."' AND s.created <= '".$to_s."' AND (s.status = 0 OR s.status = 1 OR s.status =4 OR s.status = 6 OR s.status =7 OR s.status =10)
+            GROUP BY DATE(s.created)"); 
 
         $this->set(compact('sales', "products", "from", "to"));
     }
