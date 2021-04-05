@@ -114,7 +114,6 @@ $cakeDescription = 'SUNRISE';
     </nav>
     <div id="sidebar-collapse" class="col-sm-3 col-lg-2 sidebar">
         <div class="profile-sidebar">
-         
             <div class="profile-usertitle" style="margin:auto;width:100%">
                 <div class="profile-usertitle-name text-center" style="margin-top:12px"><?= $user_connected['first_name']." ".$user_connected['last_name'] ?></div>
                 <div class="profile-usertitle-status text-center"><span class="indicator label-success"></span>En ligne</div>
