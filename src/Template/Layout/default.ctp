@@ -143,14 +143,8 @@ $cakeDescription = 'SUNRISE';
                     <li><a class="" href="<?= ROOT_DIREC ?>/customers/statements">
                         <span class="fa fa-arrow-right">&nbsp;</span> Etat de Compte
                     </a></li>
-                    <li><a class="" href="<?= ROOT_DIREC ?>/sales/closing">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Fermeture de caisse
-                    </a></li>
-                    <li><a class="" href="<?= ROOT_DIREC ?>/sales/products">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Ventes par produits
-                    </a></li>
                     <li><a class="" href="<?= ROOT_DIREC ?>/sales/colis">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Colis Attendus
+                        <span class="fa fa-arrow-right">&nbsp;</span> Manifest
                     </a></li>
                 </ul>
             </li>
@@ -211,6 +205,8 @@ $cakeDescription = 'SUNRISE';
             <?php endif; ?>
             <?php if($user_connected['role_id'] ==1) : ?>
             <li class="<?= ($this->request->getParam('controller') == 'Trucks') ? 'active' : '' ?>"><a  href="<?= ROOT_DIREC ?>/trucks"><em class="fa fa-truck">&nbsp;</em> Paquets</a></li>
+
+            <li class="<?= ($this->request->getParam('controller') == 'Flights') ? 'active' : '' ?>"><a  href="<?= ROOT_DIREC ?>/flights"><em class="fa fa-plane">&nbsp;</em> Vols</a></li>
             
 
 
@@ -219,7 +215,7 @@ $cakeDescription = 'SUNRISE';
                 </a>
                 <ul class="children collapse" id="sub-item-3">
                     <li class="<?= ($this->request->getParam('controller') == 'Pointofsales') ? 'active' : '' ?>"><a  href="<?= ROOT_DIREC ?>/pointofsales"><em class="fa fa-arrow-right">&nbsp;</em> POS</a></li>
-                    <li class="<?= ($this->request->getParam('controller') == 'Rates') ? 'active' : '' ?>"><a class=""  href="<?= ROOT_DIREC ?>/rates">
+                    <li class="<?= ($this->request->getParam('controller') == 'Rates') ? 'active' : '' ?>"><a class=""  href="<?= ROOT_DIREC ?>/rates/edit/2">
                         <span class="fa fa-arrow-right">&nbsp;</span> Taux du jour
                     </a></li>
                     <li  class="<?= ($this->request->getParam('controller') == 'Methods') ? 'active' : '' ?>"><a class=""  href="<?= ROOT_DIREC ?>/methods">

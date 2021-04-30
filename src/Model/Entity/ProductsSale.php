@@ -33,6 +33,21 @@ class ProductsSale extends Entity
         'list_price' => true,
         'quantity' => true,
         'product' => true,
-        'sale' => true
+        'sale' => true, 
+        'taxe' => true, 
+        'image_path' => true, 
+        'barcode' => true, 
+        'flight_id' => true, 
+        'tag' => true, 
+        'comment' => true, 
+        'created' => true, 
+        'modified' => true, 
+        'loaded' => true, 
+        'loaded_user_id' => true, 
+        'landed' => true, 
+        'landed_user_id' => true, 
+        'delivered' => true, 
+        'delivered_user_id' => true, 
+        'truck_id' => true
     ];
 }

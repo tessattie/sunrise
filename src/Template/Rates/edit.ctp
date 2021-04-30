@@ -20,7 +20,7 @@
 <div class="container-fluid"> 
     <div class="panel panel-default articles">
         <div class="panel-heading">
-            Editer Taux du Jour : <?= $rate->name ?>
+            Editer Taux du Jour
             <ul class="pull-right panel-settings panel-button-tab-right">
                             <li class="dropdown"><a class="pull-right dropdown-toggle" data-toggle="dropdown" href="#">
                                 <em class="fa fa-cog"></em>
@@ -41,12 +41,11 @@
     <div class="panel-body articles-container">       
             <?= $this->Form->create($rate) ?>
                 <div class="row">
-                <div class="col-md-3"></div>
-                    <div class="col-md-3"><?= $this->Form->control('name', array('class' => 'form-control', "label" => "Nom *", "placeholder" => "Nom")); ?></div>
-                    <div class="col-md-3"><?= $this->Form->control('amount', array('class' => 'form-control', "label" => "Montant *", "placeholder" => "Montant")); ?></div>
+                    <div class="col-md-3"><?= $this->Form->control('amount', array('class' => 'form-control', "label" => "Produits *", "placeholder" => "Produits")); ?></div>
+                    <div class="col-md-3"><?= $this->Form->control('payment', array('class' => 'form-control', "label" => "Paiements *", "placeholder" => "Paiements")); ?></div>
                 </div> 
                 <div class="row">
-                    <div class="col-md-9"><?= $this->Form->button(__('Valider'), array('class'=>'btn btn-success', "style"=>"margin-top:25px;float:right")) ?></div>
+                    <div class="col-md-12"><?= $this->Form->button(__('Valider'), array('class'=>'btn btn-success', "style"=>"margin-top:25px;float:right")) ?></div>
                 </div>  
 
 

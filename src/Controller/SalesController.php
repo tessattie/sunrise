@@ -156,35 +156,33 @@ class SalesController extends AppController
         $from_s = date("Y-m-d", strtotime($this->request->session()->read("from")))." 00:00:00";
         $to_s = date("Y-m-d", strtotime($this->request->session()->read("to")))." 23:59:59";
 
-        $products = $this->Products->find("all", array("order" => array("position ASC")));
-
         $conn = ConnectionManager::get('default');
-        $sales = $conn->query("SELECT SUM(sp.quantity) AS total, DATE(s.created) as date, p.name as product, p.id
-            FROM sales s 
-            INNER JOIN products_sales sp ON sp.sale_id = s.id 
-            LEFT JOIN products p ON p.id = sp.product_id 
-            WHERE s.created >='".$from_s."' AND s.created <= '".$to_s."' AND (s.status = 0 OR s.status = 1 OR s.status =4 OR s.status = 6 OR s.status =7 OR s.status =10)
-            GROUP BY DATE(s.created)"); 
+        $sales = $conn->query("SELECT DATE(s.created) as date, (SELECT SUM(sales.taxe) FROM sales WHERE DATE(s.created) = DATE(sales.created) AND (sales.status = 0 OR sales.status = 6 OR sales.status = 9 OR sales.status = 10)) as taxe_usd, (SELECT SUM(sales.taxe) FROM sales WHERE DATE(s.created) = DATE(sales.created) AND (sales.status = 1 OR sales.status = 4 OR sales.status = 7 OR sales.status = 8)) as taxe_htg, (SELECT SUM(sales.total) FROM sales WHERE DATE(s.created) = DATE(sales.created) AND (sales.status = 0 OR sales.status = 6 OR sales.status = 9 OR sales.status = 10)) as total_usd, (SELECT SUM(sales.total) FROM sales WHERE DATE(s.created) = DATE(sales.created) AND (sales.status = 1 OR sales.status = 4 OR sales.status = 7 OR sales.status = 8)) as total_htg FROM sales s WHERE s.created >='".$from_s."' AND s.created <= '".$to_s."' GROUP BY DATE(s.created) ORDER BY DATE(s.created)"); 
 
-        $this->set(compact('sales', "products", "from", "to"));
+        $this->set(compact('sales', "from", "to"));
     }
 
     public function colis(){
         $from = $this->request->session()->read("from")." 00:00:00";
         $to = $this->request->session()->read("to")." 23:59:59";
+        $sales = '';
         $this->loadModel("Stations"); 
         if($this->Auth->user()['role_id'] == 4){
-            $stations = $this->Stations->find("all", array("conditions" => array("id" => $this->Auth->user()['station_id']))); 
+            $stations = $this->Stations->find("list", array("conditions" => array("id" => $this->Auth->user()['station_id']))); 
         }else{
-            $stations = $this->Stations->find("all"); 
-        }
-        
-        $condition = "(Sales.status = 1 OR Sales.status = 0 OR Sales.status = 4 OR Sales.status = 6 OR Sales.status = 7)";
-        foreach($stations as $station){
-            $station->sales = $this->Sales->find("all", array("conditions" => array("Sales.created >= " => $from, "Sales.created <= " => $to, 'Sales.destination_station_id' => $station->id, $condition)))->contain(['Users', 'Receivers', 'Stations', 'Customers', 'ProductsSales']);
+            $stations = $this->Stations->find("list"); 
         }
 
-        $this->set("stations", $stations);
+        if($this->request->is(['patch', 'put', 'post'])){
+            $condition = "(Sales.status = 1 OR Sales.status = 0 OR Sales.status = 4 OR Sales.status = 6 OR Sales.status = 7)";
+            $station_id = $this->request->getData()['station_id'];
+            $sales = $this->Sales->find("all", array("conditions" => array("Sales.created >= " => $from, "Sales.created <= " => $to, 'Sales.destination_station_id' => $station_id, $condition)))->contain(['Users', 'Receivers', 'Stations', 'Customers', 'ProductsSales' => ['Flights']]);
+        }
+        foreach($sales as $sale){
+            $sale->destination_station = $this->Stations->get($sale->destination_station_id);
+        }
+
+        $this->set("stations", $stations); $this->set("sales", $sales);
     }
 
     /**
@@ -729,7 +727,7 @@ class SalesController extends AppController
         
 
         $sale = $this->Sales->get($id, [
-            'contain' => ['Users', "RequisitionsSales" => ['Requisitions'], 'Customers' => ['Rates'], 'Trucks', 'Pointofsales', 'ProductsSales' => ["Products"], 'PaymentsSales' => ['Payments' => ['Methods', 'Rates']]]
+            'contain' => ['Users', "RequisitionsSales" => ['Requisitions'], 'Customers' => ['Rates'], 'Trucks', 'Pointofsales', 'ProductsSales' => ["Products", 'Trucks'], 'PaymentsSales' => ['Payments' => ['Methods', 'Rates']]]
         ]);
 
         $this->set('sale', $sale); $this->set('rate', $rate);
@@ -754,6 +752,7 @@ class SalesController extends AppController
                 $date = $this->request->getData()['date'];
             }
         }
+
         $i=0;
         foreach($users as $user){
             $closing[$i] = $this->getClosingValues($user->id, $from, $to);

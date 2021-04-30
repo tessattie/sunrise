@@ -3,11 +3,11 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Sale $sale
  */
-
-$currency = $sale->customer->rate->name;
+$rates = array(1 => 'HTG', 2 => "USD"); 
+$currency = 1;
 $discounts = array(0 => $currency, 1 => "%");
-if($sale->status == 0){
-    $currency = " USD";
+if($sale->status == 0 || $sale->status == 2 || $sale->status == 6 || $sale->status == 10 || $sale->status == 11){
+    $currency = 2;
 }
 ?>
 <div class="row" style="margin-bottom:15px">
@@ -43,7 +43,6 @@ if($sale->status == 0){
                     <div class="col-md-6 invoice-to">
                         <div class="text-gray-light">FICHE #<?= $sale->sale_number ?></div>
                         <div class="text-gray-light">Client (Expéditeur) : <?= strtoupper($sale->customer->last_name)." ".$sale->customer->first_name ?></div>
-                        <div class="text-gray-light">Produit : <?= $sale->truck->immatriculation ?></div>
                         <div class="text-gray-light">Agent : <?= $sale->user->first_name." ".$sale->user->last_name ?></div>
                     </div>
                     <div class="col-md-6 invoice-details">
@@ -51,8 +50,6 @@ if($sale->status == 0){
                     <button class="btn btn-danger" style="margin-bottom:10px"><a href="<?= ROOT_DIREC ?>/sales/cancel/<?= $sale->id ?>" style="color:white">Annuler</a></button>
                 <?php endif; ?>
                         <div class="date">Date : <?= $sale->created ?></div>
-                        <div class="date">En route : <?= ($sale->charged == 0) ? "<label class='label label-danger'>Non</label>" : "<label class='label label-success'>Oui</label>" ?></div>
-                        <div class="date">Livré : <?= ($sale->sortie == 0) ? "<label class='label label-danger'>Non</label>" : "<label class='label label-success'>Oui</label>" ?></div>
 
                     </div>
                 </div>
@@ -60,36 +57,48 @@ if($sale->status == 0){
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th class="text-left">PRODUIT</th>
-                            <th class="text-center">PRIX (M3)</th>
-                            <th class="text-center">POID</th>
-                            <th class="text-right">TOTAL</th>
+                            <th class="text-left">Produit</th>
+                            <th class="text-center">Poid</th>
+                            <th class="text-center">Chargé</th>
+                            <th class="text-center">Arrivé</th>
+                            <th class="text-right">Livré</th>
                         </tr>
                     </thead>
                     <tbody>
                     <?php foreach ($sale->products_sales as $sp) : ?>
                         <tr>
-                            <td class="no text-center">1</td>
+                            <td class="no text-center"><?= $this->Html->image('sales/'.$sp->image_path, ['style' => 'height:100px']); ?></td>
                             <td class="text-left"><h3>
-                                <a href="<?= ROOT_DIREC ?>/products/view/<?= $sp->id ?>" target="_blank">
-                                <?= $sp->product->name ?>
-                                </a>
+                                <?= $sp->barcode." - ".$sp->truck->immatriculation ?>
                                 </h3>
                             </td>
-                            <td class="unit text-center"><?= number_format($sp->price,2, ".", ",") ?> <?= $currency ?></td>
-                            <td class="qty text-center"><?= $sp->quantity ?> LBS</td>
-                            <td class="total"><?= number_format($sp->price*$sp->quantity,2, ".", ",") ?><?= $currency ?></td>
+                            <td class="qty text-center"><?= $sp->quantity ?> KG</td>
+                            <?php if($sp->loaded == 1) : ?>
+                                <td class="text-center"><span class="label label-success">OUI</span></td>
+                            <?php else : ?>
+                                <td class="text-center"><span class="label label-danger">NON</span></td>
+                            <?php endif; ?>
+                            <?php if($sp->landed == 1) : ?>
+                                <td class="text-center"><span class="label label-success">OUI</span></td>
+                            <?php else : ?>
+                                <td class="text-center"><span class="label label-danger">NON</span></td>
+                            <?php endif; ?>
+                            <?php if($sp->delivered == 1) : ?>
+                                <td class="text-right"><span class="label label-success">OUI</span></td>
+                            <?php else : ?>
+                                <td class="text-right"><span class="label label-danger">NON</span></td>
+                            <?php endif; ?>
                         </tr>
                     <?php endforeach; ?>
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="2"></td>
+                            <td colspan="3"></td>
                             <td colspan="2">SOUS-TOTAL</td>
-                            <td><?= number_format($sale->subtotal,2, ".", ",") ?> <?= $currency ?></td>
+                            <td><?= number_format($sale->subtotal,2, ".", ",") ?> <?= $rates[$currency] ?></td>
                         </tr>
                         <tr>
-                            <td colspan="2"></td>
+                            <td colspan="3"></td>
                             <td colspan="2">REDUCTION (<?= $sale->discount.$discounts[$sale->discount_type] ?>)</td>
                             <?php if($sale->discount_type == 0) : ?>
                                 <td><?= number_format($sale->discount, 2, ".", ",") ?></td>
@@ -98,22 +107,21 @@ if($sale->status == 0){
                             <?php endif; ?>
                         </tr>
                         <tr>
-                            <td colspan="2"></td>
+                            <td colspan="3"></td>
+                            <td colspan="2">Taxe</td>
+                            <td><?= number_format($sale->taxe,2, ".", ",") ?>  <?= $rates[$currency] ?></td>
+                        </tr>
+                        <tr>s
+                            <td colspan="3"></td>
                             <td colspan="2">TOTAL</td>
-                            <td><?= number_format($sale->total,2, ".", ",") ?> <?= $currency ?></td>
+                            <td><?= number_format($sale->total,2, ".", ",") ?>  <?= $rates[$currency] ?></td>
                         </tr>
                     </tfoot>
                 </table>
                 <?php if($sale->status != 0) : ?>
             <?php endif; ?>
         </div>
-        <!--DO NOT DELETE THIS div. IT is responsible for showing footer always at the bottom-->
-        <div class="row" style="margin-bottom:25px">
-        <div class="col-md-4">
-        <label>Photo du paquet :</label><br>
-            <?= $this->Html->image('sales/'.$sale->image_path, ['alt' => 'CakePHP']); ?>
-        </div>
-    </div>
+
     </div>
 </div>
 <style type="text/css">

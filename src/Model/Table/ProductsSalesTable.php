@@ -41,6 +41,14 @@ class ProductsSalesTable extends Table
             'foreignKey' => 'product_id',
             'joinType' => 'INNER'
         ]);
+        $this->belongsTo('Flights', [
+            'foreignKey' => 'flight_id',
+            'joinType' => 'LEFT'
+        ]);
+        $this->belongsTo('Trucks', [
+            'foreignKey' => 'truck_id',
+            'joinType' => 'INNER'
+        ]);
         $this->belongsTo('Sales', [
             'foreignKey' => 'sale_id',
             'joinType' => 'INNER'

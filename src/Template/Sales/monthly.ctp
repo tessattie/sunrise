@@ -29,50 +29,25 @@ $years = array("2019" => "2019", "2020" => "2020", '2021' => '2021', '2022' => '
             <table class="table datatable">
                 <thead>
                     <th style="width:110px"></th>
-                    <?php $i = 1; ?>
-                    <?php foreach($products as $product) : ?>
-                        <?php $i = $i+1; ?>
-                    <?php endforeach; ?>
-                    <th class="text-right">TOTAL (KG)</th>
+                    <th class="text-center">TAXE (HTG)</th>
+                    <th class="text-center">TAXE (USD)</th>
+                    <th class="text-center">TOTAL (HTG)</th>
+                    <th class="text-right">TOTAL (USD)</th>
                 </thead>
             
             <tbody>
-                <?php $current = $from; ?>
-                <?php while($current <= $to) : ?>
-                    <?php $product_total = 0; $day = date("d", strtotime($current)); ?>
-                    <tr <?php if($day ==1 || $day == 5 || $day == 10 || $day == 15 || $day == 20 || $day == 25 || $day == 30) : ?> style="background:#E5E4E4" <?php endif; ?>>
-                       <th><?= date("D j M y",strtotime($current)); ?></th> 
-                       <?php foreach($products as $product) : ?>
-
-                            <?php 
-                            $volume = 0;
-                                foreach($sales as $sale){
-                                    if($sale['date'] == $current && $sale['id'] == $product->id){
-                                        $volume = $sale['total'];
-                                        break;
-                                    }
-                                }
-                                $product->total = $product->total + $volume;
-                                $product_total = $product_total + $volume;
-                                $volume = number_format($volume, 2, ".", ",");
-                                
-                            ?>
-                            
-                    <?php endforeach; ?>
-                        <th class="text-right"><?= number_format($product_total, 2, ".", ",")  ?></th>
-                    <?php $current = date('Y-m-d', strtotime($current . ' + 1 day')); ?>
-                <?php endwhile; ?>
-
+                <?php foreach($sales as $sale) : ?>  
+                <tr>
+                    <th><?= $sale['date'] ?></th>
+                    <td class="text-center"><?= number_format($sale['taxe_htg'], 2, ".", ",") ?></td>
+                    <td class="text-center"><?= number_format($sale['taxe_usd'], 2, ".", ",") ?></td>
+                    <td class="text-center"><?= number_format($sale['total_htg'], 2, ".", ",") ?></td>
+                    <td class="text-right"><?= number_format($sale['total_usd'], 2, ".", ",") ?></td>
+                </tr>              
+                <?php endforeach; ?>
             </tbody>
             <tfoot>
-                <tr>
-                <?php $last_total = 0; ?>
-                    <th>TOTAL (KG)</th>
-                    <?php foreach($products as $product) : ?>
-                        <?php $last_total = $last_total + $product->total; ?>
-                    <?php endforeach; ?>
-                    <th class="text-right"><?= number_format($last_total, 2, ".", ",") ?></th>
-                </tr>
+
             </tfoot>
             </table>
         </div>
