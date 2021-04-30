@@ -49,7 +49,7 @@
             <tbody> 
             <?php foreach($trucks as $truck) : ?>
                 <tr>
-                    <td class="text-left"><a href="<?= ROOT_DIREC ?>/trucks/view/<?= $truck->id ?>"><?= $truck->immatriculation ?></a></td>
+                    <td class="text-left"><?= $truck->immatriculation ?></td>
                     <td class="text-center"><?= $truck->price ?> USD</td>
                     <td class="text-center"><?= $truck->taxe ?> USD</td>
                     <td class="text-center"><?= $truck->min_weight ?> KG</td>

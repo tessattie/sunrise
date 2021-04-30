@@ -150,8 +150,8 @@ class TrucksController extends AppController
                 $this->Flash->error(__('Les mises à jour n\'ont pas pu être effectuées. Réessayez.'));
             }
         }
-        $users = $this->Trucks->Users->find('list', ['limit' => 200]);
-        $this->set(compact('truck', 'users'));
+        $status = array(0 => "Fixe", 1 => "Editable");
+        $this->set(compact('truck', 'status'));
     }
 
 

@@ -34,7 +34,7 @@
                 <div class="row">
                     <div class="col-md-4"><?= $this->Form->control('name', array('class' => 'form-control', "label" => "Nom *", "placeholder" => 'Nom')); ?></div>
                     <div class="col-md-4"><?= $this->Form->control('immatriculation', array('class' => 'form-control', "label" => "Description *", "placeholder" => "Description")); ?></div>
-                    <div class="col-md-4"><?= $this->Form->control('status', array('class' => 'form-control', "options" => $status, 'style' => "height:46px", "label" => "Statut *", 'value' => 0)); ?></div>
+                    <div class="col-md-4"><?= $this->Form->control('status', array('class' => 'form-control', "options" => $status, 'style' => "height:46px", "label" => "Statut *")); ?></div>
                 </div>
                  
                 <hr>

@@ -50,7 +50,7 @@ $customer_number = rand(1000, 9999);
                 <div class="col-md-4"><?= $this->Form->control('phone', array('class' => 'form-control', "label" => "Téléphone", "placeholder" => "Téléphone")); ?></div>
                 <div class="col-md-4"><?= $this->Form->control('type', array('class' => 'form-control', "empty" => "-- Choisissez --", "label" => "Type", "options" => array(1 => "Crédit"))); ?></div>
                 <div class="col-md-2"><?= $this->Form->control('status', array('class' => 'form-control', "label" => "Statut", "options" => array(1 => "Actif", 0 => "Bloqué"))); ?></div>
-                <div class="col-md-2"><?= $this->Form->control('rate_id', array('class' => 'form-control', "empty" => "-- Choisissez --", "label" => "Devise", "options" => array(2 => "USD"))); ?></div>
+                <div class="col-md-2"><?= $this->Form->control('rate_id', array('class' => 'form-control', "empty" => "-- Choisissez --", "label" => "Devise", "options" => array(2 => "USD", 1 => "HTG"))); ?></div>
 
             </div>   
             <div class="row">
