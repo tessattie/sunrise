@@ -206,6 +206,8 @@ $cakeDescription = 'SUNRISE';
             <li class="<?= ($this->request->getParam('controller') == 'Trucks') ? 'active' : '' ?>"><a  href="<?= ROOT_DIREC ?>/trucks"><em class="fa fa-truck">&nbsp;</em> Paquets</a></li>
 
             <li class="<?= ($this->request->getParam('controller') == 'Flights') ? 'active' : '' ?>"><a  href="<?= ROOT_DIREC ?>/flights"><em class="fa fa-plane">&nbsp;</em> Vols</a></li>
+
+            <li class="<?= ($this->request->getParam('controller') == 'Stations') ? 'active' : '' ?>"><a  href="<?= ROOT_DIREC ?>/stations"><em class="fa fa-bank">&nbsp;</em> Stations</a></li>
             
 
 
