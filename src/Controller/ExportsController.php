@@ -32,14 +32,10 @@ class ExportsController extends AppController
         "C" => "Agent",
         "D" => "Client",
         "E" => "Destinataire",
-        "F" => "Paquet",
-        "G" => "En route",
-        "H" => "Livré",
-        "I" => "Poid",
-        "J" => "Total HTG",
-        "K" => "Total USD",
-        "L" => "Date",
-        "M" => "Heure"
+        "F" => "Total HTG",
+        "G" => "Total USD",
+        "H" => "Date",
+        "I" => "Heure"
     );
 
     private $invoices_header = array(
@@ -110,7 +106,7 @@ class ExportsController extends AppController
         foreach($sales as $sale){
 
             if($sale->status == 0 || $sale->status == 4 || $sale->status == 6 || $sale->status == 7){
-                $this->excel->getActiveSheet()->getStyle('A'.$i.":M".$i)->applyFromArray(
+                $this->excel->getActiveSheet()->getStyle('A'.$i.":I".$i)->applyFromArray(
                     array(
                         'fill' => array(
                             'type' => PHPExcel_Style_Fill::FILL_SOLID,
@@ -160,37 +156,22 @@ class ExportsController extends AppController
                 $this->excel->getActiveSheet()->SetCellValue("D".$i, substr(strtoupper($sale->customer->last_name." ".$sale->customer->first_name), 0, 15)); 
             }
             $this->excel->getActiveSheet()->SetCellValue("E".$i, substr($sale->receiver->name, 0, 15));
-            $this->excel->getActiveSheet()->SetCellValue("F".$i, $sale->truck->immatriculation);
-
-            if($sale->charged == 0){
-                $this->excel->getActiveSheet()->SetCellValue("G".$i, "NON");
-            }else{
-                $this->excel->getActiveSheet()->SetCellValue("G".$i, date("Y-m-d H:i", strtotime($sale->charged_time)));
-            }
-
-            if($sale->sortie == 0){
-                $this->excel->getActiveSheet()->SetCellValue("H".$i, "NON");
-            }else{
-                $this->excel->getActiveSheet()->SetCellValue("H".$i, date("Y-m-d H:i", strtotime($sale->sortie_time)));
-            }
              
-            $this->excel->getActiveSheet()->SetCellValue("I".$i, $sale->products_sales[0]->quantity); 
             if($sale->status == 0 || $sale->status == 6 || $sale->status == 10){
-                $this->excel->getActiveSheet()->SetCellValue("K".$i, number_format($aff_us, 2, ".", '')); 
+                $this->excel->getActiveSheet()->SetCellValue("G".$i, number_format($aff_us, 2, ".", '')); 
             }else{
-                $this->excel->getActiveSheet()->SetCellValue("J".$i, number_format($aff, 2, ".", ''));
+                $this->excel->getActiveSheet()->SetCellValue("F".$i, number_format($aff, 2, ".", ''));
             }
             
-            $this->excel->getActiveSheet()->SetCellValue("L".$i, date('Y-m-d', strtotime($sale->created))); 
-            $this->excel->getActiveSheet()->SetCellValue("M".$i, date('h:i A', strtotime($sale->created))); 
+            $this->excel->getActiveSheet()->SetCellValue("H".$i, date('Y-m-d', strtotime($sale->created))); 
+            $this->excel->getActiveSheet()->SetCellValue("I".$i, date('h:i A', strtotime($sale->created))); 
 
             $i++;
         }
         $this->excel->getActiveSheet()->SetCellValue("A3", "TOTAL"); 
-        $this->excel->getActiveSheet()->SetCellValue("I3", number_format($volume, 2, ".", '')); 
-        $this->excel->getActiveSheet()->SetCellValue("J3", number_format($total, 2, ".", '')); 
-        $this->excel->getActiveSheet()->SetCellValue("K3", number_format($total_us, 2, ".", '')); 
-        $this->excel->getActiveSheet()->getStyle("A3:M3")->applyFromArray(
+        $this->excel->getActiveSheet()->SetCellValue("F3", number_format($total, 2, ".", '')); 
+        $this->excel->getActiveSheet()->SetCellValue("G3", number_format($total_us, 2, ".", '')); 
+        $this->excel->getActiveSheet()->getStyle("A3:I3")->applyFromArray(
             array(
                 'fill' => array(
                     'type' => PHPExcel_Style_Fill::FILL_SOLID,
@@ -581,7 +562,6 @@ class ExportsController extends AppController
     public function monthly(){
         $this->setDates();
         $this->loadModel("Products"); 
-        $products = $this->Products->find("all", array("order" => array("position ASC")));
         $from = date("Y-m-d 00:00:00", strtotime($this->from));
         $to = date("Y-m-d 23:59:59", strtotime($this->to));
         $month = date("F Y", strtotime($from));
@@ -592,50 +572,15 @@ class ExportsController extends AppController
         $current = $from;
         $monthly = $this->getMonthly($from, $to);
         $i = 3;
-        while($current <= $to){
-            $product_total = 0;
-            $day = date("d", strtotime($current));
-            if($day ==1 || $day == 5 || $day == 10 || $day == 15 || $day == 20 || $day == 25 || $day == 30){
-                $this->excel->getActiveSheet()->getStyle("A".$i.":".$last.$i)->applyFromArray(
-                    array(
-                        'fill' => array(
-                            'type' => PHPExcel_Style_Fill::FILL_SOLID,
-                            'color' => array('rgb' => 'E9E8E8')
-                        )
-                    )
-                );
-            }
-            $this->excel->getActiveSheet()->SetCellValue('A'.$i, date("D j M y",strtotime($current)));
-            $j=2;
-            foreach($products as $product){
-                $volume = 0;
-                foreach($monthly as $sale){
-                    if($sale['date'] == date("Y-m-d", strtotime($current)) && $sale['id'] == $product->id){
-                        $volume = $sale['total'];
-                        break;
-                    }
-                }
-                $product->total = $product->total + $volume;
-                $product_total = $product_total + $volume;
-                $volume = number_format($volume, 2, ".", "");
-                $j++;
-            }
-            $this->excel->getActiveSheet()->SetCellValue('B'.$i, number_format($product_total,2,".",","));
-            $current = date('Y-m-d', strtotime($current . ' + 1 day'));
+        foreach($monthly as $sale){
+            $this->excel->getActiveSheet()->SetCellValue("A".$i, $sale['date']);
+            $this->excel->getActiveSheet()->SetCellValue("B".$i, $sale['taxe_htg']);
+            $this->excel->getActiveSheet()->SetCellValue("C".$i, $sale['taxe_usd']);
+            $this->excel->getActiveSheet()->SetCellValue("D".$i, $sale['total_htg']);
+            $this->excel->getActiveSheet()->SetCellValue("E".$i, $sale['total_usd']);
             $i++;
         }
-
-        $l=2;
-        $this->excel->getActiveSheet()->SetCellValue("A".$i, "TOTAL");
-        $last_total = 0;
-        foreach($products as $product){
-            $last_total = $last_total + $product->total;
-            // $this->excel->getActiveSheet()->SetCellValue($this->alphabet[$l].$i, number_format($product->total,2));
-            $l++;
-        }
-        $this->excel->getActiveSheet()->SetCellValue("B".$i, number_format($last_total, 2));
         
-
         $this->styleMonthly(15);
         $this->output("export_mensuel_".date("Ymd"));
     }
@@ -815,12 +760,7 @@ class ExportsController extends AppController
 
     private function getMonthly($from, $to){
         $conn = ConnectionManager::get('default');
-        $sales = $conn->query("SELECT SUM(sp.quantity) AS total, DATE(s.created) as date, p.name as product, p.id
-            FROM sales s 
-            LEFT JOIN products_sales sp ON sp.sale_id = s.id 
-            LEFT JOIN products p ON p.id = sp.product_id 
-            WHERE s.created >='".$from."' AND s.created <= '".$to."' AND (s.status = 0 OR s.status = 1 OR s.status =4 OR s.status = 6 OR s.status = 7)
-            GROUP BY DATE(s.created), sp.product_id"); 
+        $sales = $conn->query("SELECT DATE(s.created) as date, (SELECT SUM(sales.taxe) FROM sales WHERE DATE(s.created) = DATE(sales.created) AND (sales.status = 0 OR sales.status = 6 OR sales.status = 9 OR sales.status = 10)) as taxe_usd, (SELECT SUM(sales.taxe) FROM sales WHERE DATE(s.created) = DATE(sales.created) AND (sales.status = 1 OR sales.status = 4 OR sales.status = 7 OR sales.status = 8)) as taxe_htg, (SELECT SUM(sales.total) FROM sales WHERE DATE(s.created) = DATE(sales.created) AND (sales.status = 0 OR sales.status = 6 OR sales.status = 9 OR sales.status = 10)) as total_usd, (SELECT SUM(sales.total) FROM sales WHERE DATE(s.created) = DATE(sales.created) AND (sales.status = 1 OR sales.status = 4 OR sales.status = 7 OR sales.status = 8)) as total_htg FROM sales s WHERE s.created >='".$from."' AND s.created <= '".$to."' GROUP BY DATE(s.created) ORDER BY DATE(s.created)"); 
         return $sales;
     }
 
@@ -902,7 +842,10 @@ class ExportsController extends AppController
             $i++;
         }else{
             $result["A"] = "DATE";
-            $result["B"] = "TOTAL";
+            $result["B"] = "TAXE HTG";
+            $result["C"] = "TAXE_USD";
+            $result["D"] = "TOTAL HTG";
+            $result["E"] = "TOTAL USD";
             $i=1;
         }
         $last = $this->alphabet[$i];
@@ -1147,13 +1090,13 @@ class ExportsController extends AppController
             )
         );
 
-        $this->excel->getActiveSheet()->getStyle( "A3:M3" )->getFont()->setBold( true );
-        $this->excel->getActiveSheet()->getStyle("A3:M3")->getFont()
+        $this->excel->getActiveSheet()->getStyle( "A3:I3" )->getFont()->setBold( true );
+        $this->excel->getActiveSheet()->getStyle("A3:I3")->getFont()
                                 ->getColor()->setRGB('FFFFFF');
 
         $this->excel->getActiveSheet()->getRowDimension('3')->setRowHeight(15);
         $last_row = $this->excel->getActiveSheet()->getHighestRow();
-        $this->excel->getActiveSheet()->getStyle('A1:M'.$last_row)->applyFromArray($styleArray);
+        $this->excel->getActiveSheet()->getStyle('A1:I'.$last_row)->applyFromArray($styleArray);
         $this->excel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
         $this->excel->getActiveSheet()->getColumnDimension('B')->setWidth(10);
         $this->excel->getActiveSheet()->getColumnDimension('C')->setWidth(7);
@@ -1161,13 +1104,8 @@ class ExportsController extends AppController
         $this->excel->getActiveSheet()->getColumnDimension('E')->setWidth(15);
         $this->excel->getActiveSheet()->getColumnDimension('F')->setWidth(10);
         $this->excel->getActiveSheet()->getColumnDimension('G')->setWidth(8);
-        $this->excel->getActiveSheet()->getColumnDimension('H')->setWidth(8);
-        $this->excel->getActiveSheet()->getColumnDimension('I')->setWidth(10);
-        $this->excel->getActiveSheet()->getColumnDimension('J')->setWidth(13);
-        $this->excel->getActiveSheet()->getColumnDimension('K')->setWidth(13);
-        $this->excel->getActiveSheet()->getColumnDimension('L')->setWidth(11);
-        $this->excel->getActiveSheet()->getColumnDimension('M')->setWidth(9);
-
+        $this->excel->getActiveSheet()->getColumnDimension('H')->setWidth(12);
+        $this->excel->getActiveSheet()->getColumnDimension('I')->setWidth(12);
         $this->excel->getActiveSheet()
             ->getPageSetup()
             ->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE);
@@ -1186,7 +1124,7 @@ class ExportsController extends AppController
 
         $this->excel->getActiveSheet()
             ->getPageSetup()
-            ->setPrintArea('A1:M'.$last_row);
+            ->setPrintArea('A1:I'.$last_row);
     }
 
 

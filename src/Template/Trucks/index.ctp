@@ -39,21 +39,30 @@
             <table class="table table-stripped datatable">
                 <thead> 
                     <th class="text-left">Nom</th>
-                    <th class="text-center">Poid (KG)</th>
-                    <th class="text-center">Ventes</th>
+                    <th class="text-center">Prix</th>
+                    <th class="text-center">Taxe</th>
+                    <th class="text-center">Poid min</th>
+                    <th class="text-center">Poid Max</th>
+                    <th class="text-center">Statut</th>
                     <th class="text-center"></th>
                 </thead>
             <tbody> 
             <?php foreach($trucks as $truck) : ?>
                 <tr>
-        
-                        <td class="text-left"><a href="<?= ROOT_DIREC ?>/trucks/view/<?= $truck->id ?>"><?= $truck->immatriculation ?></a></td>
-                        <td class="text-center"><?= $truck->volume ?> KG</td>
-                        <td class="text-center"><span class="label label-default"><?= count($truck->sales) ?></span></td>
-                        <td class="text-right">
-                            <a href="<?= ROOT_DIREC ?>/trucks/edit/<?= $truck->id ?>" style="font-size:1.3em!important;"><span class="fa fa-xl fa-pencil color-blue"></span></a>
-                        </td>
-                    </tr>
+                    <td class="text-left"><a href="<?= ROOT_DIREC ?>/trucks/view/<?= $truck->id ?>"><?= $truck->immatriculation ?></a></td>
+                    <td class="text-center"><?= $truck->price ?> USD</td>
+                    <td class="text-center"><?= $truck->taxe ?> USD</td>
+                    <td class="text-center"><?= $truck->min_weight ?> KG</td>
+                    <td class="text-center"><?= $truck->max_weight ?> KG</td>
+                    <?php if($truck->status == 0) : ?>
+                        <td class="text-center">Fixe</td>
+                    <?php else : ?>
+                        <td class="text-center">Editable</td>
+                    <?php endif; ?>
+                    <td class="text-right">
+                        <a href="<?= ROOT_DIREC ?>/trucks/edit/<?= $truck->id ?>" style="font-size:1.3em!important;"><span class="fa fa-xl fa-pencil color-blue"></span></a>
+                    </td>
+                </tr>
             <?php endforeach; ?>
             </tbody>
         </table>

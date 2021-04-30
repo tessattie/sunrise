@@ -30,6 +30,6 @@ class Rate extends Entity
         'amount' => true,
         'created' => true,
         'modified' => true,
-        'payments' => true
+        'payment' => true
     ];
 }
