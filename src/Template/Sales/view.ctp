@@ -59,7 +59,7 @@ if($sale->status == 0 || $sale->status == 2 || $sale->status == 6 || $sale->stat
                             <th>#</th>
                             <th class="text-left">Produit</th>
                             <th class="text-center">Poid</th>
-                            <th class="text-center">Chargé</th>
+                            <th class="text-center">En Route</th>
                             <th class="text-center">Arrivé</th>
                             <th class="text-right">Livré</th>
                         </tr>
@@ -111,7 +111,7 @@ if($sale->status == 0 || $sale->status == 2 || $sale->status == 6 || $sale->stat
                             <td colspan="2">Taxe</td>
                             <td><?= number_format($sale->taxe,2, ".", ",") ?>  <?= $rates[$currency] ?></td>
                         </tr>
-                        <tr>s
+                        <tr>
                             <td colspan="3"></td>
                             <td colspan="2">TOTAL</td>
                             <td><?= number_format($sale->total,2, ".", ",") ?>  <?= $rates[$currency] ?></td>

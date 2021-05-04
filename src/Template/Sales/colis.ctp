@@ -26,6 +26,10 @@
                         <?= $this->Form->control('station_id', array("class" => 'form-control', "options" => $stations, "empty" => "-- Choisissez --")) ?>
                     </div>
 
+                    <div class="col-md-3">
+                        <?= $this->Form->control('destination_station_id', array("class" => 'form-control', "options" => $stations, "empty" => "-- Choisissez --")) ?>
+                    </div>
+
                     <div class="col-md-1">
                         <?= $this->Form->button(__('Valider'), array('class'=>'btn btn-success', "style"=>"float:left;height:32px;margin-top:43px")) ?>
                     </div>
@@ -66,19 +70,19 @@
                             <?php if($ps->is_loaded == 0) : ?>
                                 <td class="text-center"><label class="label label-danger">Non</label></td>
                             <?php else : ?>
-                                <td class="text-center"><label class="label label-success"><?= date("Y-m-d H:i", strtotime($sale->loaded)) ?></label></td>
+                                <td class="text-center"><label class="label label-success"><?= date("Y-m-d H:i", strtotime($ps->loaded)) ?></label></td>
                             <?php endif; ?>
 
                             <?php if($ps->is_landed == 0) : ?>
                                 <td class="text-center"><label class="label label-danger">Non</label></td>
                             <?php else : ?>
-                                <td class="text-center"><label class="label label-success"><?= date("Y-m-d H:i", strtotime($sale->landed)) ?></label></td>
+                                <td class="text-center"><label class="label label-success"><?= date("Y-m-d H:i", strtotime($ps->landed)) ?></label></td>
                             <?php endif; ?>
 
                             <?php if($ps->is_delivered == 0) : ?>
                                 <td class="text-center"><label class="label label-danger">Non</label></td>
                             <?php else : ?>
-                                <td class="text-center"><label class="label label-success"><?= date("Y-m-d H:i", strtotime($sale->delivered)) ?></label></td>
+                                <td class="text-center"><label class="label label-success"><?= date("Y-m-d H:i", strtotime($ps->delivered)) ?></label></td>
                             <?php endif; ?>
                             <td class="text-center"><?= $sale->created ?></td>
                         </tr>
