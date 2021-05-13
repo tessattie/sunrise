@@ -68,7 +68,6 @@ class TrucksTable extends Table
 
         $validator
             ->scalar('immatriculation')
-            ->maxLength('immatriculation', 15)
             ->requirePresence('immatriculation', 'create')
             ->allowEmptyString('immatriculation', false);
 

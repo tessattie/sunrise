@@ -26,6 +26,10 @@
                         <?= $this->Form->control('station_id', array("class" => 'form-control', "options" => $stations, "empty" => "-- Choisissez --")) ?>
                     </div>
 
+                    <div class="col-md-3">
+                        <?= $this->Form->control('destination_station_id', array("class" => 'form-control', "options" => $stations, "empty" => "-- Choisissez --")) ?>
+                    </div>
+
                     <div class="col-md-1">
                         <?= $this->Form->button(__('Valider'), array('class'=>'btn btn-success', "style"=>"float:left;height:32px;margin-top:43px")) ?>
                     </div>

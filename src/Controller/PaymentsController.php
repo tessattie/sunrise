@@ -109,7 +109,7 @@ class PaymentsController extends AppController
 
         $methods = $this->Payments->Methods->find('list', ['conditions' => ['id <>' => 3]]);
         $rates = $this->Payments->Rates->find('list', ['limit' => 200]);
-        $daily_rate = $this->Payments->Rates->get(2)->amount;
+        $daily_rate = $this->Payments->Rates->get(2)->payment;
         $this->set(compact('payment',  'sales', 'methods', 'rates',"customer", 'daily_rate'));
     }
 

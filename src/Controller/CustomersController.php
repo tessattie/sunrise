@@ -219,7 +219,6 @@ class CustomersController extends AppController
             $customer = $this->Customers->patchEntity($customer, $this->request->getData());
             $customer->user_id = $this->Auth->user()['id'];
             $customer->type = 1;
-            $customer->rate_id = 2;
             if ($ident = $this->Customers->save($customer)) {
                 $this->Flash->success(__('Le client a bien été sauvegardée'));
 

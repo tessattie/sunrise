@@ -175,8 +175,17 @@ class SalesController extends AppController
 
         if($this->request->is(['patch', 'put', 'post'])){
             $condition = "(Sales.status = 1 OR Sales.status = 0 OR Sales.status = 4 OR Sales.status = 6 OR Sales.status = 7)";
-            $station_id = $this->request->getData()['station_id'];
-            $sales = $this->Sales->find("all", array("conditions" => array("Sales.created >= " => $from, "Sales.created <= " => $to, 'Sales.destination_station_id' => $station_id, $condition)))->contain(['Users', 'Receivers', 'Stations', 'Customers', 'ProductsSales' => ['Flights']]);
+            if(!empty($this->request->getData()['station_id'])){
+                $station_id = $this->request->getData()['station_id'];
+                $condition .= " AND Sales.station_id = ".$station_id;
+            }
+
+            if(!empty($this->request->getData()['destination_station_id'])){
+                $station_id = $this->request->getData()['destination_station_id'];
+                $condition .= " AND Sales.destination_station_id = ".$station_id;
+            }
+            
+            $sales = $this->Sales->find("all", array("conditions" => array("Sales.created >= " => $from, "Sales.created <= " => $to, $condition)))->contain(['Users', 'Receivers', 'Stations', 'Customers', 'ProductsSales' => ['Flights']]);
         }
         foreach($sales as $sale){
             $sale->destination_station = $this->Stations->get($sale->destination_station_id);
