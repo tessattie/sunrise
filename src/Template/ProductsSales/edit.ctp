@@ -1,36 +1,58 @@
 <?php
 /**
  * @var \App\View\AppView $this
- * @var \App\Model\Entity\ProductsSale $productsSale
+ * @var \App\Model\Entity\Sale $sale
  */
 ?>
-<nav class="large-3 medium-4 columns" id="actions-sidebar">
-    <ul class="side-nav">
-        <li class="heading"><?= __('Actions') ?></li>
-        <li><?= $this->Form->postLink(
-                __('Delete'),
-                ['action' => 'delete', $productsSale->id],
-                ['confirm' => __('Are you sure you want to delete # {0}?', $productsSale->id)]
-            )
-        ?></li>
-        <li><?= $this->Html->link(__('List Products Sales'), ['action' => 'index']) ?></li>
-        <li><?= $this->Html->link(__('List Products'), ['controller' => 'Products', 'action' => 'index']) ?></li>
-        <li><?= $this->Html->link(__('New Product'), ['controller' => 'Products', 'action' => 'add']) ?></li>
-        <li><?= $this->Html->link(__('List Sales'), ['controller' => 'Sales', 'action' => 'index']) ?></li>
-        <li><?= $this->Html->link(__('New Sale'), ['controller' => 'Sales', 'action' => 'add']) ?></li>
-    </ul>
-</nav>
-<div class="productsSales form large-9 medium-8 columns content">
-    <?= $this->Form->create($productsSale) ?>
-    <fieldset>
-        <legend><?= __('Edit Products Sale') ?></legend>
-        <?php
-            echo $this->Form->control('product_id', ['options' => $products]);
-            echo $this->Form->control('sale_id', ['options' => $sales]);
-            echo $this->Form->control('price');
-            echo $this->Form->control('quantity');
-        ?>
-    </fieldset>
-    <?= $this->Form->button(__('Submit')) ?>
-    <?= $this->Form->end() ?>
+
+<div class="row" style="margin-bottom:15px">
+    <ol class="breadcrumb">
+        <li><a href="<?= ROOT_DIREC ?>/sales/dashboard">
+            <em class="fa fa-home"></em>
+        </a></li>
+        <li><a href="<?= ROOT_DIREC ?>/sales/colis">
+            Manifest
+        </a></li>
+        <li class="active">Editer</li>
+    </ol>
 </div>
+<?= $this->Flash->render() ?>
+<div class="container-fluid"> 
+    <div class="panel panel-default articles">
+        <div class="panel-heading">
+            Editer Statut Paquet : <?= $productsSale->barcode ?>
+            <ul class="pull-right panel-settings panel-button-tab-right">
+                <li class="dropdown"><a class="pull-right dropdown-toggle" data-toggle="dropdown" href="#">
+                    <em class="fa fa-cog"></em>
+                </a>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li>
+                            <ul class="dropdown-settings">
+                                <li><a href="<?= ROOT_DIREC ?>/customers">
+                                     Retour
+                                </a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    <div class="panel-body articles-container">       
+           <?= $this->Form->create($productsSale) ?>
+
+            <div class="row" style="margin-top:15px">
+                <div class="col-md-2"><?= $this->Form->control('flight_id', array('class' => 'form-control', "label" => "Vol", "options" => $flights, 'empty' => "-- Choisissez --")); ?></div>
+                <div class="col-md-3"><?= $this->Form->control('is_loaded', array('class' => 'form-control', "label" => "Sortie", "options" => array(0 => "Non", 1 => "Oui"))); ?></div>
+                <div class="col-md-3"><?= $this->Form->control('is_landed', array('class' => 'form-control', "label" => "Sortie", "options" => array(0 => "Non", 1 => "Oui"))); ?></div>
+                <div class="col-md-3"><?= $this->Form->control('is_delivered', array('class' => 'form-control', "label" => "Sortie", "options" => array(0 => "Non", 1 => "Oui"))); ?></div>
+
+            </div> 
+            <div class="row">
+                <div class="col-md-12"><?= $this->Form->button(__('Valider'), array('class'=>'btn btn-success', "style"=>"margin-top:25px;float:right")) ?></div>
+            </div>  
+
+        <?= $this->Form->end() ?>
+        </div>
+        
+    </div>
+</div><!--End .articles-->

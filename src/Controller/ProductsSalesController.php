@@ -74,21 +74,42 @@ class ProductsSalesController extends AppController
      */
     public function edit($id = null)
     {
+        $this->loadModel('ProductsSales'); $this->loadModel("Flights");
+        // debug($id); die();
         $productsSale = $this->ProductsSales->get($id, [
             'contain' => []
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
+            debug($this->request->getData());
             $productsSale = $this->ProductsSales->patchEntity($productsSale, $this->request->getData());
+            $productsSale->flight_id = $this->request->getData()['flight_id'];
+            if($this->request->getData()['is_loaded'] == 1){
+               $productsSale->is_loaded = $this->request->getData()['is_loaded']; 
+               $productsSale->loaded_user_id = $this->Auth->user()['id'];
+               $productsSale->loaded = date("Y-m-d H:i:s");
+            }
+
+            if($this->request->getData()['is_landed'] == 1){
+               $productsSale->is_landed = $this->request->getData()['is_loaded']; 
+               $productsSale->landed_user_id = $this->Auth->user()['id'];
+               $productsSale->landed = date("Y-m-d H:i:s");
+            }
+
+            if($this->request->getData()['is_delivered'] == 1){
+               $productsSale->is_delivered = $this->request->getData()['is_loaded']; 
+               $productsSale->delivered_user_id = $this->Auth->user()['id'];
+               $productsSale->delivered = date("Y-m-d H:i:s");
+            }
+            
             if ($this->ProductsSales->save($productsSale)) {
                 $this->Flash->success(__('The products sale has been saved.'));
 
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect(['controller' => 'sales', 'action' => 'colis']);
             }
             $this->Flash->error(__('The products sale could not be saved. Please, try again.'));
         }
-        $products = $this->ProductsSales->Products->find('list', ['limit' => 200]);
-        $sales = $this->ProductsSales->Sales->find('list', ['limit' => 200]);
-        $this->set(compact('productsSale', 'products', 'sales'));
+        $flights = $this->Flights->find("list");
+        $this->set(compact('productsSale', 'flights'));
     }
 
     /**

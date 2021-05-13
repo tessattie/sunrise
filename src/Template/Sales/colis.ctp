@@ -50,6 +50,7 @@
                     <th class="text-center">Arrivé</th>
                     <th class="text-center">Livré</th>
                     <th class="text-center">Date de création</th>
+                    <th></th>
                 </thead>
                 <tbody> 
                     <?php foreach($sales as $sale) : ?>
@@ -59,28 +60,33 @@
                             
                             <td class="text-center"><?= substr($sale->customer->first_name." ".$sale->customer->last_name, 0, 15) ?></td>
                             <td class="text-center"><?= substr($sale->receiver->name, 0, 15) ?></td>
+                            <?php if(!empty($ps->flight_id)) : ?>
                             <td class="text-center"><?= $ps->flight->name ?></td>
+                            <?php else : ?>
+                                <td></td>
+                            <?php endif; ?>
                             <td class="text-center"><?= $ps->quantity ?></td>
                             <td class="text-center"><?= $sale->station->name ?></td>
                             <td class="text-center"><?= $sale->destination_station->name ?></td>
                             <?php if($ps->is_loaded == 0) : ?>
                                 <td class="text-center"><label class="label label-danger">Non</label></td>
                             <?php else : ?>
-                                <td class="text-center"><label class="label label-success"><?= date("Y-m-d H:i", strtotime($sale->loaded)) ?></label></td>
+                                <td class="text-center"><label class="label label-success"><?= date("Y-m-d H:i", strtotime($ps->loaded)) ?></label></td>
                             <?php endif; ?>
 
                             <?php if($ps->is_landed == 0) : ?>
                                 <td class="text-center"><label class="label label-danger">Non</label></td>
                             <?php else : ?>
-                                <td class="text-center"><label class="label label-success"><?= date("Y-m-d H:i", strtotime($sale->landed)) ?></label></td>
+                                <td class="text-center"><label class="label label-success"><?= date("Y-m-d H:i", strtotime($ps->landed)) ?></label></td>
                             <?php endif; ?>
 
                             <?php if($ps->is_delivered == 0) : ?>
                                 <td class="text-center"><label class="label label-danger">Non</label></td>
                             <?php else : ?>
-                                <td class="text-center"><label class="label label-success"><?= date("Y-m-d H:i", strtotime($sale->delivered)) ?></label></td>
+                                <td class="text-center"><label class="label label-success"><?= date("Y-m-d H:i", strtotime($ps->delivered)) ?></label></td>
                             <?php endif; ?>
-                            <td class="text-center"><?= $sale->created ?></td>
+                            <td class="text-center"><?= date("Y-m-d H:i", strtotime($sale->created)) ?></td>
+                            <td><a href="<?= ROOT_DIREC ?>/productssales/edit/<?= $ps->id ?>" style="font-size:1.3em!important;"><span class="fa fa-xl fa-pencil color-blue"></span></a> </td>
                         </tr>
                     <?php endforeach; ?>
                 <?php endforeach; ?>

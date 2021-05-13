@@ -92,7 +92,7 @@ class SalesController extends AppController
             }
         ]);  
 
-        $users = $this->Sales->Users->find('all', ["order" => ['first_name ASC'],
+        $users = $this->Sales->Users->find('list', ["order" => ['first_name ASC'],
             'keyField' => 'id',
             'valueField' => function ($u) {
                 return $u->get('name');
@@ -734,33 +734,54 @@ class SalesController extends AppController
     }
 
     public function closing(){
-        $users = $this->Sales->Users->find('all', ["order" => ['first_name ASC'],
-            'keyField' => 'id',
-            'valueField' => function ($u) {
-                return $u->get('name');
-            }
-        ]);  
-        
         $date = date('Y-m-d');
         $condition = ""; 
         $from = date("Y-m-d")." 00:00:00";
         $to = date("Y-m-d")." 23:59:59";
+        $station = 1;
+
+        $conn = ConnectionManager::get('default');
+
+        $stations = $this->Sales->Stations->find("list"); 
+        $users = '';
+
         if($this->request->is(['patch', 'put', 'post'])){
             if(!empty($this->request->getData()['date'])){
                 $from = $this->request->getData()['date'] . " 00:00:00";
                 $to = $this->request->getData()['date'] . " 23:59:59";
                 $date = $this->request->getData()['date'];
+                $station = $this->request->getData()['station_id'];
+            }
+
+            $users = $this->Sales->Users->find("all", array('conditions' => array("station_id" => $station, 'role_id' => 2)));
+
+            foreach($users as $user){
+                $credit_usd = $conn->query("SELECT sum(total) as total FROM `sales` WHERE user_id = '".$user->id."' AND created >= '".$from."' AND created <= '".$to."' AND (status = 0 OR status = 6)");
+
+                foreach($credit_usd as $c){
+                    $user->credit_usd = $c;
+                }
+
+                $credit_htg = $conn->query("SELECT sum(total) as total FROM `sales` WHERE user_id = '".$user->id."' AND created >= '".$from."' AND created <= '".$to."' AND (status = 4 OR status = 7)");
+
+                foreach($credit_htg as $c){
+                    $user->credit_htg = $c;
+                }
+
+                $monnaie_htg = $conn->query("SELECT sum(monnaie) as monnaie FROM `sales` WHERE user_id = '".$user->id."' AND created >= '".$from."' AND created <= '".$to."' AND (status = 1)");
+
+                foreach($monnaie_htg as $c){
+                    $user->monnaie_htg = $c;
+                }
+
+                $user->cash = $conn->query("SELECT sum(p.amount) as amount, p.method_id, p.rate_id FROM `payments` p LEFT JOIN sales s ON s.id = p.sale_id WHERE s.user_id = ".$user->id." AND s.created >= '".$from."' AND s.created <= '".$to."' AND (s.status = 1 OR s.status = 10) GROUP BY p.method_id, p.rate_id ORDER BY p.method_id, p.rate_id");
+            
             }
         }
+         
 
-        $i=0;
-        foreach($users as $user){
-            $closing[$i] = $this->getClosingValues($user->id, $from, $to);
-            $closing[$i]['user'] = strtoupper($user->last_name)." ".strtoupper($user->first_name);
-            $i++;
-        }
 
-        $this->set('closing', $closing);$this->set('date', $date);
+        $this->set(compact('stations', 'date', 'users'));
     }
 
     private function getClosingValues($user,$from,$to){
