@@ -70,7 +70,6 @@ $cakeDescription = 'SUNRISE';
       </div>
       <?= $this->Form->end() ?>
     </div>
-
   </div>
 </div>
     <nav class="navbar navbar-custom navbar-fixed-top" role="navigation">

@@ -39,12 +39,14 @@
             <table class="table table-stripped datatable">
                 <thead> 
                         <th>Nom</th>
+                        <th class="text-center">Abréviation</th>
                         <th class="text-right"></th>
                 </thead>
             <tbody> 
         <?php foreach($stations as $station) : ?>
                 <tr>
                     <td><?= $station->name ?></td>
+                    <td class="text-center"><?= $station->abbreviation ?></td>
                     <td class="text-right"><a href="<?= ROOT_DIREC ?>/stations/edit/<?= $station->id ?>" style="font-size:1.3em!important;"><span class="fa fa-xl fa-pencil color-blue"></span></a> 
                     </td>
                 </tr>

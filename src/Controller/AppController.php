@@ -50,6 +50,8 @@ class AppController extends Controller
 
         define("ROOT_DIREC", '/sunrise');
 
+        date_default_timezone_set("America/New_York");
+
         $this->loadComponent('RequestHandler', [
             'enableBeforeRedirect' => false,
         ]);

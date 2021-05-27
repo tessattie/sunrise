@@ -87,18 +87,30 @@ class ProductsSalesController extends AppController
                $productsSale->is_loaded = $this->request->getData()['is_loaded']; 
                $productsSale->loaded_user_id = $this->Auth->user()['id'];
                $productsSale->loaded = date("Y-m-d H:i:s");
+            }else{
+               $productsSale->is_loaded = 0; 
+               $productsSale->loaded_user_id = NULL;
+               $productsSale->loaded = NULL;
             }
 
             if($this->request->getData()['is_landed'] == 1){
-               $productsSale->is_landed = $this->request->getData()['is_loaded']; 
+               $productsSale->is_landed = $this->request->getData()['is_landed']; 
                $productsSale->landed_user_id = $this->Auth->user()['id'];
                $productsSale->landed = date("Y-m-d H:i:s");
+            }else{
+               $productsSale->is_landed = 0; 
+               $productsSale->landed_user_id = NULL;
+               $productsSale->landed = NULL;
             }
 
             if($this->request->getData()['is_delivered'] == 1){
-               $productsSale->is_delivered = $this->request->getData()['is_loaded']; 
+               $productsSale->is_delivered = $this->request->getData()['is_delivered']; 
                $productsSale->delivered_user_id = $this->Auth->user()['id'];
                $productsSale->delivered = date("Y-m-d H:i:s");
+            }else{
+               $productsSale->is_delivered = 0; 
+               $productsSale->delivered_user_id = NULL;
+               $productsSale->delivered = NULL;
             }
             
             if ($this->ProductsSales->save($productsSale)) {

@@ -187,9 +187,13 @@ class SalesController extends AppController
             
             $sales = $this->Sales->find("all", array("conditions" => array("Sales.created >= " => $from, "Sales.created <= " => $to, $condition)))->contain(['Users', 'Receivers', 'Stations', 'Customers', 'ProductsSales' => ['Flights']]);
         }
-        foreach($sales as $sale){
+
+        if(!empty($sales)){
+          foreach($sales as $sale){
             $sale->destination_station = $this->Stations->get($sale->destination_station_id);
+          }  
         }
+        
 
         $this->set("stations", $stations); $this->set("sales", $sales);
     }

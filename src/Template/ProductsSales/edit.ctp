@@ -42,9 +42,9 @@
 
             <div class="row" style="margin-top:15px">
                 <div class="col-md-2"><?= $this->Form->control('flight_id', array('class' => 'form-control', "label" => "Vol", "options" => $flights, 'empty' => "-- Choisissez --")); ?></div>
-                <div class="col-md-3"><?= $this->Form->control('is_loaded', array('class' => 'form-control', "label" => "Sortie", "options" => array(0 => "Non", 1 => "Oui"))); ?></div>
-                <div class="col-md-3"><?= $this->Form->control('is_landed', array('class' => 'form-control', "label" => "Sortie", "options" => array(0 => "Non", 1 => "Oui"))); ?></div>
-                <div class="col-md-3"><?= $this->Form->control('is_delivered', array('class' => 'form-control', "label" => "Sortie", "options" => array(0 => "Non", 1 => "Oui"))); ?></div>
+                <div class="col-md-3"><?= $this->Form->control('is_loaded', array('class' => 'form-control', "label" => "En Route", "options" => array(0 => "Non", 1 => "Oui"))); ?></div>
+                <div class="col-md-3"><?= $this->Form->control('is_landed', array('class' => 'form-control', "label" => "Arrivé", "options" => array(0 => "Non", 1 => "Oui"))); ?></div>
+                <div class="col-md-3"><?= $this->Form->control('is_delivered', array('class' => 'form-control', "label" => "Livré", "options" => array(0 => "Non", 1 => "Oui"))); ?></div>
 
             </div> 
             <div class="row">

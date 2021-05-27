@@ -33,6 +33,7 @@
             <?= $this->Form->create($station) ?>
                 <div class="row">
                     <div class="col-md-6"><?= $this->Form->control('name', array('class' => 'form-control', "label" => "Nom *", "placeholder" => "Nom")); ?></div>
+                    <div class="col-md-6"><?= $this->Form->control('abbreviation', array('class' => 'form-control', "label" => "Abréviation *", "placeholder" => "Abréviation")); ?></div>
                 </div> 
                 <div class="row">
                     <div class="col-md-12"><?= $this->Form->button(__('Valider'), array('class'=>'btn btn-success', "style"=>"margin-top:25px;float:right")) ?></div>
