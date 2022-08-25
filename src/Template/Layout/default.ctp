@@ -150,43 +150,7 @@ $cakeDescription = 'SUNRISE';
                 </ul>
             </li>
             <?php endif; ?>
-            <?php if($user_connected['role_id'] ==1) : ?>
-            <li class="parent <?= ($this->request->getParam('controller') == 'Products' || $this->request->getParam('controller') == 'Categories') ? 'active' : '' ?>"><a data-toggle="collapse" href="#sub-item-1">
-                <em class="fa fa-shopping-cart">&nbsp;</em> Catalogue <span data-toggle="collapse" href="#sub-item-1" class="icon pull-right"><em class="fa fa-plus"></em></span>
-                </a>
-                <ul class="children collapse" id="sub-item-1">
-                    <li class="<?= ($this->request->getParam('controller') == 'Products') ? 'active' : '' ?>" ><a class="" href="<?= ROOT_DIREC ?>/products">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Produits
-                    </a></li>
-                    <li class="<?= ($this->request->getParam('controller') == 'Categories') ? 'active' : '' ?>"><a class=""  href="<?= ROOT_DIREC ?>/categories">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Catégories
-                    </a></li>
-                    <li><a class=""  href="<?= ROOT_DIREC ?>/products/add">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Nouveau Produit
-                    </a></li>
-                </ul>
-            </li>
-            <?php endif; ?>
-            <?php if($user_connected['role_id'] ==1) : ?>
-            <li class="parent <?= ($this->request->getParam('controller') == 'Users' || $this->request->getParam('controller') == 'Roles' || $this->request->getParam('controller') == 'Cards') ? 'active' : '' ?>"><a data-toggle="collapse" href="#sub-item-2">
-                <em class="fa fa-users">&nbsp;</em> Utilisateurs <span data-toggle="collapse" href="#sub-item-2" class="icon pull-right"><em class="fa fa-plus"></em></span>
-                </a>
-                <ul class="children collapse" id="sub-item-2">
-                    <li class="<?= ($this->request->getParam('controller') == 'Users') ? 'active' : '' ?>"><a class=""  href="<?= ROOT_DIREC ?>/users">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Utilisateurs
-                    </a></li>
-                    <li class="<?= ($this->request->getParam('controller') == 'Roles') ? 'active' : '' ?>"><a class=""  href="<?= ROOT_DIREC ?>/roles">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Rôles
-                    </a></li>
-                    <li class="<?= ($this->request->getParam('controller') == 'Cards') ? 'active' : '' ?>"><a class="" href="<?= ROOT_DIREC ?>/cards">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Cartes
-                    </a></li>
-                    <li><a class=""  href="<?= ROOT_DIREC ?>/users/add">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Nouvel Utilisateur
-                    </a></li>
-                </ul>
-            </li>
-            <?php endif; ?>
+            
             <?php if($user_connected['role_id'] ==1 || $user_connected['role_id'] ==3) : ?>
             <li class="parent <?= ($this->request->getParam('controller') == 'Customers' || $this->request->getParam('controller') == 'Invoices' || $this->request->getParam('controller') == 'Payments') ? 'active' : '' ?>"><a data-toggle="collapse" href="#sub-item-5">
                 <em class="fa fa-cc">&nbsp;</em> Clients <span data-toggle="collapse" href="#sub-item-5" class="icon pull-right"><em class="fa fa-plus"></em></span>
@@ -210,8 +174,29 @@ $cakeDescription = 'SUNRISE';
             <li class="<?= ($this->request->getParam('controller') == 'Flights') ? 'active' : '' ?>"><a  href="<?= ROOT_DIREC ?>/flights"><em class="fa fa-plane">&nbsp;</em> Vols</a></li>
 
             <li class="<?= ($this->request->getParam('controller') == 'Stations') ? 'active' : '' ?>"><a  href="<?= ROOT_DIREC ?>/stations"><em class="fa fa-bank">&nbsp;</em> Stations</a></li>
-            
 
+            <li class="<?= ($this->request->getParam('controller') == 'Trackings') ? 'active' : '' ?>"><a  href="<?= ROOT_DIREC ?>/trackings"><em class="fa fa-arrow-right">&nbsp;</em> Tracking</a></li>
+            
+            <?php if($user_connected['role_id'] ==1) : ?>
+            <li class="parent <?= ($this->request->getParam('controller') == 'Users' || $this->request->getParam('controller') == 'Roles' || $this->request->getParam('controller') == 'Cards') ? 'active' : '' ?>"><a data-toggle="collapse" href="#sub-item-2">
+                <em class="fa fa-users">&nbsp;</em> Utilisateurs <span data-toggle="collapse" href="#sub-item-2" class="icon pull-right"><em class="fa fa-plus"></em></span>
+                </a>
+                <ul class="children collapse" id="sub-item-2">
+                    <li class="<?= ($this->request->getParam('controller') == 'Users') ? 'active' : '' ?>"><a class=""  href="<?= ROOT_DIREC ?>/users">
+                        <span class="fa fa-arrow-right">&nbsp;</span> Utilisateurs
+                    </a></li>
+                    <li class="<?= ($this->request->getParam('controller') == 'Roles') ? 'active' : '' ?>"><a class=""  href="<?= ROOT_DIREC ?>/roles">
+                        <span class="fa fa-arrow-right">&nbsp;</span> Rôles
+                    </a></li>
+                    <li class="<?= ($this->request->getParam('controller') == 'Cards') ? 'active' : '' ?>"><a class="" href="<?= ROOT_DIREC ?>/cards">
+                        <span class="fa fa-arrow-right">&nbsp;</span> Cartes
+                    </a></li>
+                    <li><a class=""  href="<?= ROOT_DIREC ?>/users/add">
+                        <span class="fa fa-arrow-right">&nbsp;</span> Nouvel Utilisateur
+                    </a></li>
+                </ul>
+            </li>
+            <?php endif; ?>
 
             <li class="parent <?= ($this->request->getParam('controller') == 'Pointofsales' || $this->request->getParam('controller') == 'Rates' || $this->request->getParam('controller') == 'Methods') ? 'active' : '' ?>"><a data-toggle="collapse" href="#sub-item-3">
                 <em class="fa fa-cog">&nbsp;</em> Configuration <span data-toggle="collapse" href="#sub-item-3" class="icon pull-right"><em class="fa fa-plus"></em></span>
@@ -226,6 +211,9 @@ $cakeDescription = 'SUNRISE';
                     </a></li>
                 </ul>
             </li>
+
+
+            
         <?php endif; ?>
         </ul>
     </div><!--/.sidebar-->

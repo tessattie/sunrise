@@ -19,34 +19,12 @@ class MovementsController extends AppController
      */
     public function index()
     {
-        $from = $this->request->session()->read("from")." 00:00:00";
-        $to = $this->request->session()->read("to")." 23:59:59";
+        $this->paginate = [
+            'contain' => ['Users', 'Methods', 'Currencies']
+        ];
+        $movements = $this->paginate($this->Movements);
 
-        $condition = "Movements.created >= '". $from . "' AND Movements.created <= '" . $to . "' ";
-        if ($this->request->is(['patch', 'post', 'put'])){
-            if(!empty($this->request->getData()['currency_id'])){
-                $condition  .= " AND Movements.currency_id = ".$this->request->getData()['currency_id'];
-            }
-            if(!empty($this->request->getData()['user_id'])){
-                $condition .= " AND Movements.user_id = ".$this->request->getData()['user_id'];
-            }
-            if(!empty($this->request->getData()['type'])){
-                $condition  .= " AND Movements.type = '".$this->request->getData()['type']."' ";
-            } 
-        }
-        $movements = $this->Movements->find('all', array('order' => array('Movements.created DESC'), 'conditions' => array($condition)))->contain(['Users', 'Methods', 'Currencies']);
-        // debug($movements->sql()); die();
-        $users = $this->Movements->Users->find('list', [ "order" => ['first_name ASC'],
-            'keyField' => 'id',
-            'valueField' => function ($u) {
-                return $u->get('name');
-            }
-        ]);  
-
-
-        $currencies = $this->Movements->Currencies->find('list'); 
-        $types = array("" => "TOUS", "debit" => "DEBIT", "credit" => "CREDIT");
-        $this->set(compact('movements', 'users', "currencies", "types"));
+        $this->set(compact('movements'));
     }
 
     /**

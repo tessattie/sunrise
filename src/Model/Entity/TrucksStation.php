@@ -4,21 +4,22 @@ namespace App\Model\Entity;
 use Cake\ORM\Entity;
 
 /**
- * Truck Entity
+ * TrucksStation Entity
  *
  * @property int $id
- * @property string $immatriculation
- * @property string $photo
- * @property float $volume
+ * @property int $station_id
+ * @property int $truck_id
+ * @property float $price
+ * @property float $taxe
  * @property \Cake\I18n\FrozenTime $created
  * @property \Cake\I18n\FrozenTime $modified
- * @property int $status
  * @property int $user_id
  *
+ * @property \App\Model\Entity\Station $station
+ * @property \App\Model\Entity\Truck $truck
  * @property \App\Model\Entity\User $user
- * @property \App\Model\Entity\Sale[] $sales
  */
-class Truck extends Entity
+class TrucksStation extends Entity
 {
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().
@@ -30,18 +31,15 @@ class Truck extends Entity
      * @var array
      */
     protected $_accessible = [
-        'immatriculation' => true,
-        'volume' => true,
+        'station_id' => true,
+        'truck_id' => true,
+        'price' => true,
+        'taxe' => true,
         'created' => true,
         'modified' => true,
-        'barcode' => true, 
-        'type' => true,
-        'status' => true,
         'user_id' => true,
-        'user' => true,
-        'sales' => true,
-        'name' => true,
-        'min_weight' => true, 
-        'max_weight' => true
+        'station' => true,
+        'truck' => true,
+        'user' => true
     ];
 }

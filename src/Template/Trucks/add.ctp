@@ -40,8 +40,6 @@
                 <hr>
 
                 <div class="row">
-                    <div class="col-md-3"><?= $this->Form->control('price', array('class' => 'form-control', "label" => "Prix *", "placeholder" => 'Prix')); ?></div>
-                    <div class="col-md-3"><?= $this->Form->control('taxe', array('class' => 'form-control', "label" => "Taxe *", "placeholder" => "Taxe")); ?></div>
                     <div class="col-md-3"><?= $this->Form->control('min_weight', array('class' => 'form-control', 'style' => "height:46px", "label" => "Poid Minimum *", 'placeholder' => "Poid Minimum")); ?></div>
                     <div class="col-md-3"><?= $this->Form->control('max_weight', array('class' => 'form-control', 'style' => "height:46px", "label" => "Poid Maximum *", 'placeholder' => "Poid Maximum")); ?></div>
                 </div>

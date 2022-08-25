@@ -10,9 +10,7 @@ use Cake\Validation\Validator;
  * Movements Model
  *
  * @property \App\Model\Table\UsersTable|\Cake\ORM\Association\BelongsTo $Users
- * @property \App\Model\Table\MethodsTable|\Cake\ORM\Association\BelongsTo $Methods
- * @property \App\Model\Table\CurrenciesTable|\Cake\ORM\Association\BelongsTo $Currencies
- * @property \App\Model\Table\NotesChestsTable|\Cake\ORM\Association\HasMany $NotesChests
+ * @property |\Cake\ORM\Association\HasMany $Trackings
  *
  * @method \App\Model\Entity\Movement get($primaryKey, $options = [])
  * @method \App\Model\Entity\Movement newEntity($data = null, array $options = [])
@@ -47,15 +45,7 @@ class MovementsTable extends Table
             'foreignKey' => 'user_id',
             'joinType' => 'INNER'
         ]);
-        $this->belongsTo('Methods', [
-            'foreignKey' => 'method_id',
-            'joinType' => 'INNER'
-        ]);
-        $this->belongsTo('Currencies', [
-            'foreignKey' => 'currency_id',
-            'joinType' => 'INNER'
-        ]);
-        $this->hasMany('NotesChests', [
+        $this->hasMany('Trackings', [
             'foreignKey' => 'movement_id'
         ]);
     }
@@ -69,41 +59,14 @@ class MovementsTable extends Table
     public function validationDefault(Validator $validator)
     {
         $validator
-            ->nonNegativeInteger('id')
+            ->integer('id')
             ->allowEmptyString('id', 'create');
 
         $validator
-            ->numeric('montant')
-            ->requirePresence('montant', 'create')
-            ->allowEmptyString('montant', false);
-
-        $validator
-            ->scalar('type')
-            ->allowEmptyString('type', false);
-
-        $validator
-            ->scalar('description')
-            ->maxLength('description', 500)
-            ->allowEmptyString('description');
-
-        $validator
-            ->dateTime('date')
-            ->requirePresence('date', 'create')
-            ->allowEmptyDateTime('date', false);
-
-        $validator
-            ->numeric('balance')
-            ->allowEmptyString('balance', false);
-
-        $validator
-            ->dateTime('deleted_at')
-            ->allowEmptyDateTime('deleted_at');
-
-        $validator
-            ->scalar('comment')
-            ->maxLength('comment', 255)
-            ->requirePresence('comment', 'create')
-            ->allowEmptyString('comment', false);
+            ->scalar('name')
+            ->maxLength('name', 255)
+            ->requirePresence('name', 'create')
+            ->allowEmptyString('name', false);
 
         return $validator;
     }
@@ -118,8 +81,6 @@ class MovementsTable extends Table
     public function buildRules(RulesChecker $rules)
     {
         $rules->add($rules->existsIn(['user_id'], 'Users'));
-        $rules->add($rules->existsIn(['method_id'], 'Methods'));
-        $rules->add($rules->existsIn(['currency_id'], 'Currencies'));
 
         return $rules;
     }

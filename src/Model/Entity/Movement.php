@@ -7,18 +7,10 @@ use Cake\ORM\Entity;
  * Movement Entity
  *
  * @property int $id
- * @property float $montant
+ * @property string $name
+ * @property \Cake\I18n\FrozenTime $created
+ * @property \Cake\I18n\FrozenTime $modified
  * @property int $user_id
- * @property int $method_id
- * @property int $currency_id
- * @property string $type
- * @property string|null $description
- * @property \Cake\I18n\FrozenTime $date
- * @property float $balance
- * @property \Cake\I18n\FrozenTime|null $created
- * @property \Cake\I18n\FrozenTime|null $modified
- * @property \Cake\I18n\FrozenTime|null $deleted_at
- * @property string $comment
  *
  * @property \App\Model\Entity\User $user
  * @property \App\Model\Entity\Method $method
@@ -37,21 +29,9 @@ class Movement extends Entity
      * @var array
      */
     protected $_accessible = [
-        'montant' => true,
-        'user_id' => true,
-        'method_id' => true,
-        'currency_id' => true,
-        'type' => true,
-        'description' => true,
-        'date' => true,
-        'balance' => true,
+        'name' => true,
         'created' => true,
         'modified' => true,
-        'deleted_at' => true,
-        'comment' => true,
+        'user_id' => true,
         'user' => true,
-        'method' => true,
-        'currency' => true,
-        'notes_chests' => true
-    ];
 }

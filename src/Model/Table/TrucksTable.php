@@ -46,9 +46,13 @@ class TrucksTable extends Table
             'foreignKey' => 'user_id',
             'joinType' => 'INNER'
         ]);
-        $this->hasMany('Sales', [
+        $this->hasMany('ProductsSales', [
             'foreignKey' => 'truck_id',
             'joinType' => 'LEFT'
+        ]);
+
+        $this->hasMany('TrucksStations', [
+            'foreignKey' => 'truck_id'
         ]);
 
         $this->setDisplayField('immatriculation');

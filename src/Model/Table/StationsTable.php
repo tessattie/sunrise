@@ -39,6 +39,10 @@ class StationsTable extends Table
         $this->hasMany('Users', [
             'foreignKey' => 'station_id'
         ]);
+
+        $this->hasMany('TrucksStations', [
+            'foreignKey' => 'station_id'
+        ]);
     }
 
     /**

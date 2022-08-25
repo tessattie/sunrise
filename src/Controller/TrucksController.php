@@ -26,7 +26,7 @@ class TrucksController extends AppController
         ini_set('memory_limit', '1024M');
         $from = $this->request->session()->read("from")." 00:00:00";
         $to = $this->request->session()->read("to")." 23:59:59";
-        $trucks = $this->Trucks->find('all', array('order' => array("immatriculation ASC")))->contain(['Users', 'Sales' => ['conditions' => ['Sales.created >=' => $from, 'Sales.created <=' => $to]]]);
+        $trucks = $this->Trucks->find('all', array('order' => array("immatriculation ASC")))->contain(['Users']);
 
         $this->set(compact('trucks'));
     }
@@ -129,29 +129,47 @@ class TrucksController extends AppController
             'contain' => []
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $old_photo = $truck->photo;
+            // debug($this->request->getData()); die();
             $truck = $this->Trucks->patchEntity($truck, $this->request->getData());
-
-            $featured_image = false;
-            if(!empty($this->request->data['photo']['tmp_name'])){
-                $featured_image = $this->checkfile($this->request->data['photo'], $truck->immatriculation, 'trucks');
-            }
-
-            if($featured_image != false){
-                $truck->photo = $featured_image;
-            }else{
-                $truck->photo = $old_photo;
-            }
 
             if ($this->Trucks->save($truck)) {
                 $this->Flash->success(__('Les mises à jours ont bien été effectuées'));
+
+                $this->loadModel('TrucksStations');
+                $all =  $this->TrucksStations->find("all", array("conditions" => array('truck_id' => $truck->id)));
+                foreach($all as $delete){
+                    $this->TrucksStations->delete($delete);
+                }
+                if(!empty($this->request->getData()['station_id'])){
+                    foreach($this->request->getData()['station_id'] as $key => $id){
+                        if(!empty($this->request->getData()['price'][$key]) && !empty($this->request->getData()['taxe'][$key]))
+                        $this->saveTS($id, $truck->id, $this->request->getData()['price'][$key], $this->request->getData()['taxe'][$key]);
+                    }
+                }
 
             }else{
                 $this->Flash->error(__('Les mises à jour n\'ont pas pu être effectuées. Réessayez.'));
             }
         }
         $status = array(0 => "Fixe", 1 => "Editable");
-        $this->set(compact('truck', 'status'));
+        $this->loadModel("Stations");
+        $stations = $this->Stations->find('all', ['order' => ['name ASC']])->contain(['TrucksStations']);
+        $this->set(compact('truck', 'status', 'stations'));
+    }
+
+
+    public function saveTS($station_id, $truck_id, $price, $taxe){
+        $this->loadModel('TrucksStations');
+
+        $new = $this->TrucksStations->newEntity();
+
+        $new->station_id = $station_id; 
+        $new->truck_id = $truck_id;
+        $new->price = $price; 
+        $new->user_id = $this->Auth->user()['id'];
+        $new->taxe = $taxe;
+         
+        $this->TrucksStations->save($new); 
     }
 
 
@@ -165,7 +183,7 @@ class TrucksController extends AppController
     public function save()
     {
         if ($this->request->is(['patch', 'post', 'put'])) {
-            // debug($this->request->getData())
+            
             $truck = $this->getTruck($this->request->getData()['immatriculation']);
             if($truck == false){
                 $this->Flash->error(__('Nous n\'avons pas trouvé un paquet avec ce nom.'));

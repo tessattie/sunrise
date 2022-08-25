@@ -39,8 +39,6 @@
             <table class="table table-stripped datatable">
                 <thead> 
                     <th class="text-left">Nom</th>
-                    <th class="text-center">Prix</th>
-                    <th class="text-center">Taxe</th>
                     <th class="text-center">Poid min</th>
                     <th class="text-center">Poid Max</th>
                     <th class="text-center">Statut</th>
@@ -50,8 +48,6 @@
             <?php foreach($trucks as $truck) : ?>
                 <tr>
                     <td class="text-left"><?= $truck->immatriculation ?></td>
-                    <td class="text-center"><?= $truck->price ?> USD</td>
-                    <td class="text-center"><?= $truck->taxe ?> USD</td>
                     <td class="text-center"><?= $truck->min_weight ?> KG</td>
                     <td class="text-center"><?= $truck->max_weight ?> KG</td>
                     <?php if($truck->status == 0) : ?>
@@ -76,10 +72,6 @@
 <script type="text/javascript">$(document).ready( function () {
     $('.datatable').DataTable({
         "ordering": false,
-        dom: 'Bfrtip',
-        buttons: [
-            'excel', 'pdf', 'print'
-        ],
         scrollY: "400px",
         scrollCollapse: true,
         paging: false,

@@ -4,21 +4,25 @@ namespace App\Model\Entity;
 use Cake\ORM\Entity;
 
 /**
- * Truck Entity
+ * Tracking Entity
  *
  * @property int $id
- * @property string $immatriculation
- * @property string $photo
- * @property float $volume
+ * @property int $products_sale_id
+ * @property int|null $flight_id
+ * @property int $movement_id
  * @property \Cake\I18n\FrozenTime $created
  * @property \Cake\I18n\FrozenTime $modified
- * @property int $status
  * @property int $user_id
+ * @property int $station_id
+ * @property string|null $comment
  *
+ * @property \App\Model\Entity\ProductsSale $products_sale
+ * @property \App\Model\Entity\Flight $flight
+ * @property \App\Model\Entity\Movement $movement
  * @property \App\Model\Entity\User $user
- * @property \App\Model\Entity\Sale[] $sales
+ * @property \App\Model\Entity\Station $station
  */
-class Truck extends Entity
+class Tracking extends Entity
 {
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().
@@ -30,18 +34,18 @@ class Truck extends Entity
      * @var array
      */
     protected $_accessible = [
-        'immatriculation' => true,
-        'volume' => true,
+        'products_sale_id' => true,
+        'flight_id' => true,
+        'movement_id' => true,
         'created' => true,
         'modified' => true,
-        'barcode' => true, 
-        'type' => true,
-        'status' => true,
         'user_id' => true,
+        'station_id' => true,
+        'comment' => true,
+        'products_sale' => true,
+        'flight' => true,
+        'movement' => true,
         'user' => true,
-        'sales' => true,
-        'name' => true,
-        'min_weight' => true, 
-        'max_weight' => true
+        'station' => true
     ];
 }
