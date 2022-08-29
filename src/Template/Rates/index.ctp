@@ -23,9 +23,8 @@
     <div class="panel-body articles-container">
             <table class="table table-stripped">
                 <thead> 
-                    <th>Type</th>
-                    <th class="text-center">Produits</th>
-                    <th class="text-center">Paiements</th>
+                    <th>Nom</th>
+                    <th class="text-center">Taux</th>
                     <th class="text-center">Dernière Modification</th>
                     <th class="text-center"></th>
                 </thead>
@@ -33,9 +32,8 @@
         <?php foreach($rates as $rate) : ?>
                 <tr>
                     <td><?= $rate->name ?></td>
-                    <td class="text-center">1 <?= $rate->name ?> = <?= number_format($rate->amount, 2, ".", ",") ?> HTG</td>
-                    <td class="text-center">1 <?= $rate->name ?> = <?= number_format($rate->payment, 2, ".", ",") ?> HTG</td>
-                    <td class="text-center"><?= $rate->modified ?></td>
+                    <td class="text-center"><?= number_format($rate->amount, 2, ".", ",") ?></td>
+                    <td class="text-center"><?= date('d M Y H:i', strtotime($rate->modified)) ?></td>
                     <td class="text-right"><a href="<?= ROOT_DIREC ?>/rates/edit/<?= $rate->id ?>" style="font-size:1.3em!important;"><span class="fa fa-xl fa-pencil color-blue"></span></a></td>
                 </tr>
         <?php endforeach; ?>

@@ -34,7 +34,6 @@ class TrucksStation extends Entity
         'station_id' => true,
         'truck_id' => true,
         'price' => true,
-        'taxe' => true,
         'created' => true,
         'modified' => true,
         'user_id' => true,

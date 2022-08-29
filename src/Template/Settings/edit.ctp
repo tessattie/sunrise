@@ -1,7 +1,7 @@
 <?php
 /**
  * @var \App\View\AppView $this
- * @var \App\Model\Entity\Movement $movement
+ * @var \App\Model\Entity\Setting $setting
  */
 ?>
 <div class="row" style="margin-bottom:15px">
@@ -9,19 +9,20 @@
         <li>
             <em class="fa fa-home"></em>
         </li>
-        <li><a href="<?= ROOT_DIREC ?>/movements">
-            Mouvements
-        </a></li>
-        <li class="active">Ajouter</li>
+        <li>
+            Configurations
+        </li>
+        <li class="active">Editer</li>
+        <li class="active">Code PIN Superviseur</li>
     </ol>
 </div>
 <?= $this->Flash->render() ?>
 <div class="container-fluid"> 
     <div class="panel panel-default articles">
         <div class="panel-heading">
-            Nouveau Mouvement
+            Editer Code PIN Superviseur
             <ul class="pull-right panel-settings panel-button-tab-right">
-                <li class="dropdown"><a href="<?= ROOT_DIREC ?>/movements">
+                <li class="dropdown"><a href="<?= ROOT_DIREC ?>/stations">
                     <em class="fa fa-arrow-left"></em>
                 </a>
                     
@@ -29,9 +30,9 @@
             </ul>
         </div>
     <div class="panel-body articles-container">       
-            <?= $this->Form->create($movement) ?>
+            <?= $this->Form->create($setting) ?>
                 <div class="row">
-                    <div class="col-md-12"><?= $this->Form->control('name', array('class' => 'form-control', "label" => "Nom *", "placeholder" => "Nom")); ?></div>
+                    <div class="col-md-4"><?= $this->Form->control('value', array('class' => 'form-control', "label" => "PIN *", "placeholder" => "PIN", "min" => '1000', "max" => '9999', "type" => "number")); ?></div>
                 </div> 
                 <div class="row">
                     <div class="col-md-12"><?= $this->Form->button(__('Valider'), array('class'=>'btn btn-success', "style"=>"margin-top:25px;float:right")) ?></div>

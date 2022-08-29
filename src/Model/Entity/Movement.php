@@ -13,9 +13,7 @@ use Cake\ORM\Entity;
  * @property int $user_id
  *
  * @property \App\Model\Entity\User $user
- * @property \App\Model\Entity\Method $method
- * @property \App\Model\Entity\Currency $currency
- * @property \App\Model\Entity\NotesChest[] $notes_chests
+ * @property \App\Model\Entity\Tracking[] $trackings
  */
 class Movement extends Entity
 {
@@ -34,4 +32,6 @@ class Movement extends Entity
         'modified' => true,
         'user_id' => true,
         'user' => true,
+        'trackings' => true
+    ];
 }

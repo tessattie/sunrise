@@ -4,31 +4,42 @@
  * @var \App\Model\Entity\Movement $movement
  */
 ?>
-<nav class="large-3 medium-4 columns" id="actions-sidebar">
-    <ul class="side-nav">
-        <li class="heading"><?= __('Actions') ?></li>
-        <li><?= $this->Form->postLink(
-                __('Delete'),
-                ['action' => 'delete', $movement->id],
-                ['confirm' => __('Are you sure you want to delete # {0}?', $movement->id)]
-            )
-        ?></li>
-        <li><?= $this->Html->link(__('List Movements'), ['action' => 'index']) ?></li>
-        <li><?= $this->Html->link(__('List Users'), ['controller' => 'Users', 'action' => 'index']) ?></li>
-        <li><?= $this->Html->link(__('New User'), ['controller' => 'Users', 'action' => 'add']) ?></li>
-        <li><?= $this->Html->link(__('List Methods'), ['controller' => 'Methods', 'action' => 'index']) ?></li>
-        <li><?= $this->Html->link(__('New Method'), ['controller' => 'Methods', 'action' => 'add']) ?></li>
-    </ul>
-</nav>
-<div class="movements form large-9 medium-8 columns content">
-    <?= $this->Form->create($movement) ?>
-    <fieldset>
-        <legend><?= __('Edit Movement') ?></legend>
-        <?php
-            echo $this->Form->control('name');
-            echo $this->Form->control('user_id', ['options' => $users]);
-        ?>
-    </fieldset>
-    <?= $this->Form->button(__('Submit')) ?>
-    <?= $this->Form->end() ?>
+<div class="row" style="margin-bottom:15px">
+    <ol class="breadcrumb">
+        <li>
+            <em class="fa fa-home"></em>
+        </li>
+        <li><a href="<?= ROOT_DIREC ?>/movements">
+            Mouvements
+        </a></li>
+        <li class="active">Editer</li>
+    </ol>
 </div>
+<?= $this->Flash->render() ?>
+<div class="container-fluid"> 
+    <div class="panel panel-default articles">
+        <div class="panel-heading">
+            Editer Mouvement : <?= $movement->name ?>
+            <ul class="pull-right panel-settings panel-button-tab-right">
+                <li class="dropdown"><a href="<?= ROOT_DIREC ?>/movements">
+                    <em class="fa fa-arrow-left"></em>
+                </a>
+                    
+                </li>
+            </ul>
+        </div>
+    <div class="panel-body articles-container">       
+            <?= $this->Form->create($movement) ?>
+                <div class="row">
+                    <div class="col-md-12"><?= $this->Form->control('name', array('class' => 'form-control', "label" => "Nom *", "placeholder" => "Nom")); ?></div>
+                </div> 
+                <div class="row">
+                    <div class="col-md-12"><?= $this->Form->button(__('Valider'), array('class'=>'btn btn-success', "style"=>"margin-top:25px;float:right")) ?></div>
+                </div>  
+
+
+            <?= $this->Form->end() ?>
+        </div>
+        
+    </div>
+</div><!--End .articles-->

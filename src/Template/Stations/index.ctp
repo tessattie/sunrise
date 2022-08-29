@@ -20,26 +20,27 @@
         <div class="panel-heading">
             Stations
             <ul class="pull-right panel-settings panel-button-tab-right">
-                            <li class="dropdown"><a class="pull-right dropdown-toggle" data-toggle="dropdown" href="#">
-                                <em class="fa fa-plus"></em>
-                            </a>
-                                <ul class="dropdown-menu dropdown-menu-right">
-                                    <li>
-                                        <ul class="dropdown-settings">
-                                            <li><a href="<?= ROOT_DIREC ?>/stations/add">
-                                                <em class="fa fa-plus"></em> Nouvelle Station
-                                            </a></li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
+                <li class="dropdown"><a class="pull-right dropdown-toggle" data-toggle="dropdown" href="#">
+                    <em class="fa fa-plus"></em>
+                </a>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li>
+                            <ul class="dropdown-settings">
+                                <li><a href="<?= ROOT_DIREC ?>/stations/add">
+                                    <em class="fa fa-plus"></em> Nouvelle Station
+                                </a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
         </div>
     <div class="panel-body articles-container">
             <table class="table table-stripped datatable">
                 <thead> 
                         <th>Nom</th>
                         <th class="text-center">Abréviation</th>
+                        <th class="text-center">Taxe (%)</th>
                         <th class="text-right"></th>
                 </thead>
             <tbody> 
@@ -47,6 +48,7 @@
                 <tr>
                     <td><?= $station->name ?></td>
                     <td class="text-center"><?= $station->abbreviation ?></td>
+                    <td class="text-center"><?= $station->taxe ?></td>
                     <td class="text-right"><a href="<?= ROOT_DIREC ?>/stations/edit/<?= $station->id ?>" style="font-size:1.3em!important;"><span class="fa fa-xl fa-pencil color-blue"></span></a> 
                     </td>
                 </tr>

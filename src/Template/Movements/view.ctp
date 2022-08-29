@@ -13,8 +13,8 @@
         <li><?= $this->Html->link(__('New Movement'), ['action' => 'add']) ?> </li>
         <li><?= $this->Html->link(__('List Users'), ['controller' => 'Users', 'action' => 'index']) ?> </li>
         <li><?= $this->Html->link(__('New User'), ['controller' => 'Users', 'action' => 'add']) ?> </li>
-        <li><?= $this->Html->link(__('List Methods'), ['controller' => 'Methods', 'action' => 'index']) ?> </li>
-        <li><?= $this->Html->link(__('New Method'), ['controller' => 'Methods', 'action' => 'add']) ?> </li>
+        <li><?= $this->Html->link(__('List Trackings'), ['controller' => 'Trackings', 'action' => 'index']) ?> </li>
+        <li><?= $this->Html->link(__('New Tracking'), ['controller' => 'Trackings', 'action' => 'add']) ?> </li>
     </ul>
 </nav>
 <div class="movements view large-9 medium-8 columns content">
@@ -41,4 +41,41 @@
             <td><?= h($movement->modified) ?></td>
         </tr>
     </table>
+    <div class="related">
+        <h4><?= __('Related Trackings') ?></h4>
+        <?php if (!empty($movement->trackings)): ?>
+        <table cellpadding="0" cellspacing="0">
+            <tr>
+                <th scope="col"><?= __('Id') ?></th>
+                <th scope="col"><?= __('Products Sale Id') ?></th>
+                <th scope="col"><?= __('Flight Id') ?></th>
+                <th scope="col"><?= __('Movement Id') ?></th>
+                <th scope="col"><?= __('Created') ?></th>
+                <th scope="col"><?= __('Modified') ?></th>
+                <th scope="col"><?= __('User Id') ?></th>
+                <th scope="col"><?= __('Station Id') ?></th>
+                <th scope="col"><?= __('Comment') ?></th>
+                <th scope="col" class="actions"><?= __('Actions') ?></th>
+            </tr>
+            <?php foreach ($movement->trackings as $trackings): ?>
+            <tr>
+                <td><?= h($trackings->id) ?></td>
+                <td><?= h($trackings->products_sale_id) ?></td>
+                <td><?= h($trackings->flight_id) ?></td>
+                <td><?= h($trackings->movement_id) ?></td>
+                <td><?= h($trackings->created) ?></td>
+                <td><?= h($trackings->modified) ?></td>
+                <td><?= h($trackings->user_id) ?></td>
+                <td><?= h($trackings->station_id) ?></td>
+                <td><?= h($trackings->comment) ?></td>
+                <td class="actions">
+                    <?= $this->Html->link(__('View'), ['controller' => 'Trackings', 'action' => 'view', $trackings->id]) ?>
+                    <?= $this->Html->link(__('Edit'), ['controller' => 'Trackings', 'action' => 'edit', $trackings->id]) ?>
+                    <?= $this->Form->postLink(__('Delete'), ['controller' => 'Trackings', 'action' => 'delete', $trackings->id], ['confirm' => __('Are you sure you want to delete # {0}?', $trackings->id)]) ?>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+        </table>
+        <?php endif; ?>
+    </div>
 </div>

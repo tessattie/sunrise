@@ -61,31 +61,25 @@
                         <thead>
                             <tr>
                                 <th>Station</th>
-                                <th class="text-center">Prix (USD)</th>
-                                <th class="text-right">Taxe (%)</th>
+                                <th class="text-right">Prix (USD)</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php $i=0; foreach($stations as $station) : ?>
                                 <?php  
-                                    $price = '';$taxe = '';
+                                    $price = '';
                                     foreach($station->trucks_stations as $ca){
                                         if($ca->station_id == $station->id){
                                             $price =$ca->price;
-                                             $taxe =$ca->taxe;
                                         }
                                     }
                                 ?>
                                 <tr>
                                     <td><?= h($station->name) ?></td>
 
-                                    <td class="text-center">
-                                        <?= $this->Form->control('station_id[]', array('type' => 'hidden', "value" => $station->id)); ?>
-                                        <?= $this->Form->control('price[]', array('class' => 'form-control', "label" => false, "value" => $price, "style" => "width:100px;margin:auto")); ?>
-                                    </td>
-
                                     <td class="text-right">
-                                        <?= $this->Form->control('taxe[]', array('class' => 'form-control', "label" => false, "value" => $taxe, "style" => "width:100px;float:right")); ?>
+                                        <?= $this->Form->control('station_id[]', array('type' => 'hidden', "value" => $station->id)); ?>
+                                        <?= $this->Form->control('price[]', array('class' => 'form-control', "label" => false, "value" => $price, "style" => "width:100px;float:right")); ?>
                                     </td>
                                 </tr>
                                 <?php $i++; ?>

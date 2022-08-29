@@ -142,8 +142,8 @@ class TrucksController extends AppController
                 }
                 if(!empty($this->request->getData()['station_id'])){
                     foreach($this->request->getData()['station_id'] as $key => $id){
-                        if(!empty($this->request->getData()['price'][$key]) && !empty($this->request->getData()['taxe'][$key]))
-                        $this->saveTS($id, $truck->id, $this->request->getData()['price'][$key], $this->request->getData()['taxe'][$key]);
+                        if(!empty($this->request->getData()['price'][$key]))
+                        $this->saveTS($id, $truck->id, $this->request->getData()['price'][$key]);
                     }
                 }
 
@@ -158,7 +158,7 @@ class TrucksController extends AppController
     }
 
 
-    public function saveTS($station_id, $truck_id, $price, $taxe){
+    public function saveTS($station_id, $truck_id, $price){
         $this->loadModel('TrucksStations');
 
         $new = $this->TrucksStations->newEntity();
@@ -167,7 +167,6 @@ class TrucksController extends AppController
         $new->truck_id = $truck_id;
         $new->price = $price; 
         $new->user_id = $this->Auth->user()['id'];
-        $new->taxe = $taxe;
          
         $this->TrucksStations->save($new); 
     }

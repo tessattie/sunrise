@@ -40,8 +40,8 @@ class MovementsFixture extends TestFixture
             [
                 'id' => 1,
                 'name' => 'Lorem ipsum dolor sit amet',
-                'created' => '2022-08-24 10:07:04',
-                'modified' => '2022-08-24 10:07:04',
+                'created' => '2022-08-29 11:04:53',
+                'modified' => '2022-08-29 11:04:53',
                 'user_id' => 1
             ],
         ];

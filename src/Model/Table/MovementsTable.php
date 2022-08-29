@@ -10,7 +10,7 @@ use Cake\Validation\Validator;
  * Movements Model
  *
  * @property \App\Model\Table\UsersTable|\Cake\ORM\Association\BelongsTo $Users
- * @property |\Cake\ORM\Association\HasMany $Trackings
+ * @property \App\Model\Table\TrackingsTable|\Cake\ORM\Association\HasMany $Trackings
  *
  * @method \App\Model\Entity\Movement get($primaryKey, $options = [])
  * @method \App\Model\Entity\Movement newEntity($data = null, array $options = [])

@@ -4,15 +4,15 @@ namespace App\Model\Entity;
 use Cake\ORM\Entity;
 
 /**
- * Station Entity
+ * Setting Entity
  *
  * @property int $id
  * @property string $name
- *
- * @property \App\Model\Entity\Sale[] $sales
- * @property \App\Model\Entity\User[] $users
+ * @property string|null $value
+ * @property \Cake\I18n\FrozenTime $created
+ * @property \Cake\I18n\FrozenTime $modified
  */
-class Station extends Entity
+class Setting extends Entity
 {
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().
@@ -25,9 +25,8 @@ class Station extends Entity
      */
     protected $_accessible = [
         'name' => true,
-        'sales' => true,
-        'users' => true, 
-        'taxe' => true,
-        'abbreviation' => true
+        'value' => true,
+        'created' => true,
+        'modified' => true
     ];
 }

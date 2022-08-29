@@ -19,7 +19,7 @@ class RatesController extends AppController
      */
     public function index()
     {
-        $rates = $this->paginate($this->Rates);
+        $rates = $this->Rates->find("all");
 
         $this->set(compact('rates'));
     }

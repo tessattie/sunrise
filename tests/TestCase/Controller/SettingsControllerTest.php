@@ -1,14 +1,14 @@
 <?php
 namespace App\Test\TestCase\Controller;
 
-use App\Controller\MovementsController;
+use App\Controller\SettingsController;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
 /**
- * App\Controller\MovementsController Test Case
+ * App\Controller\SettingsController Test Case
  */
-class MovementsControllerTest extends TestCase
+class SettingsControllerTest extends TestCase
 {
     use IntegrationTestTrait;
 
@@ -18,9 +18,7 @@ class MovementsControllerTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'app.Movements',
-        'app.Users',
-        'app.Trackings'
+        'app.Settings'
     ];
 
     /**

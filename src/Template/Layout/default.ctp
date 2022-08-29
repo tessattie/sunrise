@@ -175,7 +175,7 @@ $cakeDescription = 'SUNRISE';
 
             <li class="<?= ($this->request->getParam('controller') == 'Stations') ? 'active' : '' ?>"><a  href="<?= ROOT_DIREC ?>/stations"><em class="fa fa-bank">&nbsp;</em> Stations</a></li>
 
-            <li class="<?= ($this->request->getParam('controller') == 'Trackings') ? 'active' : '' ?>"><a  href="<?= ROOT_DIREC ?>/trackings"><em class="fa fa-arrow-right">&nbsp;</em> Tracking</a></li>
+            <li class="<?= ($this->request->getParam('controller') == 'Movements') ? 'active' : '' ?>"><a  href="<?= ROOT_DIREC ?>/movements"><em class="fa fa-arrow-right">&nbsp;</em> Mouvements</a></li>
             
             <?php if($user_connected['role_id'] ==1) : ?>
             <li class="parent <?= ($this->request->getParam('controller') == 'Users' || $this->request->getParam('controller') == 'Roles' || $this->request->getParam('controller') == 'Cards') ? 'active' : '' ?>"><a data-toggle="collapse" href="#sub-item-2">
@@ -203,8 +203,11 @@ $cakeDescription = 'SUNRISE';
                 </a>
                 <ul class="children collapse" id="sub-item-3">
                     <li class="<?= ($this->request->getParam('controller') == 'Pointofsales') ? 'active' : '' ?>"><a  href="<?= ROOT_DIREC ?>/pointofsales"><em class="fa fa-arrow-right">&nbsp;</em> POS</a></li>
-                    <li class="<?= ($this->request->getParam('controller') == 'Rates') ? 'active' : '' ?>"><a class=""  href="<?= ROOT_DIREC ?>/rates/edit/2">
+                    <li class="<?= ($this->request->getParam('controller') == 'Rates') ? 'active' : '' ?>"><a class=""  href="<?= ROOT_DIREC ?>/rates">
                         <span class="fa fa-arrow-right">&nbsp;</span> Taux du jour
+                    </a></li>
+                    <li class="<?= ($this->request->getParam('controller') == 'Settings') ? 'active' : '' ?>"><a class=""  href="<?= ROOT_DIREC ?>/settings/edit/1">
+                        <span class="fa fa-arrow-right">&nbsp;</span> Code Superviseur
                     </a></li>
                     <li  class="<?= ($this->request->getParam('controller') == 'Methods') ? 'active' : '' ?>"><a class=""  href="<?= ROOT_DIREC ?>/methods">
                         <span class="fa fa-arrow-right">&nbsp;</span> Paiements

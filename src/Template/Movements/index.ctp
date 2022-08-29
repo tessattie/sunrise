@@ -4,54 +4,73 @@
  * @var \App\Model\Entity\Movement[]|\Cake\Collection\CollectionInterface $movements
  */
 ?>
-<nav class="large-3 medium-4 columns" id="actions-sidebar">
-    <ul class="side-nav">
-        <li class="heading"><?= __('Actions') ?></li>
-        <li><?= $this->Html->link(__('New Movement'), ['action' => 'add']) ?></li>
-        <li><?= $this->Html->link(__('List Users'), ['controller' => 'Users', 'action' => 'index']) ?></li>
-        <li><?= $this->Html->link(__('New User'), ['controller' => 'Users', 'action' => 'add']) ?></li>
-        <li><?= $this->Html->link(__('List Methods'), ['controller' => 'Methods', 'action' => 'index']) ?></li>
-        <li><?= $this->Html->link(__('New Method'), ['controller' => 'Methods', 'action' => 'add']) ?></li>
-    </ul>
-</nav>
-<div class="movements index large-9 medium-8 columns content">
-    <h3><?= __('Movements') ?></h3>
-    <table cellpadding="0" cellspacing="0">
-        <thead>
-            <tr>
-                <th scope="col"><?= $this->Paginator->sort('id') ?></th>
-                <th scope="col"><?= $this->Paginator->sort('name') ?></th>
-                <th scope="col"><?= $this->Paginator->sort('created') ?></th>
-                <th scope="col"><?= $this->Paginator->sort('modified') ?></th>
-                <th scope="col"><?= $this->Paginator->sort('user_id') ?></th>
-                <th scope="col" class="actions"><?= __('Actions') ?></th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($movements as $movement): ?>
-            <tr>
-                <td><?= $this->Number->format($movement->id) ?></td>
-                <td><?= h($movement->name) ?></td>
-                <td><?= h($movement->created) ?></td>
-                <td><?= h($movement->modified) ?></td>
-                <td><?= $movement->has('user') ? $this->Html->link($movement->user->id, ['controller' => 'Users', 'action' => 'view', $movement->user->id]) : '' ?></td>
-                <td class="actions">
-                    <?= $this->Html->link(__('View'), ['action' => 'view', $movement->id]) ?>
-                    <?= $this->Html->link(__('Edit'), ['action' => 'edit', $movement->id]) ?>
-                    <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $movement->id], ['confirm' => __('Are you sure you want to delete # {0}?', $movement->id)]) ?>
-                </td>
-            </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
-    <div class="paginator">
-        <ul class="pagination">
-            <?= $this->Paginator->first('<< ' . __('first')) ?>
-            <?= $this->Paginator->prev('< ' . __('previous')) ?>
-            <?= $this->Paginator->numbers() ?>
-            <?= $this->Paginator->next(__('next') . ' >') ?>
-            <?= $this->Paginator->last(__('last') . ' >>') ?>
-        </ul>
-        <p><?= $this->Paginator->counter(['format' => __('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')]) ?></p>
-    </div>
+<div class="row" style="margin-bottom:15px">
+    <ol class="breadcrumb">
+        <li>
+            <em class="fa fa-home"></em>
+        </li>
+        <li class="active">Mouvements</li>
+    </ol>
 </div>
+<?= $this->Flash->render() ?>
+<div class="container-fluid"> 
+    <div class="panel panel-default articles">
+        <div class="panel-heading">
+            Mouvements
+            <ul class="pull-right panel-settings panel-button-tab-right">
+                            <li class="dropdown"><a class="pull-right dropdown-toggle" data-toggle="dropdown" href="#">
+                                <em class="fa fa-plus"></em>
+                            </a>
+                                <ul class="dropdown-menu dropdown-menu-right">
+                                    <li>
+                                        <ul class="dropdown-settings">
+                                            <li><a href="<?= ROOT_DIREC ?>/movements/add">
+                                                <em class="fa fa-plus"></em> Nouveau Mouvement
+                                            </a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+        </div>
+    <div class="panel-body articles-container">
+            <table class="table table-stripped datatable">
+                <thead> 
+                        <th>Nom</th>
+                        <th class="text-right"></th>
+                </thead>
+            <tbody> 
+        <?php foreach($movements as $movement) : ?>
+                <tr>
+                    <td><?= $movement->name ?></td>
+                    <td class="text-right"><a href="<?= ROOT_DIREC ?>/movements/edit/<?= $movement->id ?>" style="font-size:1.3em!important;"><span class="fa fa-xl fa-pencil color-blue"></span></a> 
+                    </td>
+                </tr>
+        <?php endforeach; ?>
+        </tbody>
+        </table>
+            <!--End .article-->
+        </div>
+        
+    </div>
+</div><!--End .articles-->
+
+<script type="text/javascript">$(document).ready( function () {
+    $('.datatable').DataTable({
+    } );
+} );</script>
+
+<style>
+    .dt-button{
+        padding:5px;
+        background:black;
+        border:2px solid black;
+        border-radius:2px;;
+        color:white;
+        margin-bottom:-10px;
+    }
+    .dt-buttons{
+        margin-bottom:-25px;
+    }
+</style>
+

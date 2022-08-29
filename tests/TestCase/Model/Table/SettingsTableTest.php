@@ -1,21 +1,21 @@
 <?php
 namespace App\Test\TestCase\Model\Table;
 
-use App\Model\Table\MovementsTable;
+use App\Model\Table\SettingsTable;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
- * App\Model\Table\MovementsTable Test Case
+ * App\Model\Table\SettingsTable Test Case
  */
-class MovementsTableTest extends TestCase
+class SettingsTableTest extends TestCase
 {
     /**
      * Test subject
      *
-     * @var \App\Model\Table\MovementsTable
+     * @var \App\Model\Table\SettingsTable
      */
-    public $Movements;
+    public $Settings;
 
     /**
      * Fixtures
@@ -23,9 +23,7 @@ class MovementsTableTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'app.Movements',
-        'app.Users',
-        'app.Trackings'
+        'app.Settings'
     ];
 
     /**
@@ -36,8 +34,8 @@ class MovementsTableTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $config = TableRegistry::getTableLocator()->exists('Movements') ? [] : ['className' => MovementsTable::class];
-        $this->Movements = TableRegistry::getTableLocator()->get('Movements', $config);
+        $config = TableRegistry::getTableLocator()->exists('Settings') ? [] : ['className' => SettingsTable::class];
+        $this->Settings = TableRegistry::getTableLocator()->get('Settings', $config);
     }
 
     /**
@@ -47,7 +45,7 @@ class MovementsTableTest extends TestCase
      */
     public function tearDown()
     {
-        unset($this->Movements);
+        unset($this->Settings);
 
         parent::tearDown();
     }
@@ -68,16 +66,6 @@ class MovementsTableTest extends TestCase
      * @return void
      */
     public function testValidationDefault()
-    {
-        $this->markTestIncomplete('Not implemented yet.');
-    }
-
-    /**
-     * Test buildRules method
-     *
-     * @return void
-     */
-    public function testBuildRules()
     {
         $this->markTestIncomplete('Not implemented yet.');
     }
