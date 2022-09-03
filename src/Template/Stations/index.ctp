@@ -40,6 +40,9 @@
                 <thead> 
                         <th>Nom</th>
                         <th class="text-center">Abréviation</th>
+                        <th class="text-center">Adresse</th>
+                        <th class="text-center">Téléphone</th>
+                        <th class="text-center">Email</th>
                         <th class="text-center">Taxe (%)</th>
                         <th class="text-right"></th>
                 </thead>
@@ -48,6 +51,9 @@
                 <tr>
                     <td><?= $station->name ?></td>
                     <td class="text-center"><?= $station->abbreviation ?></td>
+                    <td class="text-center"><?= $station->address ?></td>
+                    <td class="text-center"><?= $station->phone ?></td>
+                    <td class="text-center"><?= $station->email ?></td>
                     <td class="text-center"><?= $station->taxe ?></td>
                     <td class="text-right"><a href="<?= ROOT_DIREC ?>/stations/edit/<?= $station->id ?>" style="font-size:1.3em!important;"><span class="fa fa-xl fa-pencil color-blue"></span></a> 
                     </td>

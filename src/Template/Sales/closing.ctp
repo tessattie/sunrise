@@ -31,12 +31,12 @@
     <?php foreach($users as $user) : ?>
             <table class="table table-bordered datatable">
                 <thead>
-                <tr><th colspan="3"><?= $user->first_name." ".$user->last_name ?></th></tr>
-                    <tr><th>Type</th><th class="text-center">HTG</th><th class="text-center">USD</th></tr>
+                <tr style="background:#f2f2f2"><th colspan="4"><?= $user->first_name." ".$user->last_name ?></th></tr>
+                    <tr><th>Type</th><th class="text-center">HTG</th><th class="text-center">USD</th><th class="text-center">DOP</th></tr>
                 </thead>
                 <tbody>
                     <?php 
-                    $cash_htg = 0;$cash_usd = 0; $cheque_usd = 0; $cheque_htg = 0; $carte_htg = 0; $carte_usd = 0; 
+                    $cash_htg = 0;$cash_usd = 0; $cash_dop = 0; $cheque_usd = 0; $cheque_htg = 0; $carte_htg = 0; $carte_usd = 0;$cheque_dop = 0; $carte_dop = 0; $carte_dop = 0; 
                     if(!empty($user->cash)){
                       foreach($user->cash as $cash){
                             if($cash['method_id'] == 1 && $cash['rate_id'] == 1){
@@ -47,12 +47,20 @@
                                 $cash_usd = $cash_usd + $cash['amount'];
                             }
 
+                            if($cash['method_id'] == 1 && $cash['rate_id'] == 3){
+                                $cash_dop = $cash_dop + $cash['amount'];
+                            }
+
                             if($cash['method_id'] == 2 && $cash['rate_id'] == 1){
                                 $cheque_htg = $cheque_htg + $cash['amount'];
                             }
 
                             if($cash['method_id'] == 2 && $cash['rate_id'] == 2){
                                 $cheque_usd = $cheque_usd + $cash['amount'];
+                            }
+
+                            if($cash['method_id'] == 2 && $cash['rate_id'] == 3){
+                                $cheque_dop = $cheque_dop + $cash['amount'];
                             }
 
                             if($cash['method_id'] == 3 && $cash['rate_id'] == 1){
@@ -62,15 +70,19 @@
                             if($cash['method_id'] == 3 && $cash['rate_id'] == 2){
                                 $carte_usd = $carte_usd + $cash['amount'];
                             }
+
+                            if($cash['method_id'] == 3 && $cash['rate_id'] == 3){
+                                $carte_dop = $carte_dop + $cash['amount'];
+                            }
                         }  
                     }
                     
 
                     ?>
-                    <tr><th>Cash</th><td class="text-center"><?= number_format($cash_htg - $user->monnaie_htg['monnaie'], 2, ".", ",") ?> HTG</td> <td class="text-center"><?= number_format($cash_usd, 2, ".", ",") ?> USD</td></tr>
-                    <tr><th>Chèque </th> <td class="text-center"><?= number_format($cheque_htg, 2, ".", ",") ?> HTG</td><td class="text-center"><?= number_format($cheque_usd, 2, ".", ",") ?> USD</td></tr>
-                    <tr><th>Carte </th> <td class="text-center"><?= number_format($carte_htg, 2, ".", ",") ?> HTG</td><td class="text-center"><?= number_format($carte_usd, 2, ".", ",") ?> USD</td></tr>
-                    <tr><th>Crédit </th> <td class="text-center"><?= number_format($user->credit_htg['total'], 2, ".", ",") ?> HTG</td><td class="text-center"><?= number_format($user->credit_usd['total'], 2, ".", ",") ?> USD</td></tr>
+                    <tr><th>Cash</th><td class="text-center"><?= number_format($cash_htg - $user->monnaie_htg['monnaie'], 2, ".", ",") ?> HTG</td> <td class="text-center"><?= number_format($cash_usd - $user->monnaie_usd['monnaie'], 2, ".", ",") ?> USD</td> <td class="text-center"><?= number_format($cash_dop - $user->monnaie_dop['monnaie'], 2, ".", ",") ?> DOP</td></tr>
+                    <tr><th>Chèque </th> <td class="text-center"><?= number_format($cheque_htg, 2, ".", ",") ?> HTG</td><td class="text-center"><?= number_format($cheque_usd, 2, ".", ",") ?> USD</td><td class="text-center"><?= number_format($cheque_dop, 2, ".", ",") ?> DOP</td></tr>
+                    <tr><th>Carte </th> <td class="text-center"><?= number_format($carte_htg, 2, ".", ",") ?> HTG</td><td class="text-center"><?= number_format($carte_usd, 2, ".", ",") ?> USD</td><td class="text-center"><?= number_format($carte_dop, 2, ".", ",") ?> DOP</td></tr>
+                    <tr><th>Crédit </th> <td class="text-center">-</td><td class="text-center"><?= number_format($user->credit_usd['total'], 2, ".", ",") ?> USD</td><td class="text-center">-</td></tr>
                 </tbody>
             </table>
         <?php endforeach; ?>

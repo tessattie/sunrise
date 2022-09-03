@@ -53,6 +53,12 @@ class ProductsSalesTable extends Table
             'foreignKey' => 'sale_id',
             'joinType' => 'INNER'
         ]);
+
+
+        $this->hasMany('Trackings', [
+            'foreignKey' => 'products_sale_id',
+            'joinType' => 'LEFT'
+        ]);
     }
 
     /**

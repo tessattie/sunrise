@@ -43,6 +43,11 @@ class FlightsTable extends Table
         $this->hasMany('ProductsSales', [
             'foreignKey' => 'flight_id'
         ]);
+
+        $this->belongsTo('Stations', [
+            'foreignKey' => 'station_id',
+            'joinType' => 'LEFT'
+        ]);
     }
 
     /**

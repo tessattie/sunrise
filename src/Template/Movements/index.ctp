@@ -3,6 +3,8 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Movement[]|\Cake\Collection\CollectionInterface $movements
  */
+$validations = array(1 => "OUI", 0 => "NON")
+
 ?>
 <div class="row" style="margin-bottom:15px">
     <ol class="breadcrumb">
@@ -37,12 +39,16 @@
             <table class="table table-stripped datatable">
                 <thead> 
                         <th>Nom</th>
+                        <th class="text-center">Vol</th>
+                        <th class="text-center">Validation Client</th>
                         <th class="text-right"></th>
                 </thead>
             <tbody> 
         <?php foreach($movements as $movement) : ?>
                 <tr>
                     <td><?= $movement->name ?></td>
+                    <td class="text-center"><?= $validations[$movement->with_flight] ?></td>
+                    <td class="text-center"><?= $validations[$movement->customer_validation]  ?></td>
                     <td class="text-right"><a href="<?= ROOT_DIREC ?>/movements/edit/<?= $movement->id ?>" style="font-size:1.3em!important;"><span class="fa fa-xl fa-pencil color-blue"></span></a> 
                     </td>
                 </tr>

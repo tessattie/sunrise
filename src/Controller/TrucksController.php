@@ -141,9 +141,9 @@ class TrucksController extends AppController
                     $this->TrucksStations->delete($delete);
                 }
                 if(!empty($this->request->getData()['station_id'])){
-                    foreach($this->request->getData()['station_id'] as $key => $id){
-                        if(!empty($this->request->getData()['price'][$key]))
-                        $this->saveTS($id, $truck->id, $this->request->getData()['price'][$key]);
+                    foreach($this->request->getData()['station_id'] as $key => $ident){
+                        if(isset($this->request->getData()['price'][$key]))
+                        $this->saveTS($ident, $truck->id, $this->request->getData()['price'][$key]);
                     }
                 }
 

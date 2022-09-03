@@ -36,7 +36,7 @@ class MovementsTable extends Table
         parent::initialize($config);
 
         $this->setTable('movements');
-        $this->setDisplayField('id');
+        $this->setDisplayField('name');
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');

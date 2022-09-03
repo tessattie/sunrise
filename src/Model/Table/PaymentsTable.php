@@ -60,10 +60,6 @@ class PaymentsTable extends Table
             'foreignKey' => 'rate_id',
             'joinType' => 'INNER'
         ]);
-
-        $this->hasMany('PaymentsSales', [
-            'foreignKey' => 'payment_id'
-        ]);
     }
 
     /**

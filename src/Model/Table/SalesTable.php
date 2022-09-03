@@ -11,7 +11,6 @@ use Cake\Validation\Validator;
  *
  * @property \App\Model\Table\UsersTable|\Cake\ORM\Association\BelongsTo $Users
  * @property \App\Model\Table\CustomersTable|\Cake\ORM\Association\BelongsTo $Customers
- * @property \App\Model\Table\TrucksTable|\Cake\ORM\Association\BelongsTo $Trucks
  * @property \App\Model\Table\PointofsalesTable|\Cake\ORM\Association\BelongsTo $Pointofsales
  * @property \App\Model\Table\PaymentsTable|\Cake\ORM\Association\HasMany $Payments
  * @property \App\Model\Table\ProductsTable|\Cake\ORM\Association\BelongsToMany $Products
@@ -60,11 +59,6 @@ class SalesTable extends Table
             'joinType' => 'INNER'
         ]);
 
-        $this->belongsTo('Trucks', [
-            'foreignKey' => 'truck_id',
-            'joinType' => 'INNER'
-        ]);
-
         $this->hasMany('Payments', [
             'foreignKey' => 'sale_id'
         ]);
@@ -79,20 +73,11 @@ class SalesTable extends Table
             'joinType' => 'INNER'
         ]);
 
-        $this->hasMany('PaymentsSales', [
-            'foreignKey' => 'sale_id',
-            'joinType' => 'LEFT'
-        ]);
-
         $this->hasMany('ProductsSales', [
             'foreignKey' => 'sale_id'
         ]);
 
     $this->hasMany('ProductsSales', [
-       'foreignKey' => 'sale_id'
-   ]);
-
-    $this->hasMany('RequisitionsSales', [
        'foreignKey' => 'sale_id'
    ]);
 
@@ -161,11 +146,4 @@ class SalesTable extends Table
         return $rules;
     }
 
-    public function findHidden(Query $query, array $options)
-    {
-        $query->where([
-            'Sales.hidden' => true
-        ]);
-        return $query;
-    }
 }

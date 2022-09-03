@@ -19,7 +19,7 @@ class FlightsController extends AppController
      */
     public function index()
     {
-        $flights = $this->paginate($this->Flights);
+        $flights = $this->Flights->find("all")->contain(['Stations']);
 
         $this->set(compact('flights'));
     }
@@ -51,13 +51,12 @@ class FlightsController extends AppController
         if ($this->request->is('post')) {
             $flight = $this->Flights->patchEntity($flight, $this->request->getData());
             if ($this->Flights->save($flight)) {
-                $this->Flash->success(__('The flight has been saved.'));
-
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The flight could not be saved. Please, try again.'));
         }
-        $this->set(compact('flight'));
+        $this->loadModel("Stations");
+        $stations = $this->Stations->find("list", array("order" => array("name ASC")));
+        $this->set(compact('flight', 'stations'));
     }
 
     /**
@@ -75,13 +74,12 @@ class FlightsController extends AppController
         if ($this->request->is(['patch', 'post', 'put'])) {
             $flight = $this->Flights->patchEntity($flight, $this->request->getData());
             if ($this->Flights->save($flight)) {
-                $this->Flash->success(__('The flight has been saved.'));
-
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The flight could not be saved. Please, try again.'));
         }
-        $this->set(compact('flight'));
+        $this->loadModel("Stations");
+        $stations = $this->Stations->find("list", array("order" => array("name ASC")));
+        $this->set(compact('flight', 'stations'));
     }
 
     /**

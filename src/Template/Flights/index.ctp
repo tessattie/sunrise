@@ -39,14 +39,14 @@
             <table class="table table-stripped datatable">
                 <thead> 
                         <th>Nom</th>
-                        <th class="text-center">Date de création</th>
+                        <th class="text-center">Station</th>
                         <th class="text-right"></th>
                 </thead>
             <tbody> 
         <?php foreach($flights as $flight) : ?>
                 <tr>
                     <td><?= $flight->name ?></td>
-                    <td class="text-center"><?= $flight->created ?></td>
+                    <td class="text-center"><?= $flight->station->name ?></td>
                     <td class="text-right"><a href="<?= ROOT_DIREC ?>/flights/edit/<?= $flight->id ?>" style="font-size:1.3em!important;"><span class="fa fa-xl fa-pencil color-blue"></span></a> 
                     </td>
                 </tr>

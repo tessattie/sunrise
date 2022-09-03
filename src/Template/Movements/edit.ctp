@@ -3,6 +3,7 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Movement $movement
  */
+$validations = array(1 => "OUI", 0 => "NON")
 ?>
 <div class="row" style="margin-bottom:15px">
     <ol class="breadcrumb">
@@ -32,6 +33,11 @@
             <?= $this->Form->create($movement) ?>
                 <div class="row">
                     <div class="col-md-12"><?= $this->Form->control('name', array('class' => 'form-control', "label" => "Nom *", "placeholder" => "Nom")); ?></div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-md-6"><?= $this->Form->control('with_flight', array('class' => 'form-control', "label" => "Associé à un Vol *", 'options' => $validations)); ?></div>
+                    <div class="col-md-6"><?= $this->Form->control('customer_validation', array('class' => 'form-control', "label" => "Validation Client *", 'options' => $validations)); ?></div>
                 </div> 
                 <div class="row">
                     <div class="col-md-12"><?= $this->Form->button(__('Valider'), array('class'=>'btn btn-success', "style"=>"margin-top:25px;float:right")) ?></div>

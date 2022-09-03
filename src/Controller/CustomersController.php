@@ -10,6 +10,8 @@ use PHPExcel_Style_Alignment;
 use PHPExcel_Style_Fill;
 use Cake\Datasource\ConnectionManager;
 use PHPExcel_Cell_DataValidation;
+use FPDF;
+use Cake\Event\Event;
 
 /**
  * Customers Controller
@@ -21,30 +23,42 @@ use PHPExcel_Cell_DataValidation;
 class CustomersController extends AppController
 {
 
-    public function simulation(){
-        $from = $this->request->session()->read("from")." 00:00:00";
-        $to = $this->request->session()->read("to")." 23:59:59";
-        $pourcentage = 0;
-        $de = 0;
-        $a = 0;
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            $pourcentage = $this->request->getData()['pourcentage'];
-            $de = $this->request->getData()['interval_from'];
-            $a = $this->request->getData()['interval_to'];
-        }
-        $conn = ConnectionManager::get('default');
-        $sales = $conn->query("SELECT SUM(ps.quantity) as quantity, SUM(s.total) as total, s.truck_id, t.immatriculation 
-            FROM products_sales ps
-            LEFT JOIN sales s ON s.id = ps.sale_id
-            LEFT JOIN trucks t ON t.id = s.truck_id
-            WHERE s.created >= '".$from."' AND s.created <= '".$to."' AND (s.status = 1 OR s.status = 10)
-            GROUP BY s.truck_id
-            ORDER BY s.truck_id"); 
-        $this->set('sales', $sales);
-        $this->set('pourcentage', $pourcentage);
-        $this->set('de', $de);
-        $this->set('a', $a);
+    public function beforeFilter(Event $event){
+        parent::beforeFilter($event);
+        $this->Auth->allow(array('track'));
     }
+
+    public function track($tracking_number = false){
+        $this->viewBuilder()->setLayout('track');
+        $this->loadModel('Sales');
+        $sale = [];
+        $package = [];
+        if(!empty($_GET['tracking_number'])){
+            $tracking_number = $_GET['tracking_number'];
+        }
+
+        if($tracking_number){
+            $this->loadModel('ProductsSales'); 
+            $package = $this->ProductsSales->find("all", array("conditions" => array("barcode" => $tracking_number)))->contain(['Trucks', 'Trackings' => ['Users', 'Stations', 'Flights', 'Movements', 'sort' => 'Trackings.created ASC']]); 
+            if($package->count() == 1){
+                $package = $package->first(); 
+                $sale = $this->Sales->get($package->sale_id, ['contain' => ['Users', 'Stations', 'Receivers', 'Customers', 'Pointofsales', 'Payments' => ['Methods', 'Rates']]]);
+                $sale->destination_station  = $this->Sales->Stations->get($sale->destination_station_id);
+            }else{
+                if($package->count() == 0){
+                    $this->Flash->error(__('Aucun colis trouvé pour ce numéro.'));
+                }
+
+                if($package->count() > 1){
+                    $this->Flash->error(__('Plusieurs colis trouvé pour ce numéro. Contactez un administrateur pour plus d\'informations'));
+                }
+            }
+        }
+
+        $this->set(compact('sale', 'package'));
+    }
+
+
     /**
      * Index method
      *
@@ -62,27 +76,129 @@ class CustomersController extends AppController
     public function statements(){
         $from = $this->request->session()->read("from")." 00:00:00";
         $to = $this->request->session()->read("to")." 23:59:59";
-        $customers = $this->Customers->find("list");
+        $customers = $this->Customers->find("list", array("order" => array("last_name asc"), 'conditions' => array("type <>" => 3)));
         $sales = array();
         $payments = array();
         $customer_balance = 0;
+        $transactions = [];
+        $customer = '';
         $customer_balance_before = 0;
         if($this->request->is(['patch', 'put', 'post'])){
-            $sales = $this->Customers->Sales->find("all", array("conditions" => array("customer_id" => $this->request->getData()['customer_id'], "OR" => array("Sales.status = 0", "Sales.status = 1", 'Sales.status = 4', 'Sales.status = 6', "Sales.status = 7"), 'Sales.created >=' => $from, 'Sales.created <=' => $to)))->contain(['Customers' => ['Rates']]);
-            $payments = $this->Customers->Payments->find("all", array("conditions" => array("customer_id" => $this->request->getData()['customer_id'], "status" => 1, 'Payments.created >=' => $from, 'Payments.created <=' => $to)))->contain(['Rates']);
+            $SQL = "SELECT total as amount, created as created, sale_number as number, '' as memo, 'COLIS' as type 
+                    FROM sales WHERE (sales.status = 1) AND sales.type = 2 AND sales.customer_id = ".$this->request->getData()['customer_id']." AND sales.created >= '".$from."' AND sales.created <= '".$to."' 
+                    UNION ALL SELECT -amount as amount, created as created,'' as number,  memo as memo, 'PMT' as type 
+                    FROM payments 
+                    WHERE payments.type = 2 AND payments.created >= '".$from."' AND payments.created <= '".$to."' AND payments.customer_id = ".$this->request->getData()['customer_id']." 
+                    ORDER BY created ASC";
+
+            $conn = ConnectionManager::get('default');
+            $transactions = $conn->query($SQL);
             $customer = $this->Customers->get($this->request->getData()['customer_id'], ['contain' => ['Rates']]);
-            $customer_balance = $this->getBalance($this->request->getData()['customer_id']);
-            $customer_balance_before = $this->getBalanceByDate($this->request->getData()['customer_id'], $from);
+            if($this->request->getData()['export'] == 1){
+                $this->exportpdf($transactions, $customer, $from, $to);
+            }
         }
         
         $this->set("customers", $customers); 
         $this->set("customer", $customer); 
-        $this->set("sales", $sales); 
+        $this->set("sales", $transactions); 
         $this->set("from", $from); 
         $this->set("to", $to); 
         $this->set("payments" ,$payments);
         $this->set("customer_balance" ,$customer_balance);
         $this->set("customer_balance_before" ,$customer_balance_before);
+   }
+
+   public function exportpdf($transactions, $customer, $from, $to){
+        require_once(ROOT . DS . 'vendor' . DS  . 'fpdf'  . DS . 'fpdf.php');
+        
+        $fpdf = new FPDF();
+        $fpdf->AddPage();
+        $fpdf->Image(ROOT.'/webroot/img/logo.jpg',10,5,30);
+        $fpdf->SetFont('Arial','B',10);
+        $fpdf->Cell(190,6,utf8_decode("Sunrise Airways S.A."),0,0, 'R');
+        $fpdf->Ln();
+        $fpdf->SetFont('Arial','I',10);
+        $fpdf->Cell(190,6,utf8_decode("Aérogare Guy Malary"),0,0, 'R');
+        $fpdf->Ln();
+        $fpdf->Cell(190,6,utf8_decode("Toussaint Louverture International Airport"),0,0, 'R');
+        $fpdf->Ln();
+        $fpdf->Cell(190,6,utf8_decode("Tel: +509-2811-2222"),0,0, 'R');
+        $fpdf->Ln(20);
+        $fpdf->SetFont('Arial','B',10);
+        if(!empty($customer->first_name)){
+            if(!empty($customer->last_name)){
+                $fpdf->Cell(190,6,utf8_decode($customer->first_name. " - ". $customer->last_name),0,0, 'L');
+            }else{
+                $fpdf->Cell(190,6,utf8_decode($customer->first_name),0,0, 'L');
+            }
+        }else{
+            if(!empty($customer->last_name)){
+                $fpdf->Cell(190,6,utf8_decode($customer->last_name),0,0, 'L');
+            }else{
+                $fpdf->Cell(190,6,'',0,0, 'L');
+            }
+        }
+        $fpdf->SetFont('Arial','I',10);
+        $fpdf->Ln();
+        if(!empty($customer->address)){
+            $fpdf->Cell(190,6,utf8_decode($customer->address),0,0, 'L');
+            $fpdf->Ln();
+        }
+
+        if(!empty($customer->email)){
+            $fpdf->Cell(190,6,utf8_decode($customer->email),0,0, 'L');
+            $fpdf->Ln();
+        }
+
+        if(!empty($customer->phone)){
+            $fpdf->Cell(190,6,utf8_decode($customer->phone),0,0, 'L');
+            $fpdf->Ln();
+        }
+
+        $fpdf->Ln();
+        $fpdf->SetFont('Arial','',10);
+        $fpdf->Cell(190,6,utf8_decode("Période : ".date("d-m-Y", strtotime($from))." au ".date("d-m-Y", strtotime($to))),0,0, 'R');
+
+        $fpdf->SetFont('Arial','B',10);
+        $fpdf->Ln(15);
+        $fpdf->Cell(190,0,utf8_decode("FACTURE"),0,0, 'C');
+        $fpdf->Ln(10);
+        
+
+        $fpdf->Cell(40,8,utf8_decode("Date"),'T,L,B,R',0, 'L');
+        $fpdf->Cell(30,8,utf8_decode("#"),'T,L,B,R',0, 'C');
+        $fpdf->Cell(40,8,utf8_decode("Mémo"),'T,L,B,R',0, 'C');
+        $fpdf->Cell(25,8,utf8_decode("Type"),'T,L,B,R',0, 'C');
+        $fpdf->Cell(25,8,utf8_decode("Montant"),'T,L,B,R',0, 'C');
+        $fpdf->Cell(30,8,utf8_decode("Balance"),'T,L,B,R',0, 'R');
+        $balance = 0;
+        $fpdf->SetFont('Arial','',8);
+        // set fill color
+        $i = 1;
+        $fpdf->SetFillColor(70,130,180);
+        foreach($transactions as $sale){
+            if($i%2== 0){
+                $fpdf->SetFillColor(255,255,255);
+            }else{
+               $fpdf->SetFillColor(243,243,243); 
+            }
+            $fpdf->Ln();
+            $fpdf->Cell(40,7,date("Y-m-d H:i", strtotime($sale['created'])),'L,R,B,T',0, 'L',1);
+            $fpdf->Cell(30,7,$sale['number'],'L,R,B,T',0, 'C',1);
+            $fpdf->Cell(40,7,utf8_decode($sale['memo']),'L,R,B,T',0, 'C', 1);
+            $fpdf->Cell(25,7,utf8_decode($sale['type']),'L,R,B,T',0, 'C',1);   
+            $fpdf->Cell(25,7,number_format($sale['amount'], 2, ".", ","),'L,R,B,T',0, 'C',1);   
+            $balance = $balance + $sale['amount'];
+            $fpdf->Cell(30,7,number_format($balance, 2, ".", ",") ,'L,R,B,T',0, 'R',1);
+            $i++;
+        }
+        $fpdf->SetFillColor(255,255,255);
+        $fpdf->Ln(7);
+        $fpdf->SetFont('Arial','B',10);
+        $fpdf->Cell(95,10,utf8_decode("Total"),0,0, 'L');
+        $fpdf->Cell(95,10,number_format($balance, 2, ".", ",")." USD" ,0,0, 'R');
+        $fpdf->Output('I');
    }
 
     public function reset(){
@@ -200,7 +316,7 @@ class CustomersController extends AppController
         $from = $this->request->session()->read("from")." 00:00:00";
         $to = $this->request->session()->read("to")." 23:59:59";
         $customer = $this->Customers->get($id, [
-            'contain' => ['Users', 'Rates', 'Sales' => ["Trucks", "Customers", 'users', "ProductsSales" => ['Products'], 'conditions' => ['Sales.created >=' => $from, 'Sales.created <=' => $to]]]
+            'contain' => ['Users', 'Rates', 'Sales' => ["Customers", 'Users', 'Receivers', "ProductsSales" => ['Products'], 'conditions' => ['Sales.created >=' => $from, 'Sales.created <=' => $to]]]
         ]);
         $customer->balance = $this->getBalance($customer->id);
         $this->set('customer', $customer);
@@ -219,6 +335,7 @@ class CustomersController extends AppController
             $customer = $this->Customers->patchEntity($customer, $this->request->getData());
             $customer->user_id = $this->Auth->user()['id'];
             $customer->type = 1;
+            $customer->rate_id = 2;
             if ($ident = $this->Customers->save($customer)) {
                 $this->Flash->success(__('Le client a bien été sauvegardée'));
 

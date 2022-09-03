@@ -69,7 +69,7 @@
                                 <?php  
                                     $price = '';
                                     foreach($station->trucks_stations as $ca){
-                                        if($ca->station_id == $station->id){
+                                        if($ca->truck_id == $truck->id){
                                             $price =$ca->price;
                                         }
                                     }

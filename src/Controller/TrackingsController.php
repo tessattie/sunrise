@@ -28,22 +28,6 @@ class TrackingsController extends AppController
     }
 
     /**
-     * View method
-     *
-     * @param string|null $id Tracking id.
-     * @return \Cake\Http\Response|null
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function view($id = null)
-    {
-        $tracking = $this->Trackings->get($id, [
-            'contain' => ['ProductsSales', 'Flights', 'Movements', 'Users', 'Stations']
-        ]);
-
-        $this->set('tracking', $tracking);
-    }
-
-    /**
      * Add method
      *
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
@@ -53,19 +37,12 @@ class TrackingsController extends AppController
         $tracking = $this->Trackings->newEntity();
         if ($this->request->is('post')) {
             $tracking = $this->Trackings->patchEntity($tracking, $this->request->getData());
-            if ($this->Trackings->save($tracking)) {
-                $this->Flash->success(__('The tracking has been saved.'));
-
-                return $this->redirect(['action' => 'index']);
-            }
-            $this->Flash->error(__('The tracking could not be saved. Please, try again.'));
+            $tracking->user_id = $this->Auth->user()['id']; 
+            
+            $this->Trackings->save($tracking);
         }
-        $productsSales = $this->Trackings->ProductsSales->find('list', ['limit' => 200]);
-        $flights = $this->Trackings->Flights->find('list', ['limit' => 200]);
-        $movements = $this->Trackings->Movements->find('list', ['limit' => 200]);
-        $users = $this->Trackings->Users->find('list', ['limit' => 200]);
-        $stations = $this->Trackings->Stations->find('list', ['limit' => 200]);
-        $this->set(compact('tracking', 'productsSales', 'flights', 'movements', 'users', 'stations'));
+
+        return $this->redirect($this->referer());
     }
 
     /**
@@ -83,18 +60,16 @@ class TrackingsController extends AppController
         if ($this->request->is(['patch', 'post', 'put'])) {
             $tracking = $this->Trackings->patchEntity($tracking, $this->request->getData());
             if ($this->Trackings->save($tracking)) {
-                $this->Flash->success(__('The tracking has been saved.'));
+                $this->Flash->success(__('Données mises à jour.'));
 
-                return $this->redirect(['action' => 'index']);
+            }else{
+                $this->Flash->error(__('Impossible de mettre à jour. Contactez votre administrateur.'));
             }
-            $this->Flash->error(__('The tracking could not be saved. Please, try again.'));
+            
         }
-        $productsSales = $this->Trackings->ProductsSales->find('list', ['limit' => 200]);
-        $flights = $this->Trackings->Flights->find('list', ['limit' => 200]);
-        $movements = $this->Trackings->Movements->find('list', ['limit' => 200]);
-        $users = $this->Trackings->Users->find('list', ['limit' => 200]);
-        $stations = $this->Trackings->Stations->find('list', ['limit' => 200]);
-        $this->set(compact('tracking', 'productsSales', 'flights', 'movements', 'users', 'stations'));
+        $flights = $this->Trackings->Flights->find('list');
+        $movements = $this->Trackings->Movements->find('list');
+        $this->set(compact('tracking', 'flights', 'movements'));
     }
 
     /**
@@ -106,7 +81,7 @@ class TrackingsController extends AppController
      */
     public function delete($id = null)
     {
-        $this->request->allowMethod(['post', 'delete']);
+        $this->request->allowMethod(['post', 'delete', 'get']);
         $tracking = $this->Trackings->get($id);
         if ($this->Trackings->delete($tracking)) {
             $this->Flash->success(__('The tracking has been deleted.'));
@@ -114,6 +89,6 @@ class TrackingsController extends AppController
             $this->Flash->error(__('The tracking could not be deleted. Please, try again.'));
         }
 
-        return $this->redirect(['action' => 'index']);
+        return $this->redirect($this->referer());
     }
 }

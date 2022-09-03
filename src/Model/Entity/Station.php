@@ -27,6 +27,9 @@ class Station extends Entity
         'name' => true,
         'sales' => true,
         'users' => true, 
+        'address' => true,
+        'phone' => true, 
+        'email' => true,
         'taxe' => true,
         'abbreviation' => true
     ];

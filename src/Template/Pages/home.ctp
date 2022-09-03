@@ -98,58 +98,58 @@ $cakeDescription = 'VFM';
         <?= $this->Form->end() ?>
     <?php   endif; ?>
         <div class="divider"></div>
-        <ul class="nav menu">
-        <?php if($user_connected['role_id'] != 5) : ?>
-            <?php if($user_connected['role_id'] != 4) : ?>
-            <li><a href="<?= ROOT_DIREC ?>/sales/dashboard"><em class="fa fa-home">&nbsp;</em> Dashboard</a></li>
-            <?php endif; ?>
+        <ul class="nav menu" style="margin-top:0px">
+            <?php if($user_connected['role_id'] ==1 || $user_connected['role_id'] ==3 || $user_connected['role_id'] ==4) : ?>
             <li class="parent <?= ($this->request->getParam('controller') == 'Sales') ? 'active' : '' ?>"><a data-toggle="collapse" href="#sub-item-4">
                 <em class="fa fa-cc">&nbsp;</em> Rapports <span data-toggle="collapse" href="#sub-item-4" class="icon pull-right"><em class="fa fa-plus"></em></span>
                 </a>
                 <ul class="children collapse" id="sub-item-4">
-                <?php if($user_connected['role_id'] != 4) : ?>
                     <li><a class="" href="<?= ROOT_DIREC ?>/sales">
                         <span class="fa fa-arrow-right">&nbsp;</span> Ventes détaillées
                     </a></li>
-                    <li><a class="" href="<?= ROOT_DIREC ?>/sales/closing">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Fermeture de caisse
-                    </a></li>
                     <li><a class="" href="<?= ROOT_DIREC ?>/sales/monthly">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Ventes par mois
+                        <span class="fa fa-arrow-right">&nbsp;</span> Ventes Journalières
                     </a></li>
-                    <li><a class="" href="<?= ROOT_DIREC ?>/customers/invoices">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Factures
+                    <li><a class="" href="<?= ROOT_DIREC ?>/sales/closing">
+                        <span class="fa fa-arrow-right">&nbsp;</span> Fermeture de Caisse
                     </a></li>
-                    <li><a class="" href="<?= ROOT_DIREC ?>/customers/products">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Clients
+                    <li><a class="" href="<?= ROOT_DIREC ?>/customers/statements">
+                        <span class="fa fa-arrow-right">&nbsp;</span> Etat de Compte
                     </a></li>
-                    <?php endif; ?>
-                    <li><a class="" href="<?= ROOT_DIREC ?>/sales/products">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Ventes par produits
-                    </a></li>
-                    <li><a class="" href="<?= ROOT_DIREC ?>/sales/status">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Chargement et sortie
+                    <li><a class="" href="<?= ROOT_DIREC ?>/sales/colis">
+                        <span class="fa fa-arrow-right">&nbsp;</span> Manifest
                     </a></li>
                 </ul>
             </li>
-            <?php if($user_connected['role_id'] != 4) : ?>
-            <li class="parent <?= ($this->request->getParam('controller') == 'Products' || $this->request->getParam('controller') == 'Categories') ? 'active' : '' ?>"><a data-toggle="collapse" href="#sub-item-1">
-                <em class="fa fa-shopping-cart">&nbsp;</em> Catalogue <span data-toggle="collapse" href="#sub-item-1" class="icon pull-right"><em class="fa fa-plus"></em></span>
+            <?php endif; ?>
+            
+            <?php if($user_connected['role_id'] ==1 || $user_connected['role_id'] ==3) : ?>
+            <li class="parent <?= ($this->request->getParam('controller') == 'Customers' || $this->request->getParam('controller') == 'Invoices' || $this->request->getParam('controller') == 'Payments') ? 'active' : '' ?>"><a data-toggle="collapse" href="#sub-item-5">
+                <em class="fa fa-cc">&nbsp;</em> Clients <span data-toggle="collapse" href="#sub-item-5" class="icon pull-right"><em class="fa fa-plus"></em></span>
                 </a>
-                <ul class="children collapse" id="sub-item-1">
-                    <li class="<?= ($this->request->getParam('controller') == 'Products') ? 'active' : '' ?>" ><a class="" href="<?= ROOT_DIREC ?>/products">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Produits
+                <ul class="children collapse" id="sub-item-5">
+                    <li class="<?= ($this->request->getParam('controller') == 'Customers') ? 'active' : '' ?>"><a  href="<?= ROOT_DIREC ?>/customers"><em class="fa fa-arrow-right">&nbsp;</em> Clients</a></li>
+
+                    <li class="<?= ($this->request->getParam('controller') == 'Payments') ? 'active' : '' ?>"><a class=""  href="<?= ROOT_DIREC ?>/payments">
+                        <span class="fa fa-arrow-right">&nbsp;</span> Paiements
                     </a></li>
-                    <li class="<?= ($this->request->getParam('controller') == 'Categories') ? 'active' : '' ?>"><a class=""  href="<?= ROOT_DIREC ?>/categories">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Catégories
-                    </a></li>
-                    <li><a class=""  href="<?= ROOT_DIREC ?>/products/add">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Nouveau Produit
+
+                    <li><a class=""  href="<?= ROOT_DIREC ?>/customers/add">
+                        <span class="fa fa-arrow-right">&nbsp;</span> Nouveau Client
                     </a></li>
                 </ul>
             </li>
+            <?php endif; ?>
+            <?php if($user_connected['role_id'] ==1) : ?>
+            <li class="<?= ($this->request->getParam('controller') == 'Trucks') ? 'active' : '' ?>"><a  href="<?= ROOT_DIREC ?>/trucks"><em class="fa fa-truck">&nbsp;</em> Paquets</a></li>
 
+            <li class="<?= ($this->request->getParam('controller') == 'Flights') ? 'active' : '' ?>"><a  href="<?= ROOT_DIREC ?>/flights"><em class="fa fa-plane">&nbsp;</em> Vols</a></li>
 
+            <li class="<?= ($this->request->getParam('controller') == 'Stations') ? 'active' : '' ?>"><a  href="<?= ROOT_DIREC ?>/stations"><em class="fa fa-bank">&nbsp;</em> Stations</a></li>
+
+            <li class="<?= ($this->request->getParam('controller') == 'Movements') ? 'active' : '' ?>"><a  href="<?= ROOT_DIREC ?>/movements"><em class="fa fa-arrow-right">&nbsp;</em> Mouvements</a></li>
+            
+            <?php if($user_connected['role_id'] ==1) : ?>
             <li class="parent <?= ($this->request->getParam('controller') == 'Users' || $this->request->getParam('controller') == 'Roles' || $this->request->getParam('controller') == 'Cards') ? 'active' : '' ?>"><a data-toggle="collapse" href="#sub-item-2">
                 <em class="fa fa-users">&nbsp;</em> Utilisateurs <span data-toggle="collapse" href="#sub-item-2" class="icon pull-right"><em class="fa fa-plus"></em></span>
                 </a>
@@ -168,41 +168,7 @@ $cakeDescription = 'VFM';
                     </a></li>
                 </ul>
             </li>
-
-            <li class="parent <?= ($this->request->getParam('controller') == 'Customers' || $this->request->getParam('controller') == 'Invoices' || $this->request->getParam('controller') == 'Payments') ? 'active' : '' ?>"><a data-toggle="collapse" href="#sub-item-5">
-                <em class="fa fa-cc">&nbsp;</em> Clients <span data-toggle="collapse" href="#sub-item-5" class="icon pull-right"><em class="fa fa-plus"></em></span>
-                </a>
-                <ul class="children collapse" id="sub-item-5">
-                    <li class="<?= ($this->request->getParam('controller') == 'Customers') ? 'active' : '' ?>"><a  href="<?= ROOT_DIREC ?>/customers"><em class="fa fa-arrow-right">&nbsp;</em> Clients</a></li>
-
-                    <li class="<?= ($this->request->getParam('controller') == 'Accounts') ? 'active' : '' ?>"><a class=""  href="<?= ROOT_DIREC ?>/accounts">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Comptes
-                    </a></li>
-
-                    <li class="<?= ($this->request->getParam('controller') == 'CustomersProducts') ? 'active' : '' ?>"><a class=""  href="<?= ROOT_DIREC ?>/customersProducts">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Spécials
-                    </a></li>
-
-                   <!--  <li class="<?= ($this->request->getParam('controller') == 'Customers' && $this->request->getParam('action') == 'invoices') ? 'active' : '' ?>"><a class=""  href="<?= ROOT_DIREC ?>/customers/invoice">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Factures
-                    </a></li> -->
-
-                    <li class="<?= ($this->request->getParam('controller') == 'Requisitions') ? 'active' : '' ?>"><a class=""  href="<?= ROOT_DIREC ?>/requisitions">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Réquisitions
-                    </a></li>
-
-                    <li><a class=""  href="<?= ROOT_DIREC ?>/customers/add">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Nouveau Client
-                    </a></li>
-                </ul>
-            </li>
-        <?php endif; ?>
-            <?php if($user_connected['role_id'] != 4) : ?>
-            <li class="<?= ($this->request->getParam('controller') == 'Trucks') ? 'active' : '' ?>"><a  href="<?= ROOT_DIREC ?>/trucks"><em class="fa fa-truck">&nbsp;</em> Camions</a></li>
-        <?php   endif; ?>
-        
-            <?php if($user_connected['role_id'] != 5 && $user_connected['role_id'] != 4) : ?>
-
+            <?php endif; ?>
 
             <li class="parent <?= ($this->request->getParam('controller') == 'Pointofsales' || $this->request->getParam('controller') == 'Rates' || $this->request->getParam('controller') == 'Methods') ? 'active' : '' ?>"><a data-toggle="collapse" href="#sub-item-3">
                 <em class="fa fa-cog">&nbsp;</em> Configuration <span data-toggle="collapse" href="#sub-item-3" class="icon pull-right"><em class="fa fa-plus"></em></span>
@@ -212,29 +178,18 @@ $cakeDescription = 'VFM';
                     <li class="<?= ($this->request->getParam('controller') == 'Rates') ? 'active' : '' ?>"><a class=""  href="<?= ROOT_DIREC ?>/rates">
                         <span class="fa fa-arrow-right">&nbsp;</span> Taux du jour
                     </a></li>
+                    <li class="<?= ($this->request->getParam('controller') == 'Settings') ? 'active' : '' ?>"><a class=""  href="<?= ROOT_DIREC ?>/settings/edit/1">
+                        <span class="fa fa-arrow-right">&nbsp;</span> Code Superviseur
+                    </a></li>
                     <li  class="<?= ($this->request->getParam('controller') == 'Methods') ? 'active' : '' ?>"><a class=""  href="<?= ROOT_DIREC ?>/methods">
                         <span class="fa fa-arrow-right">&nbsp;</span> Paiements
                     </a></li>
                 </ul>
             </li>
-        <?php   endif; ?>
+
+
+            
         <?php endif; ?>
-        <?php if($user_connected['role_id'] == 5) : ?>
-            <li class="<?= ($this->request->getParam('controller') == 'Trucks') ? 'active' : '' ?>"><a  href="<?= ROOT_DIREC ?>/trucks"><em class="fa fa-truck">&nbsp;</em> Camions</a></li>
-            <li class="parent <?= ($this->request->getParam('controller') == 'Receivings') ? 'active' : '' ?>"><a data-toggle="collapse" href="#sub-item-9">
-                <em class="fa fa-arrow-left">&nbsp;</em> Réceptions <span data-toggle="collapse" href="#sub-item-9" class="icon pull-right"><em class="fa fa-plus"></em></span>
-                </a>
-                <ul class="children collapse" id="sub-item-9">
-                    <li><a class="" href="<?= ROOT_DIREC ?>/suppliers">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Fournisseurs
-                    </a></li>
-                    <li><a class="" href="<?= ROOT_DIREC ?>/receivings">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Réceptions
-                    </a></li>
-                </ul>
-            </li>
-        <?php endif; ?>
-            <li><a  href="<?= ROOT_DIREC ?>/users/logout" style="color:red"><em class="fa fa-power-off">&nbsp;</em> Déconnexion</a></li>
         </ul>
     </div><!--/.sidebar-->
     <div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">

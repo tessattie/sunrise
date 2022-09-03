@@ -26,26 +26,33 @@ $cakeDescription = 'SUNRISE';
     </title>
     <?= $this->Html->meta('icon') ?>
 
-    <?= $this->Html->css('bootstrap.min.css') ?>
-    <?= $this->Html->css('styles.css') ?>
     <?= $this->Html->css('datepicker3.css') ?>
     <?= $this->Html->css('font-awesome.min.css') ?>
 
     <link href="https://fonts.googleapis.com/css?family=Montserrat:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>
     <?= $this->fetch('script') ?>
 </head>
-<body>
+<body style="background:#f3f3f3">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light" style="padding-top:0px!important;padding-bottom:0px!important;background:white!important;text-align:center;border-bottom:1px solid #ddd">
+      <a class="navbar-brand" href="https://sunriseairways.net" style="padding:0px!important"><?= $this->Html->image('logo_login.jpg', ['alt' => 'Sunrise Logo', 'style' => "width:100px"]); ?></a>
+    </nav>
+    <?= $this->Flash->render() ?>
+    <?= $this->fetch('content') ?>
 
-        <?= $this->Flash->render() ?>
-            <?= $this->fetch('content') ?>
-
-        <footer>
-
-        </footer>
-
+    <footer class="bg-light text-center text-lg-start" style="position:fixed;bottom:0px;width:100%;margin-top:50px">
+  <!-- Copyright -->
+  <div class="text-center p-3" style="background-color: #DDDBDB">
+    © <a class="text-dark" href="https://sunriseairways.net/" style="text-decoration:none;font-weight:600">Sunrise Airways</a> - <?= date("Y") ?>
+  </div>
+  <!-- Copyright -->
+</footer>
 
     <?= $this->Html->script("jquery-1.11.1.min.js") ?>
     <?= $this->Html->script("bootstrap.js") ?>

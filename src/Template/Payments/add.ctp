@@ -26,27 +26,23 @@
         </div>
         <div class="panel-body articles-container">
         
-        <div class="row" style="padding-top:20px;padding-bottom:30px;border:1px solid #ddd;margin-bottom:20px;margin-top:10px">
+        <div class="row">
             <div class="col-md-4">
                 <?= $this->Form->control('amount', array('class' => 'form-control total_amount', "placeholder" => "Montant", "label" => "Montant", "style" => "margin-left:4px")); ?>
             </div>
             <div class="col-md-4">
-                <?= $this->Form->control('rate_id', array('class' => 'form-control', "empty" => "-- Devise --", "options" => $rates, "label" => 'Devise', "style" => "margin-left:4px;height:46px", "required" => true, 'value' => 1)); ?>
-            </div>
-            <div class="col-md-4">
                 <?= $this->Form->control('method_id', array('class' => 'form-control', "empty" => "-- Méthode de paiement --", "options" => $methods, "label" => 'Méthode', "style" => "margin-left:4px;height:46px", "required" => true)); ?>
             </div>
-            </div>   
-            <div class="row">
-               <div class="col-md-4">
+            <div class="col-md-4">
                     <?= $this->Form->control('memo', array('class' => 'form-control', "placeholder" => "Mémo", "label" => 'Mémo', "style" => "margin-left:4px")); ?>
                 </div>
-                <div class="col-md-4">
-                    <?= $this->Form->control('daily_rate', array('class' => 'form-control', "label" => 'Taux du Jour', "style" => "margin-left:4px;height:46px", "required" => true, 'placeholder' => "Taux du Jour", 'value' => $daily_rate)); ?>
-                </div>
+            </div>   
+            <hr>
+            <div class="row">
+               
                 <div class="col-md-4">
                     <label>Date</label><br>
-                    <input value="<?= date("Y-m-d")  ?>" type="date" name="created" style="height: 45px;">
+                    <input value="<?= date("Y-m-d")  ?>" type="date" name="created" style="height: 45px;" class="form-control">
                 </div> 
             </div>
             

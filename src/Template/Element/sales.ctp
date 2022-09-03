@@ -5,34 +5,22 @@
         <th class="text-center">Agent</th>
         <th class="text-center">Client</th>
         <th class="text-center">Destinataire</th>
-        <th class="text-center">Total HTG</th>
-        <th class="text-center">Total USD</th>
+        <th class="text-center">Total (USD)</th>
         <th class="text-center">Date</th>
         <th class="text-center">Heure</th>
         <th></th>
     </thead>
     <tbody> 
-    <?php $increment=0; $sous = 0; $reductions = 0; $total = 0; $sous_us = 0; $reductions_us = 0; $total_us = 0; $volume=0; foreach ($sales as $sale): ?>
-    <tr <?php if($sale->status == 0 || $sale->status == 4 || $sale->status == 6 || $sale->status == 7) : ?> style="background:#d9edf7" <?php endif; ?>>
+    <?php $total=0; $increment=0; foreach ($sales as $sale): ?>
+    <tr>
         <td class="text-left"><?= $sale->sale_number ?></td>
         <td class="text-center">
-            <?php if($sale->status == 0 || $sale->status == 7) : ?>
-                <span class="label label-info">CR</span>
+            <?php if($sale->type == 1) : ?>
+                <span class="label label-info">CASH</span>
             <?php endif; ?>
-            <?php if($sale->status == 1 || $sale->status == 10) : ?>
-                <span span class="label label-primary"> CASH</span>
-            <?php endif; ?>
-            <?php if($sale->status == 4 || $sale->status == 6) : ?>
-                <span class="label label-warning"> CH</span>
-            <?php endif; ?>
-            <?php if($sale->status == 0 || $sale->status == 2 || $sale->status == 6 || $sale->status == 9 || $sale->status == 10) : ?>
-                <span class= "label label-success">USD</span>
-            <?php endif; ?>
-            <?php if($sale->status == 4 || $sale->status == 5 || $sale->status == 7 || $sale->status == 8) : ?>
-                <span class= "label label-primary">HTG</span>
-            <?php endif; ?>
-            <?php if($sale->status == 2 || $sale->status == 3 || $sale->status == 5 || $sale->status == 9 || $sale->status == 8 || $sale->status == 11) : ?>
-                <span class= "label label-danger">X</span>
+
+            <?php if($sale->type == 2) : ?>
+                <span span class="label label-primary"> CREDIT</span>
             <?php endif; ?>
         </td>
 
@@ -42,26 +30,15 @@
 
         <td class="text-center"><?= substr($sale->receiver->name, 0, 15) ?></td>
         
-        <?php if($sale->status == 0 || $sale->status == 6 || $sale->status == 10) : ?>
+        <?php if($sale->status == 1) : ?>
 
             <?php 
-                $total_us = $total_us + $sale->total;
-                $increment = $increment + 1;
-            ?>
-            <?php $volume = $volume + $sale->products_sales[0]->quantity; ?>            
-            <td class="text-center">-</td>
-            <td class="text-center"><?= number_format($sale->total, 2, ".", ",") ?></td>
-        <?php elseif($sale->status == 1 || $sale->status == 4 || $sale->status == 7) : ?>
-            <?php
                 $total = $total + $sale->total;
                 $increment = $increment + 1;
             ?>
-            <?php $volume = $volume + $sale->products_sales[0]->quantity; ?>
             <td class="text-center"><?= number_format($sale->total, 2, ".", ",") ?></td>
-            <td class="text-center">-</td>
         <?php else : ?>
-            <td class="text-center">-</td>
-            <td class="text-center">-</td>
+            <td class="text-center"><?= number_format($sale->total, 2, ".", ",") ?></td>
             
         <?php endif; ?>
         
@@ -73,13 +50,7 @@
     <?php endforeach; ?>
     </tbody>
     <tfoot>
-        <th>Total (<?= $increment ?> PAQUETS)</th>
-        <th colspan="4"></th>
-        <th class="text-center"><?= number_format($total, 2, ".", ",") ?></th>
-        <th class="text-center"><?= number_format($total_us, 2, ".", ",") ?></th>
-        <th></th>
-        <th></th>
-        <th></th>
+        <th colspan="9">Total (<?= $increment ?> Fiches) - (<?= number_format($total, 2, ".", ",") ?> USD)</th>
     </tfoot>
 </table>
 

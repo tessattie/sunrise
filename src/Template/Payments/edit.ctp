@@ -33,22 +33,16 @@
                 <?= $this->Form->control('amount', array('class' => 'form-control total_amount', "placeholder" => "Montant", "label" => "Montant", "style" => "margin-left:4px")); ?>
             </div>
             <div class="col-md-4">
-                <?= $this->Form->control('rate_id', array('class' => 'form-control', "empty" => "-- Devise --", "options" => $rates, "label" => 'Devise', "style" => "margin-left:4px;height:46px", "required" => true, 'value' => 1)); ?>
-            </div>
-            <div class="col-md-4">
                 <?= $this->Form->control('method_id', array('class' => 'form-control', "empty" => "-- Méthode de paiement --", "options" => $methods, "label" => 'Méthode', "style" => "margin-left:4px;height:46px", "required" => true)); ?>
             </div>
-            </div>   
-            <div class="row">
-               <div class="col-md-4">
+            <div class="col-md-4">
                     <?= $this->Form->control('memo', array('class' => 'form-control', "placeholder" => "Mémo", "label" => 'Mémo', "style" => "margin-left:4px")); ?>
                 </div>
-                <div class="col-md-4">
-                    <?= $this->Form->control('daily_rate', array('class' => 'form-control', "label" => 'Taux du Jour', "style" => "margin-left:4px;height:46px", "required" => true, 'placeholder' => "Taux du Jour", 'value' => $payment->daily_rate)); ?>
-                </div>
+            </div>   
+            <div class="row">
                 <div class="col-md-4">
                     <label>Date</label><br>
-                    <input value="<?= date("Y-m-d", strtotime($payment->created))  ?>" type="date" name="created" style="height: 45px;">
+                    <input value="<?= date("Y-m-d", strtotime($payment->created))  ?>" type="date" name="created" style="height: 45px;" class="form-control">
                 </div> 
             </div>
          <?= $this->Form->button(__('Valider'), array('class'=>'btn btn-success', "style" => "height: 46px;border-radius: 0px;margin-top:20px;margin-right:15px;float:right")) ?>

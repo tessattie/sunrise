@@ -28,6 +28,9 @@ class Flight extends Entity
     protected $_accessible = [
         'name' => true,
         'status' => true,
+        'station_id' => true,
+        'customer_validation' => true, 
+        'with_flight' => true,
         'created' => true,
         'modified' => true,
         'products_sales' => true

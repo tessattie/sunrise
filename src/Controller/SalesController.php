@@ -34,56 +34,17 @@ class SalesController extends AppController
         ini_set('memory_limit', '1024M');
         $from = $this->request->session()->read("from")." 00:00:00";
         $to = $this->request->session()->read("to")." 23:59:59";
-        $condition = "(Sales.status = 1 OR Sales.status = 0 OR Sales.status = 4 OR Sales.status = 6 OR Sales.status = 7)";
+        $condition = "(Sales.status = 1)";
         if($this->Auth->user()['role_id'] == 6){
-            $condition  = "(Sales.status = 0 OR Sales.status = 4 OR Sales.status = 6 OR Sales.status = 7)";
+            $condition  = "(Sales.status = 1)";
         }
-        $truck_type = 0;
         $customer = '99999';
         $user = '99999';
         $reussies = 1;
-        $transport = 1;
+        $type = 1;
 
-        if ($this->request->is(['patch', 'post', 'put'])){
-            if(!empty($this->request->getData()['reussies']) && $this->request->getData()['reussies'] == 2){
-                $reussies = 2;
-                $condition  = "(Sales.status = 2 OR Sales.status = 3 OR Sales.status = 5)";
-            }
-            if(!empty($this->request->getData()['transport']) && $this->request->getData()['transport'] == 3){
-                $transport = 3;
-                $condition .= "AND Sales.transport = 0 ";
-            }
-            if(!empty($this->request->getData()['transport']) && $this->request->getData()['transport'] == 2){
-                $transport = 2;
-                $condition  .= "AND Sales.transport = 1 ";
-            }
-
-            if(!empty($this->request->getData()['customer_id'])){
-                $customer = $this->request->getData()['customer_id'];
-                $condition .= " AND Sales.customer_id = ".$this->request->getData()['customer_id'];
-            }
-
-            if(!empty($this->request->getData()['user_id'])){
-                $user = $this->request->getData()['user_id'];
-                $condition .= " AND Sales.user_id = ".$this->request->getData()['user_id'];
-            }
-            if($this->request->getData()['type'] == 1){
-                $truck_type = 1;
-                $sales = $this->Sales->find('all', array('order' => array("Sales.created DESC"), "conditions" => array("Sales.created >=" => $from, "Sales.created <=" => $to, $condition)))->contain(['Users', 'Customers', 'Trucks', 'Pointofsales', "ProductsSales" => ['Products'], 'Receivers'])->matching('ProductsSales', function ($q) {
-                        return $q->where(['ProductsSales.quantity >' => 3]);
-                    });
-            }elseif($this->request->getData()['type'] == 2){
-                $truck_type = 2;
-               $sales = $this->Sales->find('all', array('order' => array("Sales.created DESC"), "conditions" => array("Sales.created >=" => $from, "Sales.created <=" => $to, $condition)))->contain(['Users', 'Customers', 'Trucks', 'Pointofsales', "ProductsSales" => ['Products'], 'Receivers'])->matching('ProductsSales', function ($q) {
-                        return $q->where(['ProductsSales.quantity <=' => 3]);
-                    });
-            }else{
-                $truck_type = 0;
-                $sales = $this->Sales->find('all', array('order' => array("Sales.created DESC"), "conditions" => array("Sales.created >=" => $from, "Sales.created <=" => $to, $condition)))->contain(['Users', 'Customers', 'Trucks', 'Pointofsales', 'ProductsSales'  => ['Products'], 'Receivers']);
-            }
-        }else{
-		$sales = $this->Sales->find('all', array('order' => array("Sales.created DESC"), "conditions" => array("Sales.created >=" => $from, "Sales.created <=" => $to, $condition)))->contain(['Users', 'Receivers', 'Customers', 'Trucks', 'Pointofsales', "ProductsSales"  => ['Products']]);
-        }
+       
+		$sales = $this->Sales->find('all', array('order' => array("Sales.created DESC"), "conditions" => array("Sales.created >=" => $from, "Sales.created <=" => $to, $condition)))->contain(['Users', 'Receivers', 'Customers', 'Pointofsales', "ProductsSales"  => ['Products']]);
 
         $customers = $this->Sales->Customers->find('list', [ "order" => ['last_name ASC'],
             'keyField' => 'id',
@@ -98,7 +59,7 @@ class SalesController extends AppController
                 return $u->get('name');
             }
         ]); 
-        $this->set(compact('sales', 'truck_type', 'users', 'customers', 'customer', 'user', 'reussies', 'transport'));
+        $this->set(compact('sales', 'customers', 'customer'));
     }
 
 
@@ -166,36 +127,53 @@ class SalesController extends AppController
         $from = $this->request->session()->read("from")." 00:00:00";
         $to = $this->request->session()->read("to")." 23:59:59";
         $sales = '';
-        $this->loadModel("Stations"); 
+        $movement_id = ''; 
+        $flight_id = '';
+        $trackings='';
+        $this->loadModel("Stations"); $this->loadModel("Flights"); $this->loadModel("Movements"); $this->loadModel("Trackings"); 
         if($this->Auth->user()['role_id'] == 4){
             $stations = $this->Stations->find("list", array("conditions" => array("id" => $this->Auth->user()['station_id']))); 
         }else{
             $stations = $this->Stations->find("list"); 
         }
 
+
+        $trackings = $this->Trackings->find("all", array("conditions" => array("Trackings.created >= " => $from, "Trackings.created <= " => $to)))->contain(['Flights', 'Movements', 'Users', 'Stations', 'ProductsSales' => ['Sales' => ['Customers', 'Receivers']]]);
+
         if($this->request->is(['patch', 'put', 'post'])){
-            $condition = "(Sales.status = 1 OR Sales.status = 0 OR Sales.status = 4 OR Sales.status = 6 OR Sales.status = 7)";
+            $condition = "(Sales.status = 1)";
             if(!empty($this->request->getData()['station_id'])){
                 $station_id = $this->request->getData()['station_id'];
-                $condition .= " AND Sales.station_id = ".$station_id;
+                $trackings->where(['Trackings.station_id' => $station_id]);
             }
 
-            if(!empty($this->request->getData()['destination_station_id'])){
-                $station_id = $this->request->getData()['destination_station_id'];
-                $condition .= " AND Sales.destination_station_id = ".$station_id;
+            if(!empty($this->request->getData()['movement_id'])){
+                $movement_id = $this->request->getData()['movement_id'];
+            }
+
+            if(!empty($this->request->getData()['flight_id'])){
+                $flight_id = $this->request->getData()['flight_id'];
+                $trackings->where(['Trackings.flight_id' => $flight_id]);
+            }
+
+            if(!empty($this->request->getData()['flight_id'])){
+                $flight_id = $this->request->getData()['flight_id'];
+                $trackings->where(['Trackings.flight_id' => $flight_id]);
+            }
+
+            if(!empty($this->request->getData()['movement_id'])){
+                $movement_id = $this->request->getData()['movement_id'];
+                $trackings->where(['Trackings.movement_id' => $movement_id]);
             }
             
-            $sales = $this->Sales->find("all", array("conditions" => array("Sales.created >= " => $from, "Sales.created <= " => $to, $condition)))->contain(['Users', 'Receivers', 'Stations', 'Customers', 'ProductsSales' => ['Flights']]);
         }
 
-        if(!empty($sales)){
-          foreach($sales as $sale){
-            $sale->destination_station = $this->Stations->get($sale->destination_station_id);
-          }  
+        foreach($trackings as $tracking){
+            $tracking->products_sale->sale->destination_station = $this->Stations->get($tracking->products_sale->sale->destination_station_id);
         }
-        
-
-        $this->set("stations", $stations); $this->set("sales", $sales);
+        $flights = $this->Flights->find("list");
+        $movements = $this->Movements->find("list");
+        $this->set("stations", $stations); $this->set("sales", $trackings);$this->set("flights", $flights);$this->set("movements", $movements);$this->set("flight_id", $flight_id);$this->set("movement_id", $movement_id); $this->set("from", $this->request->session()->read("from")); $this->set("to", $this->request->session()->read("to"));
     }
 
     /**
@@ -735,15 +713,18 @@ class SalesController extends AppController
      */
     public function view($id = null)
     {
-        $this->loadModel('Rates');
-        $rate = $this->Rates->get(2);
+        $this->loadModel('Rates');$this->loadModel('Stations');$this->loadModel('Flights');$this->loadModel('Movements');
+        $rates = $this->Rates->find("list");
+        $stations = $this->Stations->find("list");
+        $flights = $this->Flights->find("list");
+        $movements = $this->Movements->find("list");
         
 
         $sale = $this->Sales->get($id, [
-            'contain' => ['Users', "RequisitionsSales" => ['Requisitions'], 'Customers' => ['Rates'], 'Trucks', 'Pointofsales', 'ProductsSales' => ["Products", 'Trucks'], 'PaymentsSales' => ['Payments' => ['Methods', 'Rates']]]
+            'contain' => ['Users', 'Customers',  'Pointofsales', 'ProductsSales' => ["Products", 'Trucks','Trackings' => ["Movements", 'Stations', "Flights", 'Users']], 'Payments' => ['Methods', 'Rates']]
         ]);
 
-        $this->set('sale', $sale); $this->set('rate', $rate);
+        $this->set('sale', $sale); $this->set('rates', $rates); $this->set('stations', $stations); $this->set('flights', $flights); $this->set('movements', $movements);
     }
 
     public function closing(){
@@ -756,7 +737,7 @@ class SalesController extends AppController
         $conn = ConnectionManager::get('default');
 
         $stations = $this->Sales->Stations->find("list"); 
-        $users = '';
+        $users = [];
 
         if($this->request->is(['patch', 'put', 'post'])){
             if(!empty($this->request->getData()['date'])){
@@ -766,28 +747,34 @@ class SalesController extends AppController
                 $station = $this->request->getData()['station_id'];
             }
 
-            $users = $this->Sales->Users->find("all", array('conditions' => array("station_id" => $station, 'role_id' => 2)));
+            $users = $this->Sales->Users->find("all", array('conditions' => array("station_id" => $station)));
 
             foreach($users as $user){
-                $credit_usd = $conn->query("SELECT sum(total) as total FROM `sales` WHERE user_id = '".$user->id."' AND created >= '".$from."' AND created <= '".$to."' AND (status = 0 OR status = 6)");
+                $credit_usd = $conn->query("SELECT sum(total) as total FROM `sales` WHERE user_id = '".$user->id."' AND created >= '".$from."' AND created <= '".$to."' AND status = 1 AND type = 2");
 
                 foreach($credit_usd as $c){
                     $user->credit_usd = $c;
                 }
 
-                $credit_htg = $conn->query("SELECT sum(total) as total FROM `sales` WHERE user_id = '".$user->id."' AND created >= '".$from."' AND created <= '".$to."' AND (status = 4 OR status = 7)");
+                $monnaie_htg = $conn->query("SELECT sum(monnaie*change_rate) as monnaie FROM `sales` WHERE user_id = '".$user->id."' AND created >= '".$from."' AND created <= '".$to."' AND status = 1 AND change_rate_id = 1");
 
-                foreach($credit_htg as $c){
-                    $user->credit_htg = $c;
-                }
+                $monnaie_usd = $conn->query("SELECT sum(monnaie) as monnaie FROM `sales` WHERE user_id = '".$user->id."' AND created >= '".$from."' AND created <= '".$to."' AND status = 1 AND change_rate_id = 2");
 
-                $monnaie_htg = $conn->query("SELECT sum(monnaie) as monnaie FROM `sales` WHERE user_id = '".$user->id."' AND created >= '".$from."' AND created <= '".$to."' AND (status = 1)");
+                $monnaie_dop = $conn->query("SELECT sum(monnaie*change_rate) as monnaie FROM `sales` WHERE user_id = '".$user->id."' AND created >= '".$from."' AND created <= '".$to."' AND status = 1 AND change_rate_id = 3");
 
                 foreach($monnaie_htg as $c){
                     $user->monnaie_htg = $c;
                 }
 
-                $user->cash = $conn->query("SELECT sum(p.amount) as amount, p.method_id, p.rate_id FROM `payments` p LEFT JOIN sales s ON s.id = p.sale_id WHERE s.user_id = ".$user->id." AND s.created >= '".$from."' AND s.created <= '".$to."' AND (s.status = 1 OR s.status = 10) GROUP BY p.method_id, p.rate_id ORDER BY p.method_id, p.rate_id");
+                foreach($monnaie_usd as $c){
+                    $user->monnaie_usd = $c;
+                }
+
+                foreach($monnaie_dop as $c){
+                    $user->monnaie_dop = $c;
+                }
+
+                $user->cash = $conn->query("SELECT sum(p.amount) as amount, p.method_id, p.rate_id FROM `payments` p LEFT JOIN sales s ON s.id = p.sale_id WHERE s.user_id = ".$user->id." AND s.created >= '".$from."' AND s.created <= '".$to."' AND (s.status = 1) GROUP BY p.method_id, p.rate_id ORDER BY p.method_id, p.rate_id");
             
             }
         }
@@ -1132,22 +1119,10 @@ class SalesController extends AppController
 
         $sale = $this->Sales->get($id);
 
-        if($sale->status == 0 || $sale->status == 1 || $sale->status = 4 || $sale->status = 7 ){
-            if($sale->status == 0){
-                $sale->status = 3; 
-            }
-            if($sale->status == 1){
-                $sale->status = 2; 
-            }
-            if($sale->status == 4){
-                $sale->status = 5; 
-            }
-            if($sale->status == 6){
-                $sale->status = 9; 
-            }
-            if($sale->status == 7){
-                $sale->status = 8; 
-            }
+        if($sale->status == 1){
+            
+            $sale->status = 2; 
+            
             $this->Sales->save($sale);
         }
         return $this->redirect(['action' => 'view', $id]); 

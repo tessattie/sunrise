@@ -28,6 +28,8 @@ class Movement extends Entity
      */
     protected $_accessible = [
         'name' => true,
+        'with_flight' => true, 
+        'customer_validation' => true,
         'created' => true,
         'modified' => true,
         'user_id' => true,

@@ -36,7 +36,7 @@ class PaymentsController extends AppController
         }
         $from = $this->request->session()->read("from")." 00:00:00";
         $to = $this->request->session()->read("to")." 23:59:59";
-        $customers = $this->Payments->Customers->find('list', ['conditions' => ['id <>' => 1, 'status' => 1]]);
+        $customers = $this->Payments->Customers->find('list', ['conditions' => ['id <>' => 1, 'status' => 1, "type <>" => 3]]);
 
         $this->set(compact('payments', 'customers', 'cust', 'customer'));
     }
@@ -76,23 +76,20 @@ class PaymentsController extends AppController
         $sales = array();
 
         if(!empty($customer)){
-            $sales = $this->Payments->PaymentsSales->Sales->find('all', array('conditions' => array("customer_id" => $customer, 'OR' => array("Sales.status = 0","Sales.status = 4")), "order" => array('Sales.created ASC')))->contain(['ProductsSales' => ['Products'], 'Customers' , "PaymentsSales" => ['Payments']]);
-            $customer = $this->Payments->PaymentsSales->Sales->Customers->get($customer, ['contain' => ['Rates']]);
+            $customer = $this->Payments->Sales->Customers->get($customer, ['contain' => ['Rates']]);
         }
         
         if ($this->request->is(["patch", "put", 'post'])){
             if(!empty($this->request->getData()['customer_id']) && empty($this->request->getData()['amount'])){
-                $sales = $this->Payments->PaymentsSales->Sales->find('all', array('conditions' => array("customer_id" => $this->request->getData()['customer_id'], 'OR' => array("Sales.status = 0","Sales.status = 4")), "order" => array('created ASC')))->contain(['ProductsSales' => ['Products'], "PaymentsSales" => ['Payments']]);
-                $customer = $this->Payments->PaymentsSales->Sales->Customers->get($this->request->getData()['customer_id'], ['contain' => ['Rates']]);
+                $customer = $this->Payments->Sales->Customers->get($this->request->getData()['customer_id'], ['contain' => ['Rates']]);
             }
             if(!empty($this->request->getData()['amount'])){
-                $customer = $this->Payments->PaymentsSales->Sales->Customers->get($this->request->getData()['customer_id'], ['contain' => ['Rates']]);
                 $payment = $this->Payments->newEntity();
                 $payment->amount = $this->request->getData()['amount']; 
                 $payment->method_id = $this->request->getData()['method_id'];
                 $payment->memo = $this->request->getData()['memo'];  
-                $payment->rate_id = $this->request->getData()['rate_id']; 
-                $payment->daily_rate = $this->request->getData()['daily_rate']; 
+                $payment->rate_id = 2; 
+                $payment->daily_rate = 1; 
                 $payment->type = 2;
                 $payment->customer_id = $this->request->getData()['customer_id'];
                 
@@ -102,15 +99,13 @@ class PaymentsController extends AppController
                 return $this->redirect(['action' => "index", $pm['customer_id']]);
             }
             if(empty($customer->id)){
-               $customer = $this->Payments->PaymentsSales->Sales->Customers->get($customer, ['contain' => ['Rates']]); 
+               $customer = $this->Payments->Sales->Customers->get($customer, ['contain' => ['Rates']]); 
             }
             
         }
 
         $methods = $this->Payments->Methods->find('list', ['conditions' => ['id <>' => 3]]);
-        $rates = $this->Payments->Rates->find('list', ['limit' => 200]);
-        $daily_rate = $this->Payments->Rates->get(2)->payment;
-        $this->set(compact('payment',  'sales', 'methods', 'rates',"customer", 'daily_rate'));
+        $this->set(compact('payment', 'methods', "customer"));
     }
 
 
@@ -233,7 +228,7 @@ class PaymentsController extends AppController
     public function edit($id = null)
     {
         $payment = $this->Payments->get($id, 
-            ['contain' => ['PaymentsSales' => ["Sales"], 'Customers']
+            ['contain' => ['Customers']
         ]);
         
         $customer = $this->Payments->Customers->get($payment->customer_id, ['contain' => ['Rates']]);
@@ -241,12 +236,11 @@ class PaymentsController extends AppController
             $payment = $this->Payments->patchEntity($payment, $this->request->getData());
             $payment->created = $this->request->getData()['created']." 12:00:00";
             if ($pm = $this->Payments->save($payment)) {
-               $payments_sales = $this->Payments->PaymentsSales->find("all", array("conditions" => array("payment_id" => $payment->id)));  
+               // $payments_sales = $this->Payments->PaymentsSales->find("all", array("conditions" => array("payment_id" => $payment->id)));  
             }
         }
         $methods = $this->Payments->Methods->find('list', ['limit' => 200, 'conditions' => ['id <>' => 3]]);
-        $rates = $this->Payments->Rates->find('list', ['limit' => 200]);
-        $this->set(compact('payment', 'methods', 'rates', 'customer'));
+        $this->set(compact('payment', 'methods', 'customer'));
     }
 
     private function getPaymentSales($payment_id){
